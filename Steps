@@ -17,3 +17,157 @@ dotnet add MoneyPilot.API\MoneyPilot.API.csproj reference MoneyPilot.Infrastruct
 REM Tests depend on Application and API (optional)
 dotnet add MoneyPilot.Tests\MoneyPilot.Tests.csproj reference MoneyPilot.API\MoneyPilot.API.csproj
 dotnet add MoneyPilot.Tests\MoneyPilot.Tests.csproj reference MoneyPilot.Application\MoneyPilot.Application.csproj
+
+
+---------------------------------------------------------------------------
+GIT
+---------------------------------------------------------------------------
+
+🧠 Git Flow: Professional Branching Model (Even for Solo Devs)
+🌳 Branch Structure
+main         ← always deployable (stable builds only)
+develop      ← active integration of features
+feature/*    ← new functionality (you work here daily)
+hotfix/*     ← urgent fixes to main (later, if needed)
+release/*    ← prep branch for production/staging
+*/
+
+✅ Your Ideal Workflow as a Solo Backend Dev
+Step 1: Create the Core Branches (if not already)
+git checkout -b develop
+git push -u origin develop
+
+git checkout -b feature/initial-backend-setup
+
+Step 2: Work on Your Feature Branch
+
+Write code, add projects, commit frequently:
+
+git add .
+git commit -m "Add initial project scaffolding and clean architecture setup"
+
+Step 3: Merge Feature → Develop (Simulating Pull Request)
+git checkout develop
+git merge feature/initial-backend-setup
+git push origin develop
+
+
+💡 This mimics a pull request merge, even if you’re not opening PRs.
+
+🔁 Repeat for All Backend Features
+
+feature/auth-api
+
+feature/expense-endpoints
+
+feature/investment-module
+
+Each one:
+
+git checkout -b feature/xyz
+# work, commit
+git checkout develop
+git merge feature/xyz
+git push origin develop
+
+🚀 When You're Ready to Deploy
+git checkout main
+git merge develop
+git push origin main
+
+
+Main should always reflect stable, production-ready code.
+
+🧪 Pro Tips
+Action	Command
+List all branches	git branch -a
+Delete merged feature	git branch -d feature/auth-api
+Rename branch	git branch -m old-name new-name
+Show branch tree	git log --oneline --graph --all
+Create & switch branch	git checkout -b feature/xyz
+
+---------------------------------------------------------------------------
+# 📘 Git Branching Checklist (MoneyPilot Backend)
+
+This checklist helps track and manage all Git branches used during backend development using a professional GitFlow.
+
+---
+
+## 🔀 Branch Structure
+
+* `main` → **Production-ready code only**
+* `develop` → **Integration branch for all completed features**
+* `feature/*` → **Each feature or task under development**
+* `release/*` → (Later) Stable version preparation
+
+---
+
+## ✅ Feature Branch Tracking
+
+| Branch Name                 | Purpose                               | Status |
+| --------------------------- | ------------------------------------- | ------ |
+| `feature/expense-entity`    | Define `Expense`, `Category` entities | ☐      |
+| `feature/dbcontext`         | Set up `MoneyPilotDbContext.cs`       | ☐      |
+| `feature/repository-uow`    | Implement repositories + Unit of Work | ☐      |
+| `feature/expense-service`   | Add service layer for Expenses        | ☐      |
+| `feature/expense-api`       | Create `ExpenseController` + CRUD     | ☐      |
+| `feature/auth-setup`        | Implement JWT authentication & User   | ☐      |
+| `feature/investment-module` | Investment model and service logic    | ☐      |
+| `feature/budget-module`     | Budget tracking entities and API      | ☐      |
+
+> Mark ✔ as you finish and merge each feature branch back into `develop`.
+
+---
+
+## 🛠 Workflow
+
+### Start a Feature:
+
+```bash
+git checkout develop
+git pull origin develop
+git checkout -b feature/your-feature-name
+```
+
+### Finish a Feature:
+
+```bash
+git add .
+git commit -m "Your commit message"
+git checkout develop
+git merge feature/your-feature-name
+git push origin develop
+git branch -d feature/your-feature-name
+```
+
+---
+
+## 📦 When to Create a Release Branch
+
+Create a `release/*` branch when you're ready to stabilize and ship a version:
+
+```bash
+git checkout develop
+git checkout -b release/1.0.0
+git push origin release/1.0.0
+```
+
+Then merge back into:
+
+* `main` → final deployable code
+* `develop` → so fixes aren’t lost
+
+---
+
+## 🧠 Pro Tips
+
+* Keep branches small and focused.
+* Use lowercase, hyphenated branch names.
+* Always test before merging.
+* Never push directly to `main` or `develop`.
+* Use pull requests or self-merges to simulate teamwork.
+
+---
+
+Update this checklist regularly as you build!
+------------------------------------------------------------------------------
