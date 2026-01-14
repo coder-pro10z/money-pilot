@@ -1,0 +1,17 @@
+## Ignore Visual Studio artifacts
+.vs/
+*.user
+*.suo
+
+## Ignore build output
+bin/
+obj/
+
+## Ignore Angular build output
+dist/
+node_modules/
+
+## Ignore temporary files
+*.log
+*.tmp
+.env
