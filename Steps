@@ -1,0 +1,19 @@
+
+
+
+
+To add refrences --
+REM Application depends on Domain
+dotnet add MoneyPilot.Application\MoneyPilot.Application.csproj reference MoneyPilot.Domain\MoneyPilot.Domain.csproj
+
+REM Infrastructure depends on Application and Domain
+dotnet add MoneyPilot.Infrastructure\MoneyPilot.Infrastructure.csproj reference MoneyPilot.Application\MoneyPilot.Application.csproj
+dotnet add MoneyPilot.Infrastructure\MoneyPilot.Infrastructure.csproj reference MoneyPilot.Domain\MoneyPilot.Domain.csproj
+
+REM API depends on Application and Infrastructure
+dotnet add MoneyPilot.API\MoneyPilot.API.csproj reference MoneyPilot.Application\MoneyPilot.Application.csproj
+dotnet add MoneyPilot.API\MoneyPilot.API.csproj reference MoneyPilot.Infrastructure\MoneyPilot.Infrastructure.csproj
+
+REM Tests depend on Application and API (optional)
+dotnet add MoneyPilot.Tests\MoneyPilot.Tests.csproj reference MoneyPilot.API\MoneyPilot.API.csproj
+dotnet add MoneyPilot.Tests\MoneyPilot.Tests.csproj reference MoneyPilot.Application\MoneyPilot.Application.csproj
