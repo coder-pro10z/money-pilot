@@ -171,3 +171,120 @@ Then merge back into:
 
 Update this checklist regularly as you build!
 ------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------------------
+✅ Perfect — great job committing your domain entities to `feature/expense-entity`.
+
+### 📌 Now you're ready for the next step in your backend architecture:
+
+---
+
+## 🚀 Next Step: Create `feature/dbcontext` Branch
+
+This branch will:
+
+* Add `MoneyPilotDbContext` in `Infrastructure`
+* Register `DbSet<Expense>`, `Category`, etc.
+* Configure the database connection
+* Add EF Core packages
+* Generate your first migration
+
+---
+
+## ✅ What to Do Next
+
+### 1. Create the new branch
+
+```bash
+git checkout develop
+git pull
+git checkout -b feature/dbcontext
+```
+
+### 2. Inside `MoneyPilot.Infrastructure`, create:
+
+**📄 `Data/MoneyPilotDbContext.cs`**
+
+```csharp
+using Microsoft.EntityFrameworkCore;
+using MoneyPilot.Domain.Entities;
+
+namespace MoneyPilot.Infrastructure.Data;
+
+public class MoneyPilotDbContext : DbContext
+{
+    public MoneyPilotDbContext(DbContextOptions<MoneyPilotDbContext> options)
+        : base(options)
+    {
+    }
+
+    public DbSet<Expense> Expenses { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<Budget> Budgets { get; set; }
+    public DbSet<AppUser> Users { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        // Fluent API (optional for now)
+    }
+}
+```
+
+### 3. Add EF Core packages (if not added yet)
+
+```bash
+dotnet add MoneyPilot.Infrastructure package Microsoft.EntityFrameworkCore
+dotnet add MoneyPilot.Infrastructure package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add MoneyPilot.Infrastructure package Microsoft.EntityFrameworkCore.Tools
+```
+
+### 4. Setup connection string in `MoneyPilot.API/appsettings.json`
+
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=MoneyPilotDb;Trusted_Connection=True;"
+}
+```
+
+### 5. Register `DbContext` in `Program.cs` of API
+
+```csharp
+builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+```
+
+### 6. Create initial migration & update DB
+
+```bash
+dotnet ef migrations add InitialCreate -p MoneyPilot.Infrastructure -s MoneyPilot.API
+dotnet ef database update -p MoneyPilot.Infrastructure -s MoneyPilot.API
+```
+
+---
+
+Let me know once you’ve added the `DbContext` — I’ll walk you through the next branch: `feature/repository-uow`.
+-------------------------------------------------------------------------
+
