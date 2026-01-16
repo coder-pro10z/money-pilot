@@ -10,6 +10,6 @@ namespace MoneyPilot.Application.Interfaces
     {
         // Add any expense-specific methods here
         Task<IEnumerable<Expense>> GetExpensesByUserIdAsync(string userId);
-        Task<IEnumerable<Expense>> GetExpensesByCategoryAsync(string category);
+        Task<IEnumerable<Expense>> GetExpensesByCategoryAsync(int categoryId);
     }
 }
