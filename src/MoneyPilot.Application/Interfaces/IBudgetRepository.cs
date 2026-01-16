@@ -7,7 +7,7 @@ using MoneyPilot.Domain.Entities;
 
 namespace MoneyPilot.Application.Interfaces
 {
-    internal interface IBudgetRepository
+    public interface IBudgetRepository
     {
         // Add any budget-specific methods here
         Task<Budget?> GetBudgetByUserIdAsync(string userId, int categoryId, DateTime month);

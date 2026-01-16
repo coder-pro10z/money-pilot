@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MoneyPilot.Domain.Entities;
 namespace MoneyPilot.Application.Interfaces
 {
-    internal interface IExpenseRepository : IRepository<Expense>
+    public interface IExpenseRepository : IRepository<Expense>
     {
         // Add any expense-specific methods here
         Task<IEnumerable<Expense>> GetExpensesByUserIdAsync(string userId);
