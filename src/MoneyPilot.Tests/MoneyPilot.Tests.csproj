@@ -8,10 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.17.1" />
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MoneyPilot.API\MoneyPilot.API.csproj" />
+    <ProjectReference Include="..\MoneyPilot.Application\MoneyPilot.Application.csproj" />
+    <ProjectReference Include="..\MoneyPilot.Domain\MoneyPilot.Domain.csproj" />
+    <ProjectReference Include="..\MoneyPilot.Infrastructure\MoneyPilot.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
