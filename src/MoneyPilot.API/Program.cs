@@ -2,6 +2,7 @@
 using MoneyPilot.Application.Interfaces;
 using MoneyPilot.Infrastructure.Data;
 using MoneyPilot.Infrastructure.Repositories;
+using MoneyPilot.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ builder.Services.AddScoped<IUnitofWork, UnitOfWork>();
 builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();
 
 // SWAGGER
 builder.Services.AddEndpointsApiExplorer();

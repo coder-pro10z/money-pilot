@@ -37,10 +37,12 @@ namespace MoneyPilot.Infrastructure.Repositories
             );
         }
 
+        public async Task<IEnumerable<Budget>> GetBudgetsByUserIdAsync(string userId)
+        {
+            return await _context.Budgets
+                .Where(b => b.UserId == userId)
+                .ToListAsync();
+        }
 
-        //Task<Budget?> IBudgetRepository.GetBudgetByUserIdAsync(string userId, int categoryId, DateTime month)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }
