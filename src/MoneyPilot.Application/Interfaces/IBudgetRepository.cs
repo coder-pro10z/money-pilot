@@ -11,7 +11,7 @@ namespace MoneyPilot.Application.Interfaces
     {
         // Add any budget-specific methods here
         Task<IEnumerable<Budget>> GetBudgetsByUserIdAsync(string userId);
-
         Task<Budget?> GetBudgetByUserIdAsync(string userId, int categoryId, DateTime month);
+        Task<Budget?> GetByIdAsync(int id); // explicitly declared
     }
 }

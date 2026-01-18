@@ -39,10 +39,24 @@ namespace MoneyPilot.Infrastructure.Repositories
 
         public async Task<IEnumerable<Budget>> GetBudgetsByUserIdAsync(string userId)
         {
-            return await _context.Budgets
-                .Where(b => b.UserId == userId)
-                .ToListAsync();
+            //return await _context.Budgets
+            //    .Where(b => b.UserId == userId)
+            //    .ToListAsync();
+        return await _context.Budgets
+        .Include(b => b.Category)
+        .Include(b => b.User)
+        .Where(b => b.UserId == userId)
+        .ToListAsync();
+
         }
+        public async Task<Budget?> GetByIdAsync(int id)
+        {
+            return await _context.Budgets
+                .Include(b => b.Category)
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(b => b.Id == id);
+        }
+
 
     }
 }

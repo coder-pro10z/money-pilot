@@ -13,9 +13,17 @@ namespace MoneyPilot.Infrastructure.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<Budget>> GetAllAsync(string userId)
+        public async Task<IEnumerable<BudgetResponseDto>> GetAllAsync(string userId)
         {
-            return await _unitOfWork.Budgets.GetBudgetsByUserIdAsync(userId);
+            var budgets=  await _unitOfWork.Budgets.GetBudgetsByUserIdAsync(userId);
+            return budgets.Select(s=> new BudgetResponseDto
+            {
+             Id = s.Id,
+             MonthlyLimit =s.MonthlyLimit,  
+             Month  = s.Month,
+             CategoryId  = s.CategoryId,
+             CategoryName  = s.Category.Name
+    });
         }
 
         public async Task<Budget?> GetByIdAsync(int id)

@@ -11,7 +11,7 @@ namespace MoneyPilot.Application.Interfaces
     public interface IBudgetService
     {
         // Add any budget-specific methods here
-        Task<IEnumerable<Budget>> GetAllAsync(string userId);
+        Task<IEnumerable<BudgetResponseDto>> GetAllAsync(string userId);
         Task<Budget?> GetByIdAsync(int id);
         
         Task AddAsync(BudgetDto dto,String userId);
