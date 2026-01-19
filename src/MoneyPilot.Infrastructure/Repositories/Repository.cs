@@ -21,9 +21,10 @@ namespace MoneyPilot.Infrastructure.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public async  Task<T> GetByIdAsync(int id)
+        public async  Task<T?> GetByIdAsync(int id)
         {
-            return await _dbSet.FindAsync(id);
+            //Add exception handling for not found to add as Assigning a possibly-null value to a non-nullable variable or property. 
+            return await _dbSet.FindAsync(id) ?? throw new Exception("Not found");
         }
         public async Task<IEnumerable<T>> GetAllAsync()
         {

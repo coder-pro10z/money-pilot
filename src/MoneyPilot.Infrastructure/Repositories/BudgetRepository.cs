@@ -7,7 +7,7 @@ namespace MoneyPilot.Infrastructure.Repositories
 {
     public class BudgetRepository : Repository<Budget>, IBudgetRepository
     {
-        private readonly MoneyPilotDbContext _context;
+        private new readonly MoneyPilotDbContext _context;
 
         public BudgetRepository(MoneyPilotDbContext context) : base(context)
         {
@@ -49,12 +49,14 @@ namespace MoneyPilot.Infrastructure.Repositories
         .ToListAsync();
 
         }
-        public async Task<Budget?> GetByIdAsync(int id)
+        // Override GetByIdAsync to include related entities
+        public new async Task<Budget ?> GetByIdAsync(int id)
         {
+            //Add exception handling for not found to add as Assigning a possibly-null value to a non-nullable variable or property.
             return await _context.Budgets
                 .Include(b => b.Category)
                 .Include(b => b.User)
-                .FirstOrDefaultAsync(b => b.Id == id);
+                .FirstOrDefaultAsync(b => b.Id == id) ?? throw new InvalidOperationException("Budget not found"); ;
         }
 
 

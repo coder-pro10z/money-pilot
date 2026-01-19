@@ -22,7 +22,7 @@ namespace MoneyPilot.Infrastructure.Services
              MonthlyLimit =s.MonthlyLimit,  
              Month  = s.Month,
              CategoryId  = s.CategoryId,
-             CategoryName  = s.Category.Name
+             CategoryName  = s.Category?.Name ?? "Unknown"
     });
         }
 
@@ -33,11 +33,19 @@ namespace MoneyPilot.Infrastructure.Services
 
         public async Task AddAsync(BudgetDto dto, string userId)
         {
+            // Fetch the required Category entity to satisfy the required 'Category' property
+            //var category = await _unitOfWork.Categories.GetByIdAsync(dto.CategoryId);
+            //if (category == null)
+            //{
+            //    throw new InvalidOperationException($"Category with ID {dto.CategoryId} not found.");
+            //}
+
             var budget = new Budget
             {
                 MonthlyLimit = dto.MonthlyLimit,
                 Month = dto.Month,
                 CategoryId = dto.CategoryId,
+                //Category = category, // Set required property
                 UserId = userId
             };
 

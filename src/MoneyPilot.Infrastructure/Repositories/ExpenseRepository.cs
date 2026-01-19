@@ -12,8 +12,9 @@ namespace MoneyPilot.Infrastructure.Repositories
 {
 
         public class ExpenseRepository : Repository<Expense>, IExpenseRepository
-        {
-            private readonly MoneyPilotDbContext _context;
+    {
+         // Use the base _context instead or:
+            private new readonly MoneyPilotDbContext _context;
 
             public ExpenseRepository(MoneyPilotDbContext context) : base(context)
             {

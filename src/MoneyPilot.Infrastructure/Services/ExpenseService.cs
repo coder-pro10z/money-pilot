@@ -22,7 +22,8 @@ public class ExpenseService : IExpenseService
             Amount = e.Amount,
             Date = e.Date,
             CategoryId = e.CategoryId,
-            CategoryName = e.Category?.Name
+            CategoryName = e.Category?.Name ?? "Unknown"
+            //Added null check for Category to avoid potential null reference exceptions
         });
     }
 

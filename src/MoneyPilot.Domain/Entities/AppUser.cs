@@ -8,10 +8,11 @@ namespace MoneyPilot.Domain.Entities
 {
     public class AppUser
     {
-        public string Id { get; set; }
-        public string Email { get; set; }
+        public required string Id { get; set; }
+        public required string Email { get; set; }
 
-        public ICollection<Expense> Expenses { get; set; }
-        public ICollection<Budget> Budgets { get; set; }
+        //added required keyword to Expenses and Budgets to ensure they are not null
+        public required ICollection<Expense> Expenses { get; set; }
+        public required ICollection<Budget> Budgets { get; set; }
     }
 }

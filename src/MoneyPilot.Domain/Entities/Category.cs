@@ -9,9 +9,9 @@ namespace MoneyPilot.Domain.Entities
     public class Category
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-
-        public ICollection<Expense> Expenses { get; set; }
-        public ICollection<Budget> Budgets { get; set; }
+        //added required keyword to Name to ensure it is not null
+        public required string Name { get; set; }
+        public required ICollection<Expense> Expenses { get; set; }
+        public required ICollection<Budget> Budgets { get; set; }
     }
 }
