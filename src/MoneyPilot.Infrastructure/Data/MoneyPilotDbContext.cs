@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MoneyPilot.Domain.Entities;
 
 namespace MoneyPilot.Infrastructure.Data
 {
-    public class MoneyPilotDbContext: DbContext
+    public class MoneyPilotDbContext: IdentityDbContext<AppUser>
     {
         public MoneyPilotDbContext(DbContextOptions<MoneyPilotDbContext> options) : base(options)
         {

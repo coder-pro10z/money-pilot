@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace MoneyPilot.Domain.Entities
 {
-    public class AppUser
+    public class AppUser: IdentityUser
     {
-        public required string Id { get; set; }
-        public required string Email { get; set; }
 
         //added required keyword to Expenses and Budgets to ensure they are not null
-        public required ICollection<Expense> Expenses { get; set; }
-        public required ICollection<Budget> Budgets { get; set; }
+        public  ICollection<Expense> Expenses { get; set; } =new List<Expense>();
+        public ICollection<Budget> Budgets { get; set; } = new List<Budget>();
     }
 }
