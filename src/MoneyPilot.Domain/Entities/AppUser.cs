@@ -12,7 +12,7 @@ namespace MoneyPilot.Domain.Entities
     {
 
         //added required keyword to Expenses and Budgets to ensure they are not null
-        public  ICollection<Expense> Expenses { get; set; }
-        public ICollection<Budget> Budgets { get; set; }
+        public  ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+        public ICollection<Budget> Budgets { get; set; }= new List<Budget>();
     }
 }
