@@ -1,70 +1,107 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using MoneyPilot.Application.Interfaces;
 using MoneyPilot.Domain.Entities;
 using MoneyPilot.Infrastructure.Data;
 using MoneyPilot.Infrastructure.Repositories;
 using MoneyPilot.Infrastructure.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// SERVICES
-builder.Services.AddControllers();
+//
+// ====================== SERVICES ======================
+//
+
+// Controllers + JSON (cycle-safe)
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
+
+// DbContext
 builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Identity
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<MoneyPilotDbContext>()
+    .AddDefaultTokenProviders();
+
+// Repositories & Services
 builder.Services.AddScoped<IUnitofWork, UnitOfWork>();
 builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
 
-// SWAGGER
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//
+// ====================== JWT ======================
+//
+var jwtSettings = builder.Configuration.GetSection("Jwt");
+var jwtKey = jwtSettings["Key"]
+    ?? throw new InvalidOperationException("JWT Key missing");
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtKey))
+        };
     });
 
-// JWT
-builder.Services.AddIdentity<AppUser, IdentityRole>()
-    .AddEntityFrameworkStores<MoneyPilotDbContext>().AddDefaultTokenProviders();
+//
+// ====================== SWAGGER ======================
+//
+builder.Services.AddEndpointsApiExplorer();
 
-var  jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key is missing from configuration");
-builder.Services.AddAuthentication(options =>
+builder.Services.AddSwaggerGen(c =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+        Title = "MoneyPilot API",
+        Version = "v1"
+    });
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Paste ONLY the JWT token (no Bearer)",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
     };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securityScheme, Array.Empty<string>() }
+    });
 });
 
+//
+// ====================== APP ======================
+//
 var app = builder.Build();
 
-// MIDDLEWARE
-
-
-app.UseAuthentication();
-app.UseAuthorization();
-
+//
+// ====================== MIDDLEWARE ======================
+//
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -73,15 +110,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// ⚠️ ORDER MATTERS
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
-// TEST endpoint
 app.MapGet("/", () => "🎉 MoneyPilot API is running!");
-app.MapGet("/test/expenses", async (IExpenseService expenseService) =>
-{
-    var expenses = await expenseService.GetAllAsync("test-user");
-    return Results.Ok(expenses);
-});
 
 app.Run();

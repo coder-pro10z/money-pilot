@@ -36,7 +36,8 @@ namespace MoneyPilot.Tests.Controller
 
             // Act
             //result from controller method
-            var result = await controller.GetAll("test-user");
+            //var result = await controller.GetAll("test-user");
+            var result = await controller.GetAll();
 
             // Assert
             //var okResult=Assert.IsType<OkObjectResult>(result);

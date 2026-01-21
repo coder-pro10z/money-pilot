@@ -14,7 +14,7 @@ namespace MoneyPilot.Infrastructure.Data
         public MoneyPilotDbContext(DbContextOptions<MoneyPilotDbContext> options) : base(options)
         {
         }
-        public DbSet<AppUser> Users { get; set; }
+        //public DbSet<AppUser> Users { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<Budget> Budgets { get; set; }
@@ -29,23 +29,7 @@ namespace MoneyPilot.Infrastructure.Data
             modelBuilder.Entity<Budget>()
                 .Property(b => b.MonthlyLimit)
                 .HasPrecision(18, 2);
-            // Configure relationships and constraints if needed
-            //modelBuilder.Entity<Expense>()
-            //    .HasOne(e => e.Category)
-            //    .WithMany(c => c.Expenses)
-            //    .HasForeignKey(e => e.CategoryId);
-            //modelBuilder.Entity<Expense>()
-            //    .HasOne(e => e.User)
-            //    .WithMany(u => u.Expenses)
-            //    .HasForeignKey(e => e.UserId);
-            //modelBuilder.Entity<Budget>()
-            //    .HasOne(b => b.Category)
-            //    .WithMany(c => c.Budgets)
-            //    .HasForeignKey(b => b.CategoryId);
-            //modelBuilder.Entity<Budget>()
-            //    .HasOne(b => b.User)
-            //    .WithMany(u => u.Budgets)
-            //    .HasForeignKey(b => b.UserId);
+         
         }
     }
 }
