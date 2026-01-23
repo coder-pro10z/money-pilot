@@ -46,39 +46,3 @@ public class ExpenseController : ControllerBase
 }
 
 
-
-//// GET api/expense/{id}
-//[HttpGet("{id:int}")]
-//public async Task<IActionResult> Get(int id)
-//{
-//    var userId = GetUserId();
-//    var expense = await _expenseService.GetByIdAsync(id, userId);
-//    return expense == null ? NotFound() : Ok(expense);
-//}
-
-//// POST api/expense
-//[HttpPost]
-//public async Task<IActionResult> Create([FromBody] ExpenseDto dto)
-//{
-//    var userId = GetUserId();
-//    var createdId = await _expenseService.AddAsync(dto, userId);
-//    return CreatedAtAction(nameof(Get), new { id = createdId }, dto);
-//}
-
-//// PUT api/expense/{id}
-//[HttpPut("{id:int}")]
-//public async Task<IActionResult> Update(int id, [FromBody] ExpenseDto dto)
-//{
-//    var userId = GetUserId();
-//    var success = await _expenseService.UpdateAsync(id, dto, userId);
-//    return success ? NoContent() : NotFound();
-//}
-
-//// DELETE api/expense/{id}
-//[HttpDelete("{id:int}")]
-//public async Task<IActionResult> Delete(int id)
-//{
-//    var userId = GetUserId();
-//    var success = await _expenseService.DeleteAsync(id, userId);
-//    return success ? NoContent() : NotFound();
-//}
