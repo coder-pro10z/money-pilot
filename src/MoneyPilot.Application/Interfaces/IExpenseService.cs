@@ -10,11 +10,12 @@ namespace MoneyPilot.Application.Interfaces
 {
     public interface IExpenseService
     {
-        Task<IEnumerable<ExpenseResponseDto>> GetAllAsync(string userId);
-        Task<Expense?> GetByIdAsync(int id);
-        Task AddAsync(ExpenseDto dto, string userId);
-        Task<bool> UpdateAsync(int id, ExpenseDto dto);
-        Task<bool> DeleteAsync(int id);
+ Task<IEnumerable<ExpenseResponseDto>> GetAllAsync(string userId);
+Task<ExpenseResponseDto?> GetByIdAsync(int id, string userId);
+Task CreateAsync(ExpenseDto dto, string userId);
+Task<bool> UpdateAsync(int id, ExpenseDto dto, string userId);
+Task<bool> DeleteAsync(int id, string userId);
+
     }
 
 }
