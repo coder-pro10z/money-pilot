@@ -17,6 +17,6 @@ namespace MoneyPilot.Domain.Entities
 
         //Added required keyword to Category,UserId, User to ensure they are not null
         public string UserId { get; set; } = null!;
-        public AppUser User { get; set; } = null;
+        public AppUser User { get; set; } = null!;
     }
     }
