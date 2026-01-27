@@ -22,16 +22,27 @@ namespace MoneyPilot.Infrastructure.Services
              MonthlyLimit =s.MonthlyLimit,  
              Month  = s.Month,
              CategoryId  = s.CategoryId,
-             CategoryName  = s.Category?.Name ?? "Unknown"
+             //CategoryName  = s.Category?.Name ?? "Unknown"
     });
         }
 
-        public async Task<Budget?> GetByIdAsync(int id)
+        public async Task<BudgetResponseDto?> GetByIdAsync(int id ,string userId)
         {
-            return await _unitOfWork.Budgets.GetByIdAsync(id);
+            var budget =  await _unitOfWork.Budgets.GetByIdAsync(id);
+            if (budget == null || budget.UserId != userId)
+                return null;
+
+                return new BudgetResponseDto
+            {
+                Id = budget.Id,
+                MonthlyLimit = budget.MonthlyLimit,
+                Month = budget.Month,
+                CategoryId = budget.CategoryId,
+                //CategoryName  = s.Category?.Name ?? "Unknown"
+            };
         }
 
-        public async Task AddAsync(BudgetDto dto, string userId)
+        public async Task<BudgetResponseDto> AddAsync(BudgetDto dto, string userId)
         {
             // Fetch the required Category entity to satisfy the required 'Category' property
             //var category = await _unitOfWork.Categories.GetByIdAsync(dto.CategoryId);
@@ -51,12 +62,22 @@ namespace MoneyPilot.Infrastructure.Services
 
             await _unitOfWork.Budgets.AddAsync(budget);
             await _unitOfWork.SaveChangesAsync();
+            return new BudgetResponseDto
+            {
+                Id = budget.Id,
+                MonthlyLimit = budget.MonthlyLimit,
+                Month = budget.Month,
+                CategoryId = budget.CategoryId,
+                //CategoryName  = s.Category?.Name ?? "Unknown"
+            };
         }
 
-        public async Task<bool> UpdateAsync(int id, BudgetDto dto)
+        public async Task<bool> UpdateAsync(int id, BudgetDto dto, string userId)
         {
             var existing = await _unitOfWork.Budgets.GetByIdAsync(id);
-            if (existing == null) return false;
+            if (existing == null||existing.UserId!= userId) return false;
+
+            
 
             existing.MonthlyLimit = dto.MonthlyLimit;
             existing.Month = dto.Month;
@@ -67,14 +88,24 @@ namespace MoneyPilot.Infrastructure.Services
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, string userId)
         {
             var existing = await _unitOfWork.Budgets.GetByIdAsync(id);
-            if (existing == null) return false;
+            if (existing == null || existing.UserId!=userId) return false;
 
             _unitOfWork.Budgets.Delete(existing);
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
+
+        //public Task<BudgetResponseDto> GetByIdAsync(string UserId)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //Task<BudgetResponseDto> IBudgetService.AddAsync(BudgetDto dto, string userId)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

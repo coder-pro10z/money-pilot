@@ -12,6 +12,6 @@ namespace MoneyPilot.Application.DTOs
         public decimal MonthlyLimit { get; set; }
         public DateTime Month { get; set; }
         public int CategoryId { get; set; }
-        public string ?CategoryName { get; set; }
+        //public /*string*/ ?CategoryName { get; set; }
     }
 }

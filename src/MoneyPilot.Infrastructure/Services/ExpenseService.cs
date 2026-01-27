@@ -53,19 +53,45 @@ namespace MoneyPilot.Infrastructure.Services
         }
 
         // ===================== CREATE =====================
-        public async Task CreateAsync(ExpenseDto dto, string userId)
+        //public async Task CreateAsync(ExpenseDto dto, string userId)
+        //{
+        //    var expense = new Expense
+        //    {
+        //        Description = dto.Description,
+        //        Amount = dto.Amount,
+        //        CategoryId = dto.CategoryId,
+        //        Date = dto.Date,
+        //        UserId = userId // 🔐 JWT-derived, never from client
+        //    };
+
+        //    await _expenseRepository.AddAsync(expense);
+        //    await _unitOfWork.SaveChangesAsync();
+        //}
+
+        public async Task<ExpenseResponseDto> CreateAsync(ExpenseDto dto, string userId)
         {
             var expense = new Expense
             {
                 Description = dto.Description,
                 Amount = dto.Amount,
                 CategoryId = dto.CategoryId,
+                //CategoryName = dto.Category?.Name,
                 Date = dto.Date,
-                UserId = userId // 🔐 JWT-derived, never from client
+                UserId = userId
             };
 
-            await _expenseRepository.AddAsync(expense);
+            await _unitOfWork.Expenses.AddAsync(expense);
             await _unitOfWork.SaveChangesAsync();
+
+            return new ExpenseResponseDto
+            {
+                Id = expense.Id,
+                Description = expense.Description,
+                Amount = expense.Amount,
+                CategoryName = expense.Category?.Name,
+                Date = expense.Date,
+                CategoryId = expense.CategoryId
+            };
         }
 
         // ===================== UPDATE =====================

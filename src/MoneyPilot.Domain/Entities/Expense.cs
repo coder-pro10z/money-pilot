@@ -9,11 +9,11 @@ namespace MoneyPilot.Domain.Entities
     public class Expense
     {
         public int Id { get; set; }
-        public string ?Description { get; set; }
+        public string Description { get; set; } = null!;
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
         public int CategoryId { get; set; }
-        public Category? Category { get; set; }
+        public Category Category { get; set; } = null!;
 
         //Added required keyword to Category,UserId, User to ensure they are not null
         public string UserId { get; set; } = null!;
