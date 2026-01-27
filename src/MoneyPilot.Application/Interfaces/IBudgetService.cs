@@ -12,10 +12,10 @@ namespace MoneyPilot.Application.Interfaces
     {
         // Add any budget-specific methods here
         Task<IEnumerable<BudgetResponseDto>> GetAllAsync(string userId);
-        Task<Budget?> GetByIdAsync(int id);
+        Task<BudgetResponseDto?> GetByIdAsync(int id, string  UserId);
         
-        Task AddAsync(BudgetDto dto,String userId);
-        Task<bool> UpdateAsync(int id, BudgetDto dto);
-        Task<bool> DeleteAsync(int id);
+        Task<BudgetResponseDto> AddAsync(BudgetDto dto,string userId);
+        Task<bool> UpdateAsync(int id, BudgetDto dto, string UserId);
+        Task<bool> DeleteAsync(int id, string userId);
     }
 }

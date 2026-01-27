@@ -1,71 +1,57 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MoneyPilot.Application.DTOs;
-using MoneyPilot.API.Controllers;
 using MoneyPilot.Application.Interfaces;
+using System.Security.Claims;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace MoneyPilot.API.Controllers
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+public class BudgetController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BudgetController : ControllerBase
+    private readonly IBudgetService _budgetService;
+
+    public BudgetController(IBudgetService budgetService)
     {
+        _budgetService = budgetService;
+    }
 
-        //inject budget service
-        private readonly IBudgetService _budgetService;
-        /* Explanation:
-         The BudgetController class is an API controller that handles HTTP requests related to budget operations.
-         It uses dependency injection to receive an instance of IBudgetService, which contains the business logic for managing budgets.
-         The controller defines several endpoints for CRUD operations on budgets, such as getting all budgets for a user, getting a specific budget by ID, creating a new budget, updating an existing budget, and deleting a budget.
-        */
+    private string GetUserId() =>
+        User.FindFirstValue(ClaimTypes.NameIdentifier)
+        ?? throw new UnauthorizedAccessException("UserId missing");
 
-        public BudgetController(IBudgetService budgetService)
-        {
-            //what is happening here?
-            // This is constructor injection. The framework will automatically provide an instance of IBudgetService when creating an instance of BudgetController.
-            _budgetService = budgetService;
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var budgets = await _budgetService.GetAllAsync(GetUserId());
+        return Ok(budgets);
+    }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var budget = await _budgetService.GetByIdAsync(id, GetUserId());
+        return budget == null ? NotFound() : Ok(budget);
+    }
 
-        // GET: api/<BudgetController>
-        [HttpGet]
-        public async Task<IActionResult> GetAll(string userId)
-        {
-            var Budgets = await _budgetService.GetAllAsync(userId);
-            return Ok(Budgets);
-        }
+    [HttpPost]
+    public async Task<IActionResult> Create(BudgetDto dto)
+    {
+        var created = await _budgetService.AddAsync(dto, GetUserId());
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+    }
 
-        // GET api/<BudgetController>/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
-        {
-            var Budget = await _budgetService.GetByIdAsync(id);
-            return Budget == null ? NotFound() : Ok(Budget);
-        }
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(int id, BudgetDto dto)
+    {
+        var success = await _budgetService.UpdateAsync(id, dto, GetUserId());
+        return success ? NoContent() : NotFound();
+    }
 
-        // POST api/<BudgetController>
-        [HttpPost]
-        public async Task<IActionResult> Create([FromQuery] string userId, [FromBody] BudgetDto dto)
-        {
-            await _budgetService.AddAsync(dto, userId);
-            return CreatedAtAction(nameof(GetAll),new {userId = userId },dto);
-        }
-
-        // PUT api/<BudgetController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] BudgetDto dto)
-        {
-            var success = await _budgetService.UpdateAsync(id, dto);
-            return success ? NoContent() : NotFound();
-        }
-
-        // DELETE api/<BudgetController>/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var success = await _budgetService.DeleteAsync(id);
-            return success ? NoContent() : NotFound();
-        }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var success = await _budgetService.DeleteAsync(id, GetUserId());
+        return success ? NoContent() : NotFound();
     }
 }

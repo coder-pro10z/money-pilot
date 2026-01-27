@@ -2,74 +2,129 @@
 using MoneyPilot.Application.Interfaces;
 using MoneyPilot.Domain.Entities;
 
-public class ExpenseService : IExpenseService
+namespace MoneyPilot.Infrastructure.Services
 {
-    private readonly IUnitofWork _unitOfWork;
-
-    public ExpenseService(IUnitofWork unitOfWork)
+    public class ExpenseService : IExpenseService
     {
-        _unitOfWork = unitOfWork;
-    }
+        private readonly IExpenseRepository _expenseRepository;
+        private readonly IUnitofWork _unitOfWork;
 
-    public async Task<IEnumerable<ExpenseResponseDto>> GetAllAsync(string userId)
-    {
-        var expenses = await _unitOfWork.Expenses.GetExpensesByUserIdAsync(userId);
-
-        return expenses.Select(e => new ExpenseResponseDto
+        public ExpenseService(
+            IExpenseRepository expenseRepository,
+            IUnitofWork unitOfWork)
         {
-            Id = e.Id,
-            Description = e.Description,
-            Amount = e.Amount,
-            Date = e.Date,
-            CategoryId = e.CategoryId,
-            CategoryName = e.Category?.Name ?? "Unknown"
-            //Added null check for Category to avoid potential null reference exceptions
-        });
-    }
+            _expenseRepository = expenseRepository;
+            _unitOfWork = unitOfWork;
+        }
 
-    public async Task<Expense?> GetByIdAsync(int id)
-    {
-        return await _unitOfWork.Expenses.GetByIdAsync(id);
-    }
-
-    public async Task AddAsync(ExpenseDto dto, string userId)
-    {
-        var expense = new Expense
+        // ===================== GET ALL =====================
+        public async Task<IEnumerable<ExpenseResponseDto>> GetAllAsync(string userId)
         {
-            Description = dto.Description,
-            Amount = dto.Amount,
-            Date = dto.Date,
-            CategoryId = dto.CategoryId,
-            UserId = userId
-        };
+            var expenses = await _expenseRepository.GetAllByUserIdAsync(userId);
 
-        await _unitOfWork.Expenses.AddAsync(expense);
-        await _unitOfWork.SaveChangesAsync();
-    }
+            return expenses.Select(e => new ExpenseResponseDto
+            {
+                Id = e.Id,
+                Description = e.Description,
+                Amount = e.Amount,
+                CategoryId = e.CategoryId,
+                CategoryName = e.Category?.Name,
+                Date = e.Date
+            });
+        }
 
-    public async Task<bool> UpdateAsync(int id, ExpenseDto dto)
-    {
-        var existing = await _unitOfWork.Expenses.GetByIdAsync(id);
-        if (existing == null) return false;
+        // ===================== GET BY ID =====================
+        public async Task<ExpenseResponseDto?> GetByIdAsync(int id, string userId)
+        {
+            var expense = await _expenseRepository.GetByIdAsync(id, userId);
 
-        existing.Description = dto.Description;
-        existing.Amount = dto.Amount;
-        existing.CategoryId = dto.CategoryId;
-        existing.Date = dto.Date;
+            if (expense == null)
+                return null;
 
-        _unitOfWork.Expenses.Update(existing);
-        await _unitOfWork.SaveChangesAsync();
-        return true;
-    }
+            return new ExpenseResponseDto
+            {
+                Id = expense.Id,
+                Description = expense.Description,
+                Amount = expense.Amount,
+                CategoryId = expense.CategoryId,
+                CategoryName = expense.Category?.Name,
+                Date = expense.Date
+            };
+        }
 
-    public async Task<bool> DeleteAsync(int id)
-    {
-        var existing = await _unitOfWork.Expenses.GetByIdAsync(id);
-        if (existing == null) return false;
+        // ===================== CREATE =====================
+        //public async Task CreateAsync(ExpenseDto dto, string userId)
+        //{
+        //    var expense = new Expense
+        //    {
+        //        Description = dto.Description,
+        //        Amount = dto.Amount,
+        //        CategoryId = dto.CategoryId,
+        //        Date = dto.Date,
+        //        UserId = userId // 🔐 JWT-derived, never from client
+        //    };
 
-        _unitOfWork.Expenses.Delete
-            (existing);
-        await _unitOfWork.SaveChangesAsync();
-        return true;
+        //    await _expenseRepository.AddAsync(expense);
+        //    await _unitOfWork.SaveChangesAsync();
+        //}
+
+        public async Task<ExpenseResponseDto> CreateAsync(ExpenseDto dto, string userId)
+        {
+            var expense = new Expense
+            {
+                Description = dto.Description,
+                Amount = dto.Amount,
+                CategoryId = dto.CategoryId,
+                //CategoryName = dto.Category?.Name,
+                Date = dto.Date,
+                UserId = userId
+            };
+
+            await _unitOfWork.Expenses.AddAsync(expense);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new ExpenseResponseDto
+            {
+                Id = expense.Id,
+                Description = expense.Description,
+                Amount = expense.Amount,
+                CategoryName = expense.Category?.Name,
+                Date = expense.Date,
+                CategoryId = expense.CategoryId
+            };
+        }
+
+        // ===================== UPDATE =====================
+        public async Task<bool> UpdateAsync(int id, ExpenseDto dto, string userId)
+        {
+            var expense = await _expenseRepository.GetByIdAsync(id, userId);
+
+            if (expense == null)
+                return false;
+
+            expense.Description = dto.Description;
+            expense.Amount = dto.Amount;
+            expense.CategoryId = dto.CategoryId;
+            expense.Date = dto.Date;
+
+            _expenseRepository.Update(expense);
+            await _unitOfWork.SaveChangesAsync();
+
+            return true;
+        }
+
+        // ===================== DELETE =====================
+        public async Task<bool> DeleteAsync(int id, string userId)
+        {
+            var expense = await _expenseRepository.GetByIdAsync(id, userId);
+
+            if (expense == null)
+                return false;
+
+            _expenseRepository.Delete(expense);
+            await _unitOfWork.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

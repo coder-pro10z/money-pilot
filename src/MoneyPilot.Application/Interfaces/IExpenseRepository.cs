@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MoneyPilot.Application.Interfaces;
 using MoneyPilot.Domain.Entities;
-namespace MoneyPilot.Application.Interfaces
+
+public interface IExpenseRepository : IRepository<Expense>
 {
-    public interface IExpenseRepository : IRepository<Expense>
-    {
-        // Add any expense-specific methods here
-        Task<IEnumerable<Expense>> GetExpensesByUserIdAsync(string userId);
-        Task<IEnumerable<Expense>> GetExpensesByCategoryAsync(int categoryId);
-    }
+    Task<IEnumerable<Expense>> GetAllByUserIdAsync(string userId);
+    Task<Expense?> GetByIdAsync(int id, string userId);
+    Task AddAsync(Expense expense);
+    void Update(Expense expense);
+    void Delete(Expense expense);
 }

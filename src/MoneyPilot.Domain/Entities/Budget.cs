@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MoneyPilot.Domain.Entities;
 
-namespace MoneyPilot.Domain.Entities
+public class Budget
 {
-    public class Budget
-    {
-        public int Id { get; set; }
+    public int Id { get; set; }
 
-        public int CategoryId { get; set; }
-        //added required keyword to Category,UserId to ensure they are not null
-        public   Category ? Category { get; set; }
-        public required string UserId { get; set; }
-        public  AppUser ?User { get; set; }
-        public decimal MonthlyLimit { get; set; }
-        public DateTime Month { get; set; }
-    }
+    public int CategoryId { get; set; }
+    public Category Category { get; set; } = null!;
+
+    public string UserId { get; set; } = null!;   // ✅ FIX
+    public AppUser User { get; set; } = null!;
+
+    public decimal MonthlyLimit { get; set; }
+    public DateTime Month { get; set; }
 }

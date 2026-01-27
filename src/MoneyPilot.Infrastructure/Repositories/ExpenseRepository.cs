@@ -1,40 +1,54 @@
-﻿using MoneyPilot.Application.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using MoneyPilot.Application.Interfaces;
 using MoneyPilot.Domain.Entities;
 using MoneyPilot.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
 namespace MoneyPilot.Infrastructure.Repositories
 {
-
-        public class ExpenseRepository : Repository<Expense>, IExpenseRepository
+    public class ExpenseRepository : Repository<Expense>, IExpenseRepository
     {
-         // Use the base _context instead or:
-            private new readonly MoneyPilotDbContext _context;
+        private readonly MoneyPilotDbContext _context;
 
-            public ExpenseRepository(MoneyPilotDbContext context) : base(context)
-            {
-                _context = context;
-            }
+        public ExpenseRepository(MoneyPilotDbContext context) : base(context)
+        {
+            _context = context;
+        }
 
-            public async Task<IEnumerable<Expense>> GetExpensesByUserIdAsync(string userId)
-            {
-                return await _context.Expenses
-                    .Where(e => e.UserId == userId)
-                    .ToListAsync();
-            }
+        // Get all expenses for a user
+        public async Task<IEnumerable<Expense>> GetAllByUserIdAsync(string userId)
+        {
+            return await _context.Expenses
+                .AsNoTracking()
+                .Include(e => e.Category)
+                .Where(e => e.UserId == userId)
+                .OrderByDescending(e => e.Date)
+                .ToListAsync();
+        }
 
-            public async Task<IEnumerable<Expense>> GetExpensesByCategoryAsync(int categoryId)
-            {
-                return await _context.Expenses
-                    .Where(e => e.CategoryId == categoryId)
-                    .ToListAsync();
-            }
+        // Get single expense by Id + UserId (ownership enforced)
+        public async Task<Expense?> GetByIdAsync(int id, string userId)
+        {
+            return await _context.Expenses
+                .Include(e => e.Category)
+                .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
+        }
 
+        // Add expense
+        public async Task AddAsync(Expense expense)
+        {
+            await _context.Expenses.AddAsync(expense);
+        }
+
+        // Update expense
+        public void Update(Expense expense)
+        {
+            _context.Expenses.Update(expense);
+        }
+
+        // Delete expense
+        public void Delete(Expense expense)
+        {
+            _context.Expenses.Remove(expense);
+        }
     }
-    }
-
+}
