@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using MoneyPilot.Application.DTOs;
 using System.Security.Claims;
+using Microsoft.Extensions.Logging; // ADD THIS
+
 
 [Authorize]
 [ApiController]
@@ -9,10 +11,12 @@ using System.Security.Claims;
 public class ExpenseController : ControllerBase
 {
     private readonly IExpenseService _expenseService;
+    private readonly ILogger<ExpenseController> _logger; 
 
-    public ExpenseController(IExpenseService expenseService)
+    public ExpenseController(IExpenseService expenseService, ILogger<ExpenseController> logger)
     {
         _expenseService = expenseService;
+        _logger = logger;
     }
 
     private string GetUserId() =>
@@ -23,8 +27,21 @@ public class ExpenseController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var expenses = await _expenseService.GetAllAsync(GetUserId());
-        return Ok(expenses);
+        //Logging the action
+        var userId = GetUserId();
+        _logger.LogInformation("User {userId} requested all the Expenses, Time:{time}. Request from {RemoteIpAddress} ",
+                                userId,DateTime.Now,HttpContext.Connection.RemoteIpAddress);
+        try
+        {
+        var expenses = await _expenseService.GetAllAsync(userId);
+            _logger.LogDebug("User {userId} has {count} Expenses.",userId,expenses.Count());
+            return Ok(expenses);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while User {userId} was retrieving Expenses at {time}.", userId, DateTime.Now);
+            return BadRequest();
+        }
     }
 
     // GET api/expense/5

@@ -9,15 +9,45 @@ using MoneyPilot.Infrastructure.Data;
 using MoneyPilot.Infrastructure.Repositories;
 using MoneyPilot.Infrastructure.Services;
 using System.Text;
+using Serilog;
+using Microsoft.Extensions.DependencyInjection;
+using HealthChecks.SqlServer;
+// At the VERY TOP of Program.cs
 
-var builder = WebApplication.CreateBuilder(args);
 
-//
-// ====================== SERVICES ======================
-//
+//start of try Block
+try
+{
 
-// Controllers + JSON (cycle-safe)
-builder.Services.AddControllers()
+    // ====================== LOGGER ======================
+    //Configure Serilog
+    Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Information()
+        .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+        .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
+        .Enrich.FromLogContext()
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties}{NewLine}{Exception}")
+        .WriteTo.File("Logs/moneypilot_api_log.txt",
+            rollingInterval: RollingInterval.Day,
+            retainedFileCountLimit: 7,
+            outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{exception}"
+            )
+        .CreateLogger();
+
+
+    //First thing to run - before anything else
+    Log.Information("Starting MoneyPilot API...");
+    var builder = WebApplication.CreateBuilder(args);
+
+    // Use Serilog (ADD THIS LINE)
+    builder.Host.UseSerilog();
+
+    //
+    // ====================== SERVICES ======================
+    //
+
+    // Controllers + JSON (cycle-safe)
+    builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler =
@@ -40,10 +70,19 @@ builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
 
-//
-// ====================== JWT ======================
-//
-var jwtSettings = builder.Configuration.GetSection("Jwt");
+    // ====================== HEALTH CHECKS ======================
+    // Add this WITH your other service registrations
+    builder.Services.AddHealthChecks()
+        .AddDbContextCheck<MoneyPilotDbContext>()
+        .AddSqlServer(
+            builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")
+            ,tags: new[] { "database", "sql" });
+
+    //
+    // ====================== JWT ======================
+    //
+    var jwtSettings = builder.Configuration.GetSection("Jwt");
 var jwtKey = jwtSettings["Key"]
     ?? throw new InvalidOperationException("JWT Key missing");
 
@@ -136,4 +175,25 @@ app.MapControllers();
 
 app.MapGet("/", () => "🎉 MoneyPilot API is running!");
 
-app.Run();
+    // Map health checks endpoint
+    app.MapHealthChecks("/health");
+
+    //TEST LOGS
+    // Add before app.Run()
+    app.MapGet("/test", (ILogger<Program> logger) =>
+    {
+        logger.LogInformation("Test endpoint hit at {Time}", DateTime.UtcNow);
+        return Results.Ok(new { message = "Test successful", time = DateTime.UtcNow });
+    });
+
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application startup failed");
+throw;
+}
+finally
+{
+    Log.CloseAndFlush();
+}
