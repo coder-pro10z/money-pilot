@@ -22,14 +22,15 @@ namespace MoneyPilot.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            //    modelBuilder.Entity<Expense>()
-            //.Property(e => e.Amount)
-            //.HasPrecision(18, 2);
-
-            //    modelBuilder.Entity<Budget>()
-            //        .Property(b => b.MonthlyLimit)
-            //        .HasPrecision(18, 2);
             modelBuilder.Entity<Expense>()
+        .Property(e => e.Amount)
+        .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Budget>()
+                .Property(b => b.MonthlyLimit)
+                .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Expense>()
         .HasOne(e => e.User)
         .WithMany(u => u.Expenses)
         .HasForeignKey(e => e.UserId)
