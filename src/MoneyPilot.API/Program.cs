@@ -11,6 +11,7 @@ using MoneyPilot.Infrastructure.Services;
 using System.Text;
 using Serilog;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using HealthChecks.SqlServer;
 // At the VERY TOP of Program.cs
 
@@ -83,58 +84,58 @@ builder.Services.AddScoped<IBudgetService, BudgetService>();
     // ====================== JWT ======================
     //
     var jwtSettings = builder.Configuration.GetSection("Jwt");
-var jwtKey = jwtSettings["Key"]
-    ?? throw new InvalidOperationException("JWT Key missing");
+    var jwtKey = jwtSettings["Key"]
+        ?? throw new InvalidOperationException("JWT Key missing");
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+    builder.Services.AddAuthentication(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-
-        ValidIssuer = jwtSettings["Issuer"],
-        ValidAudience = jwtSettings["Audience"],
-
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(jwtKey)),
-
-        ClockSkew = TimeSpan.Zero
-    };
-});
-
-//
-// ====================== SWAGGER ======================
-//
-builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
     {
-        Title = "MoneyPilot API",
-        Version = "v1"
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtKey)),
+
+            ClockSkew = TimeSpan.Zero
+        };
     });
 
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Enter JWT token. Do NOT include 'Bearer ' prefix."
-    });
+    //
+    // ====================== SWAGGER ======================
+    //
+    builder.Services.AddEndpointsApiExplorer();
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "MoneyPilot API",
+            Version = "v1"
+        });
+
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "Enter JWT token. Do NOT include 'Bearer ' prefix."
+        });
+
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
@@ -148,32 +149,43 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
-});
+    });
 
-//
-// ====================== APP ======================
-//
-var app = builder.Build();
+    //
+    // ====================== APP ======================
+    //
+    var app = builder.Build();
 
-//
-// ====================== MIDDLEWARE ======================
-//
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    //
+    // ====================== MIDDLEWARE ======================
+    //
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseDeveloperExceptionPage();
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
-app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
 
-// ⚠️ ORDER MATTERS
-app.UseAuthentication();
-app.UseAuthorization();
+    // ⚠️ ORDER MATTERS
+    app.UseAuthentication();
+    app.UseAuthorization();
 
-app.MapControllers();
+    app.MapControllers();
 
-app.MapGet("/", () => "🎉 MoneyPilot API is running!");
+    app.MapGet("/", () => "🎉 MoneyPilot API is running!");
+
+    // Map health checks endpoint
+    app.MapHealthChecks("/health");
+
+    //TEST LOGS
+    // Add before app.Run()
+    app.MapGet("/test", (ILogger<Program> logger) =>
+    {
+        logger.LogInformation("Test endpoint hit at {Time}", DateTime.UtcNow);
+        return Results.Ok(new { message = "Test successful", time = DateTime.UtcNow });
+    });
 
     // Map health checks endpoint
     app.MapHealthChecks("/health");
@@ -191,7 +203,7 @@ app.MapGet("/", () => "🎉 MoneyPilot API is running!");
 catch (Exception ex)
 {
     Log.Fatal(ex, "Application startup failed");
-throw;
+    throw;
 }
 finally
 {
