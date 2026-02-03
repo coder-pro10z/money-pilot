@@ -55,21 +55,21 @@ try
             System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 
-    // DbContext
-    builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// DbContext
+builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-    // Identity
-    builder.Services.AddIdentity<AppUser, IdentityRole>()
-        .AddEntityFrameworkStores<MoneyPilotDbContext>()
-        .AddDefaultTokenProviders();
+// Identity
+builder.Services.AddIdentity<AppUser, IdentityRole>()
+    .AddEntityFrameworkStores<MoneyPilotDbContext>()
+    .AddDefaultTokenProviders();
 
-    // Repositories & Services
-    builder.Services.AddScoped<IUnitofWork, UnitOfWork>();
-    builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
-    builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
-    builder.Services.AddScoped<IExpenseService, ExpenseService>();
-    builder.Services.AddScoped<IBudgetService, BudgetService>();
+// Repositories & Services
+builder.Services.AddScoped<IUnitofWork, UnitOfWork>();
+builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
+builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
+builder.Services.AddScoped<IExpenseService, ExpenseService>();
+builder.Services.AddScoped<IBudgetService, BudgetService>();
 
     // ====================== HEALTH CHECKS ======================
     // Add this WITH your other service registrations
@@ -78,7 +78,7 @@ try
         .AddSqlServer(
             builder.Configuration.GetConnectionString("DefaultConnection")
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")
-            , tags: new[] { "database", "sql" });
+            ,tags: new[] { "database", "sql" });
 
     //
     // ====================== JWT ======================
@@ -175,6 +175,17 @@ try
     app.MapControllers();
 
     app.MapGet("/", () => "🎉 MoneyPilot API is running!");
+
+    // Map health checks endpoint
+    app.MapHealthChecks("/health");
+
+    //TEST LOGS
+    // Add before app.Run()
+    app.MapGet("/test", (ILogger<Program> logger) =>
+    {
+        logger.LogInformation("Test endpoint hit at {Time}", DateTime.UtcNow);
+        return Results.Ok(new { message = "Test successful", time = DateTime.UtcNow });
+    });
 
     // Map health checks endpoint
     app.MapHealthChecks("/health");
