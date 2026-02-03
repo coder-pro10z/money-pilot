@@ -176,16 +176,6 @@ builder.Services.AddScoped<IBudgetService, BudgetService>();
 
     app.MapGet("/", () => "🎉 MoneyPilot API is running!");
 
-    // Map health checks endpoint
-    app.MapHealthChecks("/health");
-
-    //TEST LOGS
-    // Add before app.Run()
-    app.MapGet("/test", (ILogger<Program> logger) =>
-    {
-        logger.LogInformation("Test endpoint hit at {Time}", DateTime.UtcNow);
-        return Results.Ok(new { message = "Test successful", time = DateTime.UtcNow });
-    });
 
     // Map health checks endpoint
     app.MapHealthChecks("/health");
