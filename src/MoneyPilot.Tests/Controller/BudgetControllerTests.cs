@@ -35,14 +35,14 @@ namespace MoneyPilot.Tests.Controller
                         MonthlyLimit = 500,
                         Month = new DateTime(2024, 6, 1),
                         CategoryId = 1,
-                        CategoryName = "Groceries"
+                        //CategoryName = "Groceries"
                     }
                 });
 
             //Controller instantiation         
             var controller = new BudgetController(mockBudgetService.Object);
             // Act
-            var result =await controller.GetAll("test-user");
+            var result =await controller.GetAll();
             // Call the method you want to test here
             // Assert
             // Add your assertions here

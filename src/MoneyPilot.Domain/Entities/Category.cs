@@ -13,5 +13,9 @@ namespace MoneyPilot.Domain.Entities
         public required string Name { get; set; }
         public required ICollection<Expense> Expenses { get; set; }
         public required ICollection<Budget> Budgets { get; set; }
+
+        // ✅ ADD THIS if you want bidirectional navigation
+        public ICollection<RecurringTransaction> RecurringTransactions { get; set; }
+            = new List<RecurringTransaction>();
     }
 }
