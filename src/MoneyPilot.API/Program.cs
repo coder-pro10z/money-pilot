@@ -199,3 +199,5 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+// End of try-catch-finally
