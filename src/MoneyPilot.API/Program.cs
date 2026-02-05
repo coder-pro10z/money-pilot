@@ -70,6 +70,8 @@ builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
+    // Add this with your other service registrations
+builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionService>();
 
     // ====================== HEALTH CHECKS ======================
     // Add this WITH your other service registrations
