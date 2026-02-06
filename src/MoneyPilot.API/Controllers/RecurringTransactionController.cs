@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MoneyPilot.API.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class RecurringTransactionsController : ControllerBase

@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace MoneyPilot.Domain.Entities
 {
     public class Category
     {
         public int Id { get; set; }
-        //added required keyword to Name to ensure it is not null
-        public required string Name { get; set; }
-        public required ICollection<Expense> Expenses { get; set; }
-        public required ICollection<Budget> Budgets { get; set; }
+        public string Name { get; set; } = null!;
 
-        // ✅ ADD THIS if you want bidirectional navigation
-        public ICollection<RecurringTransaction> RecurringTransactions { get; set; }
-            = new List<RecurringTransaction>();
+        // Remove 'required' keyword and initialize with empty collections
+        public ICollection<Expense> Expenses { get; set; } = new List<Expense>();
+        public ICollection<Budget> Budgets { get; set; } = new List<Budget>();
+
+        // Optional: Add RecurringTransactions if needed
+        public ICollection<RecurringTransaction> RecurringTransactions { get; set; } = new List<RecurringTransaction>();
     }
 }
