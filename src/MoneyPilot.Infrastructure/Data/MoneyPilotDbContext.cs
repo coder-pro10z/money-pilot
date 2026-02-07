@@ -50,6 +50,22 @@ namespace MoneyPilot.Infrastructure.Data
                 entity.Property(rt => rt.Amount)
                 .HasPrecision(18, 2);
 
+
+                // Store enum as string in database (keeps DB readable)
+                //entity.Property(rt => rt.RecurrenceType)
+                //    .HasConversion<string>()
+                //    .HasMaxLength(20);
+                // Store enum as string in database
+                entity.Property(rt => rt.RecurrenceType)
+                    .HasConversion<string>()
+                    .HasMaxLength(20);
+
+
+                // Store DayOfWeek as string
+                entity.Property(rt => rt.DayOfWeek)
+                    .HasConversion<string?>()
+                    .HasMaxLength(15);
+
                 //configure relationship with AppUser
                 entity.HasOne(rt => rt.User)
                 .WithMany(u => u.RecurringTransactions)

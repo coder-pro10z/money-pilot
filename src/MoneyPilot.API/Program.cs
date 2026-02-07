@@ -1,18 +1,19 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using HealthChecks.SqlServer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MoneyPilot.Application.Interfaces;
 using MoneyPilot.Domain.Entities;
+using MoneyPilot.Domain.Enums;
 using MoneyPilot.Infrastructure.Data;
 using MoneyPilot.Infrastructure.Repositories;
 using MoneyPilot.Infrastructure.Services;
-using System.Text;
 using Serilog;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using HealthChecks.SqlServer;
+using System.Text;
 // At the VERY TOP of Program.cs
 
 
@@ -22,18 +23,18 @@ try
 
     // ====================== LOGGER ======================
     //Configure Serilog
-    Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Information()
-        .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
-        .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
-        .Enrich.FromLogContext()
-        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties}{NewLine}{Exception}")
-        .WriteTo.File("Logs/moneypilot_api_log.txt",
-            rollingInterval: RollingInterval.Day,
-            retainedFileCountLimit: 7,
-            outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{exception}"
-            )
-        .CreateLogger();
+    //Log.Logger = new LoggerConfiguration()
+    //    .MinimumLevel.Information()
+    //    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+    //    .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
+    //    .Enrich.FromLogContext()
+    //    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties}{NewLine}{Exception}")
+    //    .WriteTo.File("Logs/moneypilot_api_log.txt",
+    //        rollingInterval: RollingInterval.Day,
+    //        retainedFileCountLimit: 7,
+    //        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{exception}"
+    //        )
+    //    .CreateLogger();
 
 
     //First thing to run - before anything else
@@ -41,7 +42,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Use Serilog (ADD THIS LINE)
-    builder.Host.UseSerilog();
+    //builder.Host.UseSerilog();
 
     //
     // ====================== SERVICES ======================
@@ -70,6 +71,8 @@ builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
+    // Add this with your other service registrations
+builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionService>();
 
     // ====================== HEALTH CHECKS ======================
     // Add this WITH your other service registrations
@@ -188,6 +191,124 @@ builder.Services.AddScoped<IBudgetService, BudgetService>();
         return Results.Ok(new { message = "Test successful", time = DateTime.UtcNow });
     });
 
+    app.MapGet("/test-db", async (MoneyPilotDbContext db) =>
+    {
+        try
+        {
+            var hasRecurringTable = await db.RecurringTransactions.AnyAsync();
+            return Results.Ok(new
+            {
+                status = "OK",
+                hasRecurringTable,
+                tables = new[] { "RecurringTransactions", "Expenses", "Categories" }
+            });
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem($"Database error: {ex.Message}");
+        }
+    });
+
+    app.MapPost("/seed", async (MoneyPilotDbContext db) =>
+    {
+        // Create a test category if none exists
+        if (!await db.Categories.AnyAsync())
+        {
+            db.Categories.Add(new Category { Name = "Food" });
+            db.Categories.Add(new Category { Name = "Transportation" });
+            db.Categories.Add(new Category { Name = "Entertainment" });
+            await db.SaveChangesAsync();
+        }
+
+        // Get a user (assuming you have at least one)
+        var user = await db.Users.FirstOrDefaultAsync();
+        if (user == null) return Results.Problem("No users found");
+
+        // Create a sample recurring transaction
+        var category = await db.Categories.FirstOrDefaultAsync(c => c.Name == "Food");
+
+        //var recurringTransaction = new RecurringTransaction
+        //{
+        //    UserId = user.Id,
+        //    Description = "Monthly Netflix Subscription",
+        //    Amount = 15.99m,
+        //    CategoryId = category.Id,
+        //    RecurrenceType = "Monthly",
+        //    Interval = 1,
+        //    DayOfMonth = 15,
+        //    StartDate = DateTime.UtcNow.AddDays(-30),
+        //    NextOccurrence = DateTime.UtcNow.AddDays(5), // Due in 5 days
+        //    IsActive = true,
+        //    CreatedAt = DateTime.UtcNow
+        //};
+
+        var recurringTransaction = new RecurringTransaction
+    {
+        UserId = user.Id,
+        Description = "Monthly Netflix Subscription",
+        Amount = 15.99m,
+        CategoryId = category.Id,
+        RecurrenceType = RecurrenceType.Monthly, // Keep as string
+        Interval = 1,
+        DayOfMonth = 15,
+        StartDate = DateTime.UtcNow.AddDays(-30),
+        NextOccurrence = DateTime.UtcNow.AddDays(5),
+        IsActive = true,
+        CreatedAt = DateTime.UtcNow
+    };
+    db.RecurringTransactions.Add(recurringTransaction);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(new
+    {
+        message = "Sample data created",
+        transactionId = recurringTransaction.Id
+    });
+});
+
+    app.MapPost("/test-simple", async (MoneyPilotDbContext db) =>
+    {
+        try
+        {
+            // Create a simple category without navigation properties
+            var category = new Category { Name = "TestCategory" };
+            db.Categories.Add(category);
+            await db.SaveChangesAsync();
+
+            // Get any user
+            var user = await db.Users.FirstOrDefaultAsync();
+            if (user == null) return Results.Problem("No users found");
+
+            // Create simple recurring transaction
+            var transaction = new RecurringTransaction
+            {
+                UserId = user.Id,
+                Description = "Test",
+                Amount = 10.00m,
+                CategoryId = category.Id,
+                // ⚠️ Choose based on your entity type:
+                // If string: RecurrenceType = "Monthly",
+                // If enum: RecurrenceType = RecurrenceType.Monthly,
+                RecurrenceType = RecurrenceType.Monthly, // Adjust this!
+                Interval = 1,
+                StartDate = DateTime.UtcNow,
+                NextOccurrence = DateTime.UtcNow.AddDays(1),
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            db.RecurringTransactions.Add(transaction);
+            await db.SaveChangesAsync();
+
+            return Results.Ok(new { success = true, id = transaction.Id });
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem($"Error: {ex.Message}");
+        }
+    });
+
+
     app.Run();
 }
 catch (Exception ex)
@@ -195,6 +316,12 @@ catch (Exception ex)
     Log.Fatal(ex, "Application startup failed");
     throw;
 }
+//catch (HostAbortedException)
+//{
+//    // This is normal when running EF Core migrations
+//    Log.Information("Host was aborted (normal for EF migrations)");
+//}
+
 finally
 {
     Log.CloseAndFlush();

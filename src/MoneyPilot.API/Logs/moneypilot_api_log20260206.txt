@@ -1,0 +1,173 @@
+2026-02-06 00:23:52.850 +05:30 [INF] Starting MoneyPilot API...
+2026-02-06 00:24:56.178 +05:30 [INF] Starting MoneyPilot API...
+2026-02-06 00:25:12.906 +05:30 [INF] Test endpoint hit at "2026-02-05T18:55:12.9027093Z"
+2026-02-06 00:25:18.822 +05:30 [ERR] An unhandled exception has occurred while executing the request.
+2026-02-06 00:26:00.530 +05:30 [ERR] An unhandled exception has occurred while executing the request.
+2026-02-06 00:27:15.297 +05:30 [ERR] Failed executing DbCommand (22ms) [Parameters=[@__userId_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT [r].[Id], [r].[Amount], [r].[CategoryId], [r].[CreatedAt], [r].[DayOfMonth], [r].[DayOfWeek], [r].[Description], [r].[EndDate], [r].[Interval], [r].[IsActive], [r].[LastProcessed], [r].[NextOccurrence], [r].[RecurrenceType], [r].[StartDate], [r].[UpdatedAt], [r].[UserId], [c].[Id], [c].[Name]
+FROM [RecurringTransactions] AS [r]
+INNER JOIN [Categories] AS [c] ON [r].[CategoryId] = [c].[Id]
+WHERE [r].[UserId] = @__userId_0
+ORDER BY [r].[NextOccurrence] DESC
+2026-02-06 00:27:15.321 +05:30 [ERR] An exception occurred while iterating over the results of a query for context type 'MoneyPilot.Infrastructure.Data.MoneyPilotDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'LastProcessed'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:e4ce5752-f758-4097-826c-482bede7e14c
+Error Number:207,State:1,Class:16
+2026-02-06 00:27:15.498 +05:30 [ERR] Error getting all recurring transactions for user 25acdcc7-d39b-4ef3-9326-9498f6a25733
+2026-02-06 00:27:31.691 +05:30 [ERR] Failed executing DbCommand (20ms) [Parameters=[@__id_0='?' (DbType = Int32), @__userId_1='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[Amount], [r].[CategoryId], [r].[CreatedAt], [r].[DayOfMonth], [r].[DayOfWeek], [r].[Description], [r].[EndDate], [r].[Interval], [r].[IsActive], [r].[LastProcessed], [r].[NextOccurrence], [r].[RecurrenceType], [r].[StartDate], [r].[UpdatedAt], [r].[UserId], [c].[Id], [c].[Name]
+FROM [RecurringTransactions] AS [r]
+INNER JOIN [Categories] AS [c] ON [r].[CategoryId] = [c].[Id]
+WHERE [r].[Id] = @__id_0 AND [r].[UserId] = @__userId_1
+2026-02-06 00:27:31.698 +05:30 [ERR] An exception occurred while iterating over the results of a query for context type 'MoneyPilot.Infrastructure.Data.MoneyPilotDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'LastProcessed'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:e4ce5752-f758-4097-826c-482bede7e14c
+Error Number:207,State:1,Class:16
+2026-02-06 00:27:31.990 +05:30 [ERR] Error getting recurring transaction 1 for user 25acdcc7-d39b-4ef3-9326-9498f6a25733
+2026-02-06 00:28:23.427 +05:30 [ERR] Failed executing DbCommand (43ms) [Parameters=[@p0='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p1='?' (DbType = Int32), @p2='?' (DbType = DateTime2), @p3='?' (DbType = Int32), @p4='?' (Size = 15), @p5='?' (Size = 4000), @p6='?' (DbType = DateTime2), @p7='?' (DbType = Int32), @p8='?' (DbType = Boolean), @p9='?' (DbType = DateTime2), @p10='?' (DbType = DateTime2), @p11='?' (Size = 20), @p12='?' (DbType = DateTime2), @p13='?' (DbType = DateTime2), @p14='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RecurringTransactions] ([Amount], [CategoryId], [CreatedAt], [DayOfMonth], [DayOfWeek], [Description], [EndDate], [Interval], [IsActive], [LastProcessed], [NextOccurrence], [RecurrenceType], [StartDate], [UpdatedAt], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14);
+2026-02-06 00:28:23.446 +05:30 [ERR] An exception occurred in the database while saving changes for context type 'MoneyPilot.Infrastructure.Data.MoneyPilotDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'LastProcessed'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:e4ce5752-f758-4097-826c-482bede7e14c
+Error Number:207,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2026-02-06 00:28:23.689 +05:30 [ERR] Error creating recurring transaction for user 25acdcc7-d39b-4ef3-9326-9498f6a25733
+2026-02-06 00:28:25.704 +05:30 [ERR] Failed executing DbCommand (5ms) [Parameters=[@p0='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p1='?' (DbType = Int32), @p2='?' (DbType = DateTime2), @p3='?' (DbType = Int32), @p4='?' (Size = 15), @p5='?' (Size = 4000), @p6='?' (DbType = DateTime2), @p7='?' (DbType = Int32), @p8='?' (DbType = Boolean), @p9='?' (DbType = DateTime2), @p10='?' (DbType = DateTime2), @p11='?' (Size = 20), @p12='?' (DbType = DateTime2), @p13='?' (DbType = DateTime2), @p14='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [RecurringTransactions] ([Amount], [CategoryId], [CreatedAt], [DayOfMonth], [DayOfWeek], [Description], [EndDate], [Interval], [IsActive], [LastProcessed], [NextOccurrence], [RecurrenceType], [StartDate], [UpdatedAt], [UserId])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11, @p12, @p13, @p14);
+2026-02-06 00:28:25.711 +05:30 [ERR] An exception occurred in the database while saving changes for context type 'MoneyPilot.Infrastructure.Data.MoneyPilotDbContext'.
+Microsoft.EntityFrameworkCore.DbUpdateException: An error occurred while saving the entity changes. See the inner exception for details.
+ ---> Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'LastProcessed'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+ClientConnectionId:e4ce5752-f758-4097-826c-482bede7e14c
+Error Number:207,State:1,Class:16
+   --- End of inner exception stack trace ---
+   at Microsoft.EntityFrameworkCore.Update.ReaderModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Update.Internal.SqlServerModificationCommandBatch.ExecuteAsync(IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Update.Internal.BatchExecutor.ExecuteAsync(IEnumerable`1 commandBatches, IRelationalConnection connection, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(IList`1 entriesToSave, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(StateManager stateManager, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+2026-02-06 00:28:25.870 +05:30 [ERR] Error creating recurring transaction for user 25acdcc7-d39b-4ef3-9326-9498f6a25733
+2026-02-06 00:30:31.544 +05:30 [INF] Starting MoneyPilot API...
+2026-02-06 00:30:31.934 +05:30 [FTL] Application startup failed
+2026-02-06 00:31:33.698 +05:30 [INF] Starting MoneyPilot API...
+2026-02-06 00:31:34.012 +05:30 [FTL] Application startup failed
+2026-02-06 21:40:24.480 +05:30 [INF] Starting MoneyPilot API...
+2026-02-06 21:43:07.257 +05:30 [INF] User 25acdcc7-d39b-4ef3-9326-9498f6a25733 requested all the Expenses, Time:"2026-02-06T21:43:07.2109414+05:30". Request from ::1 
+2026-02-06 21:43:07.708 +05:30 [ERR] Failed executing DbCommand (112ms) [Parameters=[@__userId_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT [e].[Id], [e].[Amount], [e].[CategoryId], [e].[CreatedAt], [e].[Date], [e].[Description], [e].[RecurringTransactionId], [e].[UpdatedAt], [e].[UserId], [c].[Id], [c].[Name]
+FROM [Expenses] AS [e]
+INNER JOIN [Categories] AS [c] ON [e].[CategoryId] = [c].[Id]
+WHERE [e].[UserId] = @__userId_0
+ORDER BY [e].[Date] DESC
+2026-02-06 21:43:07.964 +05:30 [ERR] An exception occurred while iterating over the results of a query for context type 'MoneyPilot.Infrastructure.Data.MoneyPilotDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'CreatedAt'.
+Invalid column name 'UpdatedAt'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:d4dba4b6-c2ab-4f93-bb47-3f0185096681
+Error Number:207,State:1,Class:16
+2026-02-06 21:43:08.830 +05:30 [ERR] An error occurred while User 25acdcc7-d39b-4ef3-9326-9498f6a25733 was retrieving Expenses at "2026-02-06T21:43:08.8277916+05:30".
+2026-02-06 21:43:21.125 +05:30 [ERR] Failed executing DbCommand (25ms) [Parameters=[@__userId_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT [r].[Id], [r].[Amount], [r].[CategoryId], [r].[CreatedAt], [r].[DayOfMonth], [r].[DayOfWeek], [r].[Description], [r].[EndDate], [r].[Interval], [r].[IsActive], [r].[LastProcessed], [r].[NextOccurrence], [r].[RecurrenceType], [r].[StartDate], [r].[UpdatedAt], [r].[UserId], [c].[Id], [c].[Name]
+FROM [RecurringTransactions] AS [r]
+INNER JOIN [Categories] AS [c] ON [r].[CategoryId] = [c].[Id]
+WHERE [r].[UserId] = @__userId_0
+ORDER BY [r].[NextOccurrence] DESC
+2026-02-06 21:43:21.155 +05:30 [ERR] An exception occurred while iterating over the results of a query for context type 'MoneyPilot.Infrastructure.Data.MoneyPilotDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'LastProcessed'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:d4dba4b6-c2ab-4f93-bb47-3f0185096681
+Error Number:207,State:1,Class:16
+2026-02-06 21:43:21.521 +05:30 [ERR] Error getting all recurring transactions for user 25acdcc7-d39b-4ef3-9326-9498f6a25733
+2026-02-06 23:02:24.288 +05:30 [INF] Starting MoneyPilot API...
+2026-02-06 23:02:29.899 +05:30 [FTL] Application startup failed
+2026-02-06 23:14:49.063 +05:30 [INF] Starting MoneyPilot API...
+2026-02-06 23:14:50.706 +05:30 [FTL] Application startup failed
+2026-02-06 23:18:17.076 +05:30 [INF] Starting MoneyPilot API...
+2026-02-06 23:18:17.903 +05:30 [FTL] Application startup failed
