@@ -23,18 +23,18 @@ try
 
     // ====================== LOGGER ======================
     //Configure Serilog
-    //Log.Logger = new LoggerConfiguration()
-    //    .MinimumLevel.Information()
-    //    .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
-    //    .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
-    //    .Enrich.FromLogContext()
-    //    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties}{NewLine}{Exception}")
-    //    .WriteTo.File("Logs/moneypilot_api_log.txt",
-    //        rollingInterval: RollingInterval.Day,
-    //        retainedFileCountLimit: 7,
-    //        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{exception}"
-    //        )
-    //    .CreateLogger();
+    Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Information()
+        .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+        .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
+        .Enrich.FromLogContext()
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties}{NewLine}{Exception}")
+        .WriteTo.File("Logs/moneypilot_api_log.txt",
+            rollingInterval: RollingInterval.Day,
+            retainedFileCountLimit: 7,
+            outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{exception}"
+            )
+        .CreateLogger();
 
 
     //First thing to run - before anything else
@@ -42,7 +42,7 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     // Use Serilog (ADD THIS LINE)
-    //builder.Host.UseSerilog();
+    builder.Host.UseSerilog();
 
     //
     // ====================== SERVICES ======================
