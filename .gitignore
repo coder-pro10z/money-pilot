@@ -16,3 +16,4 @@ node_modules/
 *.tmp
 .env
 /src/MoneyPilot.API/Logs/moneypilot_api_log20260203.txt
+/.gitignore
