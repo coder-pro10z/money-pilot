@@ -83,6 +83,81 @@ namespace MoneyPilot.API.Controllers
             }
         }
 
+        //Update the recurring expense
+        [HttpPut("{id}")]
+        public async Task<ActionResult<RecurringTransactionDto>> Update(int id,UpdateRecurringTransactionDto dto)
+        {
+            try {
+                var userId = GetUserId();
+                var updated = await _recurringTransactionService.UpdateAsync(id, dto, userId);
+                return Ok(updated);
+            }
+            catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
+            catch (ArgumentException ex) { return BadRequest(ex.Message); }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating recurring transaction {TransactionId} for user {UserId}",
+            id, GetUserId());
+                return StatusCode(500, "An error occurred while updating the recurring transaction.");
+            }
+
+        }
+
+        //Delete the recurring Expense
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try {
+                var userId = GetUserId();
+                await _recurringTransactionService.DeleteAsync(id, userId);
+                return NoContent(); 
+            }
+            catch(KeyNotFoundException ex) { return NotFound(ex.Message); }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error Deleting recurring transaction {TransactionId} for user {UserId}",
+            id, GetUserId());
+                return StatusCode(500, "An error occurred while updating the recurring transaction.");
+            }
+        }
+        //Get the Due Expense of User
+        [HttpGet("due")]
+        public async Task<ActionResult<IEnumerable<RecurringTransactionDto>>> GetDueTransactions()
+        {
+            try
+            {
+                var userId = GetUserId();
+                var dueTransactions = await _recurringTransactionService.GetDueTransactionsAsync(userId);
+                return Ok(dueTransactions);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting due recurring transactions for user {UserId}", GetUserId());
+                return StatusCode(500, "An error occurred while retrieving due recurring transactions.");
+            }
+        }
+
+        //Add a due Expense
+        [HttpPost("process-due")]
+        public async Task<ActionResult> ProcessDueTransactions()
+        {
+            try
+            {
+                var userId = GetUserId();
+                var processedCount = await _recurringTransactionService.ProcessDueTransactionsAsync();
+                return Ok(new
+                {
+                    message = $"Processed {processedCount} recurring transactions",
+                    timestamp = DateTime.UtcNow
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing due recurring transactions");
+                return StatusCode(500, "An error occurred while processing recurring transactions.");
+            }
+        }
+
         private string GetUserId()
         {
             return User.FindFirstValue(ClaimTypes.NameIdentifier)

@@ -10,7 +10,7 @@ namespace MoneyPilot.Domain.Entities
         public string UserId { get; set; } = null!;
         public string Description { get; set; } = null!;
         public decimal Amount { get; set; }
-        public int CategoryId { get; set; }
+        public int CategoryId { get; set; } 
 
         // Change from string to enum
         public RecurrenceType RecurrenceType { get; set; } // Enum, not string

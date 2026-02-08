@@ -98,19 +98,131 @@ namespace MoneyPilot.Infrastructure.Services
 
         public async Task<RecurringTransactionDto> UpdateAsync(int id, UpdateRecurringTransactionDto dto, string userId)
         {
+            //var transaction = await _context.RecurringTransactions
+            //    .Include(rt => rt.Category)
+            //    .FirstOrDefaultAsync(rt => rt.Id == id && rt.UserId == userId);
+
+            //if (transaction == null)
+            //    throw new KeyNotFoundException($"Recurring transaction {id} not found");
+
+            //// Simple update - implement as needed
+            //if (!string.IsNullOrEmpty(dto.Description))
+            //    transaction.Description = dto.Description;
+
+            //if (dto.Amount.HasValue)
+            //    transaction.Amount = dto.Amount.Value;
+
+            //transaction.UpdatedAt = DateTime.UtcNow;
+            //await _context.SaveChangesAsync();
+
+            //return MapToDto(transaction);
+
             var transaction = await _context.RecurringTransactions
-                .Include(rt => rt.Category)
-                .FirstOrDefaultAsync(rt => rt.Id == id && rt.UserId == userId);
+       .Include(rt => rt.Category)
+       .Include(rt => rt.GeneratedExpenses)
+       .FirstOrDefaultAsync(rt => rt.Id == id && rt.UserId == userId);
 
             if (transaction == null)
                 throw new KeyNotFoundException($"Recurring transaction {id} not found");
 
-            // Simple update - implement as needed
+            // Track if schedule changed
+            bool scheduleChanged = false;
+
+            // Update fields if provided
             if (!string.IsNullOrEmpty(dto.Description))
                 transaction.Description = dto.Description;
 
             if (dto.Amount.HasValue)
                 transaction.Amount = dto.Amount.Value;
+
+            if (dto.CategoryId.HasValue)
+            {
+                var categoryExists = await _context.Categories
+                    .AnyAsync(c => c.Id == dto.CategoryId.Value);
+                if (!categoryExists)
+                    throw new ArgumentException($"Category {dto.CategoryId} not found");
+                transaction.CategoryId = dto.CategoryId.Value;
+            }
+
+            //if (!string.IsNullOrEmpty(dto.RecurrenceType))
+            //{
+            //    transaction.RecurrenceType = dto.RecurrenceType;
+            //    scheduleChanged = true;
+            //}
+            // ✅ FIX: Convert string to RecurrenceType enum
+            if (!string.IsNullOrEmpty(dto.RecurrenceType))
+            {
+                if (Enum.TryParse<RecurrenceType>(dto.RecurrenceType, true, out var recurrenceType))
+                {
+                    transaction.RecurrenceType = recurrenceType;
+                    scheduleChanged = true;
+                }
+                else
+                {
+                    throw new ArgumentException($"Invalid recurrence type: {dto.RecurrenceType}");
+                }
+            }
+
+            if (dto.Interval.HasValue)
+            {
+                transaction.Interval = dto.Interval.Value;
+                scheduleChanged = true;
+            }
+
+            //if (dto.DayOfWeek != null)
+            //{
+            //    transaction.DayOfWeek = dto.DayOfWeek; // Could be empty string to clear
+            //    scheduleChanged = true;
+            //}
+            // ✅ FIX: Convert string to DayOfWeek enum
+            if (dto.DayOfWeek != null)
+            {
+                if (string.IsNullOrEmpty(dto.DayOfWeek))
+                {
+                    // Clear the value
+                    transaction.DayOfWeek = null;
+                }
+                else if (Enum.TryParse<DayOfWeek>(dto.DayOfWeek, true, out var dayOfWeek))
+                {
+                    transaction.DayOfWeek = dayOfWeek;
+                }
+                else
+                {
+                    throw new ArgumentException($"Invalid day of week: {dto.DayOfWeek}");
+                }
+                scheduleChanged = true;
+            }
+
+
+
+            if (dto.DayOfMonth.HasValue)
+            {
+                transaction.DayOfMonth = dto.DayOfMonth.Value;
+                scheduleChanged = true;
+            }
+
+            if (dto.StartDate.HasValue)
+            {
+                transaction.StartDate = dto.StartDate.Value;
+                scheduleChanged = true;
+            }
+
+            if (dto.EndDate.HasValue)
+                transaction.EndDate = dto.EndDate.Value;
+
+            if (dto.IsActive.HasValue)
+                transaction.IsActive = dto.IsActive.Value;
+
+            // Recalculate next occurrence if schedule changed
+            if (scheduleChanged)
+            {
+                transaction.NextOccurrence = CalculateNextOccurrence(
+                    transaction.RecurrenceType,
+                    transaction.Interval,
+                    transaction.DayOfWeek,
+                    transaction.DayOfMonth,
+                    transaction.StartDate);
+            }
 
             transaction.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
@@ -209,6 +321,65 @@ namespace MoneyPilot.Infrastructure.Services
                 CreatedAt = transaction.CreatedAt,
                 GeneratedExpensesCount = transaction.GeneratedExpenses?.Count ?? 0
             };
+        }
+        private DateTime CalculateNextOccurrence(
+     RecurrenceType recurrenceType,  // Changed from string to enum
+     int interval,
+     DayOfWeek? dayOfWeek,          // Changed from string? to DayOfWeek?
+     int? dayOfMonth,
+     DateTime fromDate)
+        {
+            switch (recurrenceType)
+            {
+                case RecurrenceType.Daily:
+                    return fromDate.AddDays(interval);
+
+                case RecurrenceType.Weekly:
+                    if (dayOfWeek.HasValue)
+                    {
+                        // Find next occurrence of this day
+                        var next = fromDate;
+                        while (next.DayOfWeek != dayOfWeek.Value)
+                        {
+                            next = next.AddDays(1);
+                        }
+                        return next.AddDays(7 * (interval - 1));
+                    }
+                    return fromDate.AddDays(7 * interval);
+
+                case RecurrenceType.Monthly:
+                    if (dayOfMonth.HasValue)
+                    {
+                        try
+                        {
+                            var next = new DateTime(fromDate.Year, fromDate.Month, dayOfMonth.Value);
+                            if (next <= fromDate)
+                            {
+                                next = next.AddMonths(1);
+                            }
+                            return next.AddMonths(interval - 1);
+                        }
+                        catch
+                        {
+                            // Invalid day for month, use last day
+                            var next = new DateTime(fromDate.Year, fromDate.Month, 1)
+                                .AddMonths(1)
+                                .AddDays(-1);
+                            if (next <= fromDate)
+                            {
+                                next = next.AddMonths(1);
+                            }
+                            return next.AddMonths(interval - 1);
+                        }
+                    }
+                    return fromDate.AddMonths(interval);
+
+                case RecurrenceType.Yearly:
+                    return fromDate.AddYears(interval);
+
+                default:
+                    return fromDate.AddMonths(interval);
+            }
         }
     }
 }

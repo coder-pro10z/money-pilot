@@ -327,7 +327,10 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         : Results.Problem(string.Join(", ", result.Errors.Select(e => e.Description)));
 
             }
-            catch (Exception ex) { throw ex; }
+            catch (Exception ex)
+            {
+                return Results.Problem($"Error: {ex.Message}");
+            }
         });
 
 
