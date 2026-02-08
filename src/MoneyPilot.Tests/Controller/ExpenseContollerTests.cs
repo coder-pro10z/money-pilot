@@ -11,43 +11,43 @@ using MoneyPilot.API.Controllers;
 using MoneyPilot.Application.DTOs;
 namespace MoneyPilot.Tests.Controller
 {
-    public class ExpenseContollerTests
+    public class ExpenseControllerTests
     {
-        [Fact]
-        public async Task GetAll_ReturnsOkResult_WithExpenses()
-        {
-            // Arrange
-            var mockService = new Mock<IExpenseService>();
-            //Setup MockService methods and properties here
-            mockService.Setup(s=> s.GetAllAsync("test-user"))
-                                    .ReturnsAsync(new List<ExpenseResponseDto>
-                                    {
-                                        new ExpenseResponseDto { Id = 1,
-                                            Amount = 100,
-                                            Description = "Test Expense 1",
-                                            CategoryId=1,
-                                            CategoryName="Food" },
-                                        //new ExpenseDto { Id = 2, Amount = 200, Description = "Test Expense 2" }
-                                    }
-                );
-            //controller
-            //passing mockService object setup to controller
-            //var controller = new ExpenseController(mockService.Object);
+        //[Fact]
+        //public async Task GetAll_ReturnsOkResult_WithExpenses()
+        //{
+        //    // Arrange
+        //    var mockService = new Mock<IExpenseService>();
+        //    //Setup MockService methods and properties here
+        //    mockService.Setup(s=> s.GetAllAsync("test-user"))
+        //                            .ReturnsAsync(new List<ExpenseResponseDto>
+        //                            {
+        //                                new ExpenseResponseDto { Id = 1,
+        //                                    Amount = 100,
+        //                                    Description = "Test Expense 1",
+        //                                    CategoryId=1,
+        //                                    CategoryName="Food" },
+        //                                //new ExpenseDto { Id = 2, Amount = 200, Description = "Test Expense 2" }
+        //                            }
+        //        );
+        //    //controller
+        //    //passing mockService object setup to controller
+        //    //var controller = new ExpenseController(mockService.Object);
 
-            //// Act
-            ////result from controller method
-            ////var result = await controller.GetAll("test-user");
-            //var result = await controller.GetAll();
+        //    //// Act
+        //    ////result from controller method
+        //    ////var result = await controller.GetAll("test-user");
+        //    //var result = await controller.GetAll();
 
-            //// Assert
-            ////var okResult=Assert.IsType<OkObjectResult>(result);
-            ////var returnValue = Assert.IsAssignableFrom<IEnumerable<ExpenseResponseDto>>(okResult);
+        //    //// Assert
+        //    ////var okResult=Assert.IsType<OkObjectResult>(result);
+        //    ////var returnValue = Assert.IsAssignableFrom<IEnumerable<ExpenseResponseDto>>(okResult);
 
-            //var okResult = Assert.IsType<OkObjectResult>(result); // This asserts the type
-            //var returnValue = Assert.IsAssignableFrom<IEnumerable<ExpenseResponseDto>>(okResult.Value); // This inspects the Value property inside the HTTP response
-            //Assert.Single(returnValue);
+        //    //var okResult = Assert.IsType<OkObjectResult>(result); // This asserts the type
+        //    //var returnValue = Assert.IsAssignableFrom<IEnumerable<ExpenseResponseDto>>(okResult.Value); // This inspects the Value property inside the HTTP response
+        //    //Assert.Single(returnValue);
 
-        }
+    //}
 
     }
 }
