@@ -308,6 +308,28 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         }
     });
 
+    //user miminal api
+    // Add this endpoint to Program.cs to check users
+    app.MapGet("/users", async (MoneyPilotDbContext db) =>
+    {
+        var users = await db.Users.ToListAsync();
+        return Results.Ok(users.Select(u => new { u.Id, u.Email }));
+    });
+
+    app.MapPost("/test-create-user",
+        async (MoneyPilotDbContext db, UserManager<AppUser> userManager)
+        => { try {
+                Log.Information("User creation test!");
+                var user = new AppUser {  UserName = "tester@email.com",Email="tester@email.com"} ;
+                var result = await userManager.CreateAsync(user, "Test@123");
+                return result.Succeeded
+        ? Results.Ok(new { message = "User created", userId = user.Id })
+        : Results.Problem(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            }
+            catch (Exception ex) { throw ex; }
+        });
+
 
     app.Run();
 }
