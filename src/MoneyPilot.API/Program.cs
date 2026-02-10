@@ -129,88 +129,6 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     builder.Services.AddScoped<TestTokenHelper>();
 
     builder.Services.AddScoped<AutoLoginTokenService>();
-    //
-    // ====================== SWAGGER ======================
-    //
-    builder.Services.AddEndpointsApiExplorer();
-
-    //builder.Services.AddSwaggerGen(c =>
-    //{
-    //    c.SwaggerDoc("v1", new OpenApiInfo
-    //    {
-    //        Title = "MoneyPilot API",
-    //        Version = "v1"
-    //    });
-
-    //    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    //    {
-    //        Name = "Authorization",
-    //        Type = SecuritySchemeType.Http,
-    //        Scheme = "Bearer",
-    //        BearerFormat = "JWT",
-    //        In = ParameterLocation.Header,
-    //        Description = "Enter JWT token. Do NOT include 'Bearer ' prefix."
-    //    });
-
-    //    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    //{
-    //    {
-    //        new OpenApiSecurityScheme
-    //        {
-    //            Reference = new OpenApiReference
-    //            {
-    //                Type = ReferenceType.SecurityScheme,
-    //                Id = "Bearer"
-    //            }
-    //        },
-    //        Array.Empty<string>()
-    //    }
-    //});
-    //});
-
-
-    // Add Swagger with auto-login support
-    //builder.Services.AddSwaggerGen(c =>
-    //{
-    //    c.SwaggerDoc("v1", new OpenApiInfo
-    //    {
-    //        Title = "MoneyPilot API",
-    //        Version = "v1",
-    //        Description = $"<strong>Auto-Login Available:</strong> Visit <a href='/auto-login' target='_blank'>/auto-login</a> for test token"
-    //    });
-
-    //    // Add JWT Authentication to Swagger
-    //    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    //    {
-    //        Description = "JWT Authorization header using the Bearer scheme. Enter: 'Bearer {token}'",
-    //        Name = "Authorization",
-    //        In = ParameterLocation.Header,
-    //        Type = SecuritySchemeType.ApiKey,
-    //        Scheme = "Bearer"
-    //    });
-
-    //    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    //{
-    //    {
-    //        new OpenApiSecurityScheme
-    //        {
-    //            Reference = new OpenApiReference
-    //            {
-    //                Type = ReferenceType.SecurityScheme,
-    //                Id = "Bearer"
-    //            }
-    //        },
-    //        new string[] {}
-    //    }
-    //});
-
-    //    // Add auto-login endpoint to Swagger
-    //    c.TagActionsBy(api => new[] { api.GroupName });
-    //    c.DocInclusionPredicate((name, api) => true);
-    //});
-
-
-
 
     //
     // ====================== SWAGGER-OLD ======================
@@ -287,29 +205,6 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
         app.UseSwagger();
         app.UseSwaggerUI();
-    //    app.UseSwaggerUI(c =>
-    //    {
-    //        c.SwaggerEndpoint("/swagger/v1/swagger.json", "MoneyPilot API v1");
-    //        c.RoutePrefix = "swagger";
-
-        //        // Optional: Add a link to auto-login in Swagger
-        //        c.HeadContent = @"
-        //    <script>
-        //        window.addEventListener('load', function() {
-        //            // Add auto-login button to Swagger UI
-        //            const nav = document.querySelector('.topbar-wrapper');
-        //            if (nav) {
-        //                const autoLoginBtn = document.createElement('a');
-        //                autoLoginBtn.href = '/auto-login';
-        //                autoLoginBtn.target = '_blank';
-        //                autoLoginBtn.style.cssText = 'margin-left: 20px; padding: 8px 15px; background: #28a745; color: white; border-radius: 4px; text-decoration: none;';
-        //                autoLoginBtn.textContent = '🔓 Auto-Login';
-        //                nav.appendChild(autoLoginBtn);
-        //            }
-        //        });
-        //    </script>
-        //";
-        //    });
 
     }
 
@@ -370,21 +265,6 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
         // Create a sample recurring transaction
         var category = await db.Categories.FirstOrDefaultAsync(c => c.Name == "Food");
-
-        //var recurringTransaction = new RecurringTransaction
-        //{
-        //    UserId = user.Id,
-        //    Description = "Monthly Netflix Subscription",
-        //    Amount = 15.99m,
-        //    CategoryId = category.Id,
-        //    RecurrenceType = "Monthly",
-        //    Interval = 1,
-        //    DayOfMonth = 15,
-        //    StartDate = DateTime.UtcNow.AddDays(-30),
-        //    NextOccurrence = DateTime.UtcNow.AddDays(5), // Due in 5 days
-        //    IsActive = true,
-        //    CreatedAt = DateTime.UtcNow
-        //};
 
         var recurringTransaction = new RecurringTransaction
     {
@@ -540,11 +420,6 @@ catch (Exception ex)
     Log.Fatal(ex, "Application startup failed");
     throw;
 }
-//catch (HostAbortedException)
-//{
-//    // This is normal when running EF Core migrations
-//    Log.Information("Host was aborted (normal for EF migrations)");
-//}
 
 finally
 {
