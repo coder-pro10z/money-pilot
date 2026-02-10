@@ -242,50 +242,50 @@ namespace MoneyPilot.Infrastructure.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<int> ProcessDueTransactionsAsync()
-        {
-            var today = DateTime.UtcNow.Date;
-            var dueTransactions = await _context.RecurringTransactions
-                .Include(rt => rt.Category)
-                .Where(rt => rt.IsActive && rt.NextOccurrence.Date <= today)
-                .ToListAsync();
+        //public async Task<int> ProcessDueTransactionsAsync()
+        //{
+        //    var today = DateTime.UtcNow.Date;
+        //    var dueTransactions = await _context.RecurringTransactions
+        //        .Include(rt => rt.Category)
+        //        .Where(rt => rt.IsActive && rt.NextOccurrence.Date <= today)
+        //        .ToListAsync();
 
-            var processedCount = 0;
+        //    var processedCount = 0;
 
-            foreach (var transaction in dueTransactions)
-            {
-                // Create expense
-                var expense = new Expense
-                {
-                    UserId = transaction.UserId,
-                    Description = $"[Recurring] {transaction.Description}",
-                    Amount = transaction.Amount,
-                    CategoryId = transaction.CategoryId,
-                    Date = transaction.NextOccurrence,
-                    CreatedAt = DateTime.UtcNow
-                };
+        //    foreach (var transaction in dueTransactions)
+        //    {
+        //        // Create expense
+        //        var expense = new Expense
+        //        {
+        //            UserId = transaction.UserId,
+        //            Description = $"[Recurring] {transaction.Description}",
+        //            Amount = transaction.Amount,
+        //            CategoryId = transaction.CategoryId,
+        //            Date = transaction.NextOccurrence,
+        //            CreatedAt = DateTime.UtcNow
+        //        };
 
-                _context.Expenses.Add(expense);
+        //        _context.Expenses.Add(expense);
 
-                // Update next occurrence (simple)
-                transaction.NextOccurrence = transaction.RecurrenceType switch
-                {
-                    RecurrenceType.Daily => transaction.NextOccurrence.AddDays(transaction.Interval),
-                    RecurrenceType.Weekly => transaction.NextOccurrence.AddDays(7 * transaction.Interval),
-                    RecurrenceType.Monthly => transaction.NextOccurrence.AddMonths(transaction.Interval),
-                    RecurrenceType.Yearly => transaction.NextOccurrence.AddYears(transaction.Interval),
-                    _ => transaction.NextOccurrence.AddDays(transaction.Interval)
-                };
+        //        // Update next occurrence (simple)
+        //        transaction.NextOccurrence = transaction.RecurrenceType switch
+        //        {
+        //            RecurrenceType.Daily => transaction.NextOccurrence.AddDays(transaction.Interval),
+        //            RecurrenceType.Weekly => transaction.NextOccurrence.AddDays(7 * transaction.Interval),
+        //            RecurrenceType.Monthly => transaction.NextOccurrence.AddMonths(transaction.Interval),
+        //            RecurrenceType.Yearly => transaction.NextOccurrence.AddYears(transaction.Interval),
+        //            _ => transaction.NextOccurrence.AddDays(transaction.Interval)
+        //        };
 
-                transaction.LastProcessed = DateTime.UtcNow;
-                processedCount++;
-            }
+        //        transaction.LastProcessed = DateTime.UtcNow;
+        //        processedCount++;
+        //    }
 
-            if (processedCount > 0)
-                await _context.SaveChangesAsync();
+        //    if (processedCount > 0)
+        //        await _context.SaveChangesAsync();
 
-            return processedCount;
-        }
+        //    return processedCount;
+        //}
 
         public async Task<IEnumerable<RecurringTransactionDto>> GetDueTransactionsAsync(string userId)
         {
@@ -323,11 +323,11 @@ namespace MoneyPilot.Infrastructure.Services
             };
         }
         private DateTime CalculateNextOccurrence(
-     RecurrenceType recurrenceType,  // Changed from string to enum
-     int interval,
-     DayOfWeek? dayOfWeek,          // Changed from string? to DayOfWeek?
-     int? dayOfMonth,
-     DateTime fromDate)
+         RecurrenceType recurrenceType,  // Changed from string to enum
+         int interval,
+         DayOfWeek? dayOfWeek,          // Changed from string? to DayOfWeek?
+         int? dayOfMonth,
+         DateTime fromDate)
         {
             switch (recurrenceType)
             {
@@ -381,5 +381,105 @@ namespace MoneyPilot.Infrastructure.Services
                     return fromDate.AddMonths(interval);
             }
         }
+
+
+        // Enhanced version with detailed result
+        public async Task<RecurringTransactionProcessingResultDto> ProcessDueTransactionsWithResultAsync()
+        {
+            var result = new RecurringTransactionProcessingResultDto();
+            var errors = new List<string>();
+
+            var today = DateTime.UtcNow.Date;
+
+            // ✅ Using Serilog correctly - injected via constructor
+            _logger.LogInformation("Processing recurring transactions for {Date}", today);
+
+            try
+            {
+                var dueTransactions = await _context.RecurringTransactions
+                    .Include(rt => rt.Category)
+                    .Where(rt => rt.IsActive && rt.NextOccurrence.Date <= today)
+                    .ToListAsync();
+
+                result.TotalProcessed = dueTransactions.Count;
+                _logger.LogInformation("Found {Count} transactions due for processing", result.TotalProcessed);
+
+                foreach (var transaction in dueTransactions)
+                {
+                    try
+                    {
+                        // Create expense
+                        var expense = new Expense
+                        {
+                            UserId = transaction.UserId,
+                            Description = $"[Recurring] {transaction.Description}",
+                            Amount = transaction.Amount,
+                            CategoryId = transaction.CategoryId,
+                            Date = transaction.NextOccurrence,
+                            CreatedAt = DateTime.UtcNow
+                        };
+
+                        _context.Expenses.Add(expense);
+
+                        // Update next occurrence
+                        transaction.NextOccurrence = transaction.RecurrenceType switch
+                        {
+                            RecurrenceType.Daily => transaction.NextOccurrence.AddDays(transaction.Interval),
+                            RecurrenceType.Weekly => transaction.NextOccurrence.AddDays(7 * transaction.Interval),
+                            RecurrenceType.Monthly => transaction.NextOccurrence.AddMonths(transaction.Interval),
+                            RecurrenceType.Yearly => transaction.NextOccurrence.AddYears(transaction.Interval),
+                            _ => transaction.NextOccurrence.AddDays(transaction.Interval)
+                        };
+
+                        transaction.LastProcessed = DateTime.UtcNow;
+                        result.SuccessfulCreations++;
+
+                        _logger.LogDebug("Processed transaction {Id} for user {UserId}",
+                            transaction.Id, transaction.UserId);
+                    }
+                    catch (Exception ex)
+                    {
+                        result.FailedCreations++;
+                        var errorMsg = $"Transaction {transaction.Id}: {ex.Message}";
+                        errors.Add(errorMsg);
+
+                        // ✅ Using Serilog with structured logging
+                        _logger.LogError(ex, "Failed to process recurring transaction {TransactionId}",
+                            transaction.Id);
+                    }
+                }
+
+                if (result.TotalProcessed > 0)
+                {
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation("Saved {Count} changes to database", result.TotalProcessed);
+                }
+
+                result.Errors = errors;
+
+                // ✅ Final log using Serilog
+                _logger.LogInformation(
+                    "Completed processing: {Successful}/{Total} successful, {Failed} failed",
+                    result.SuccessfulCreations, result.TotalProcessed, result.FailedCreations);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to process recurring transactions");
+                errors.Add($"Service error: {ex.Message}");
+                result.Errors = errors;
+            }
+
+            return result;
+        }
+
+        // Keep your existing method for backward compatibility
+        public async Task<int> ProcessDueTransactionsAsync()
+        {
+            var result = await ProcessDueTransactionsWithResultAsync();
+            return result.TotalProcessed;
+        }
+
+
+
     }
 }

@@ -11,7 +11,13 @@ namespace MoneyPilot.Application.Interfaces
         Task<RecurringTransactionDto> CreateAsync(CreateRecurringTransactionDto dto, string userId);
         Task<RecurringTransactionDto> UpdateAsync(int id, UpdateRecurringTransactionDto dto, string userId);
         Task DeleteAsync(int id, string userId);
+
+        // Existing method - returns count only
         Task<int> ProcessDueTransactionsAsync();
+
+        // New method - returns detailed result
+        Task<RecurringTransactionProcessingResultDto> ProcessDueTransactionsWithResultAsync();
+
         Task<IEnumerable<RecurringTransactionDto>> GetDueTransactionsAsync(string userId);
     }
 }
