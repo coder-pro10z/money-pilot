@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MoneyPilot.Application.Configs;
 using MoneyPilot.Application.Interfaces;
 using MoneyPilot.Domain.Entities;
 using MoneyPilot.Domain.Enums;
@@ -18,6 +19,8 @@ using System.Drawing;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
+//using MoneyPilot.Application.Configs;
+
 // At the VERY TOP of Program.cs
 
 
@@ -79,7 +82,13 @@ builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
     // Add this with your other service registrations
 builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionService>();
- 
+
+    // Registering Recurring Transaction Background Service
+    builder.Services.Configure<RecurringTransactionConfig>(
+        builder.Configuration.GetSection("RecurringTransactionProcessing"));
+
+    builder.Services.AddHostedService<RecurringTransactionBackgroundService>();
+
 
 
     // ====================== HEALTH CHECKS ======================
