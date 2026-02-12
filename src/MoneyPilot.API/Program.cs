@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MoneyPilot.Application.Configs;
@@ -15,6 +16,7 @@ using MoneyPilot.Infrastructure.Data;
 using MoneyPilot.Infrastructure.Repositories;
 using MoneyPilot.Infrastructure.Services;
 using Serilog;
+using System.Diagnostics;
 using System.Drawing;
 using System.Reflection.PortableExecutable;
 using System.Text;
@@ -419,6 +421,227 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     return Results.Content($"""
        {token} 
        """, "text/html");
+    });
+
+    //test-bg service
+    // Background service health check
+    app.MapGet("/health/background-service", (IServiceProvider services) =>
+    {
+        try
+        {
+            var backgroundServices = services.GetServices<IHostedService>();
+            var bgService = backgroundServices.OfType<RecurringTransactionBackgroundService>().FirstOrDefault();
+
+            if (bgService == null)
+            {
+                return Results.Json(new
+                {
+                    status = "NOT_FOUND",
+                    message = "Background service not registered in DI container",
+                    time = DateTime.UtcNow
+                });
+            }
+
+            // Get configuration
+            var config = services.GetRequiredService<IOptions<RecurringTransactionConfig>>();
+
+            return Results.Json(new
+            {
+                status = "RUNNING",
+                service = nameof(RecurringTransactionBackgroundService),
+                config = new
+                {
+                    config.Value.Enabled,
+                    config.Value.RunOnStartup,
+                    config.Value.ProcessingTime,
+                    nextRun = CalculateNextRun(config.Value.ProcessingTime)
+                },
+                startupTime = DateTime.Now,
+                uptime = DateTime.Now - Process.GetCurrentProcess().StartTime
+            });
+        }
+        catch (Exception ex)
+        {
+            return Results.Problem($"Health check failed: {ex.Message}");
+        }
+    });
+
+    // Helper function
+    DateTime CalculateNextRun(string processingTime)
+    {
+        if (TimeSpan.TryParse(processingTime, out var time))
+        {
+            var now = DateTime.Now;
+            var scheduled = now.Date.Add(time);
+            return now > scheduled ? scheduled.AddDays(1) : scheduled;
+        }
+        return DateTime.Now.AddDays(1);
+    }
+
+    //// Startup diagnostics page
+    app.MapGet("/diagnostics/startup", async (IServiceProvider services) =>
+    {
+        var html = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>MoneyPilot Startup Diagnostics</title>
+            <style>
+                body { font-family: Consolas, monospace; padding: 20px; background: #0d1117; color: #c9d1d9; }
+                .status-running { color: #3fb950; }
+                .status-stopped { color: #f85149; }
+                .log-entry { padding: 5px; border-left: 3px solid #30363d; margin: 5px 0; }
+                .log-info { border-left-color: #1f6feb; }
+                .log-warning { border-left-color: #d29922; }
+                .log-error { border-left-color: #f85149; }
+            </style>
+        </head>
+        <body>
+            <h1>🔍 MoneyPilot Startup Diagnostics</h1>
+            <h2>Background Service Status</h2>
+            <div id="service-status">Checking...</div>
+            <h2>Recent Logs</h2>
+            <div id="logs"></div>
+            <h2>Actions</h2>
+            <button onclick="testService()">Test Background Service</button>
+            <button onclick="checkHealth()">Check Health</button>
+            <button onclick="viewLogs()">View Log File</button>
+            
+            <script>
+                async function loadStatus() {
+                    const response = await fetch('/health/background-service');
+                    const data = await response.json();
+                    
+                    document.getElementById('service-status').innerHTML = `
+                        <p><strong>Status:</strong> <span class="status-${data.status.toLowerCase()}">${data.status}</span></p>
+                        <p><strong>Service:</strong> ${data.service}</p>
+                        <p><strong>Enabled:</strong> ${data.config?.Enabled}</p>
+                        <p><strong>Run on Startup:</strong> ${data.config?.RunOnStartup}</p>
+                        <p><strong>Next Run:</strong> ${data.config?.nextRun}</p>
+                        <p><strong>Startup Time:</strong> ${data.startupTime}</p>
+                    `;
+                }
+                
+                async function testService() {
+                    const response = await fetch('/admin/background-service/trigger', { method: 'POST' });
+                    const result = await response.json();
+                    alert(result.message);
+                    loadStatus();
+                }
+                
+                async function checkHealth() {
+                    window.open('/health', '_blank');
+                }
+                
+                async function viewLogs() {
+                    window.open('/api/logs/recent', '_blank');
+                }
+                
+                // Load status on page load
+                loadStatus();
+                
+                // Auto-refresh every 10 seconds
+                setInterval(loadStatus, 10000);
+            </script>
+        </body>
+        </html>
+        """;
+
+        return Results.Content(html, "text/html");
+    });
+
+    // View recent logs
+    app.MapGet("/api/logs/recent", () =>
+    {
+        var logFile = "Logs/moneypilot_api_log.txt";
+        if (!File.Exists(logFile))
+        {
+            return Results.Content("No log file found", "text/plain");
+        }
+
+        var lines = File.ReadLines(logFile).TakeLast(50);
+        return Results.Content(string.Join(Environment.NewLine, lines), "text/plain");
+    });
+
+    // Comprehensive startup test
+    app.MapGet("/test/startup", async (IRecurringTransactionService service, IServiceProvider sp) =>
+    {
+        var results = new List<string>();
+
+        // 1. Check if service is registered
+        var bgServices = sp.GetServices<IHostedService>();
+        var hasBgService = bgServices.Any(s => s.GetType().Name.Contains("RecurringTransaction"));
+        results.Add($"Background Service Registered: {(hasBgService ? "✅" : "❌")}");
+
+        // 2. Try to process (should show if working)
+        try
+        {
+            var count = await service.ProcessDueTransactionsAsync();
+            results.Add($"Service Method Call Successful: ✅ (processed {count} transactions)");
+        }
+        catch (Exception ex)
+        {
+            results.Add($"Service Method Call Failed: ❌ ({ex.Message})");
+        }
+
+        // 3. Check configuration
+        var config = sp.GetRequiredService<IOptions<RecurringTransactionConfig>>();
+        results.Add($"Configuration Loaded: ✅");
+        results.Add($"- Enabled: {config.Value.Enabled}");
+        results.Add($"- RunOnStartup: {config.Value.RunOnStartup}");
+        results.Add($"- Processing Time: {config.Value.ProcessingTime}");
+
+        // 4. Check log file
+        var logFile = "Logs/moneypilot_api_log.txt";
+        var hasLogFile = File.Exists(logFile);
+        results.Add($"Log File Exists: {(hasLogFile ? "✅" : "❌")}");
+
+        if (hasLogFile)
+        {
+            var logContent = File.ReadLines(logFile).TakeLast(10);
+            var hasBgServiceLogs = logContent.Any(l => l.Contains("background service", StringComparison.OrdinalIgnoreCase));
+            results.Add($"Background Service Logs Found: {(hasBgServiceLogs ? "✅" : "❌")}");
+        }
+
+        return Results.Json(new
+        {
+            test = "Background Service Startup Test",
+            timestamp = DateTime.UtcNow,
+            results
+        });
+    });
+
+
+    // Add this test endpoint to verify config
+    app.MapGet("/debug/config", (IOptions<RecurringTransactionConfig> config) =>
+    {
+        return Results.Json(config.Value);
+    });
+
+    app.MapGet("/monitor", () =>
+    {
+        return Results.Content("""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Live Monitor</title>
+            <script>
+                async function updateLogs() {
+                    const response = await fetch('/api/logs/recent');
+                    const logs = await response.text();
+                    document.getElementById('logs').textContent = logs;
+                }
+                
+                setInterval(updateLogs, 2000);
+                updateLogs();
+            </script>
+        </head>
+        <body>
+            <h1>Live Log Monitor</h1>
+            <pre id="logs" style="background: #000; color: #0f0; padding: 10px;"></pre>
+        </body>
+        </html>
+        """, "text/html");
     });
 
 
