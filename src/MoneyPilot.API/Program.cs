@@ -21,6 +21,7 @@ using System.Drawing;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
+using MoneyPilot.SecurityHeaders.Extensions;
 //using MoneyPilot.Application.Configs;
 
 // At the VERY TOP of Program.cs
@@ -218,9 +219,12 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         app.UseSwaggerUI();
 
     }
-
+    
     app.UseHttpsRedirection();
 
+    //using custom security headers middleware
+    app.UseMoneyPilotSecurityHeaders();
+    
     // ⚠️ ORDER MATTERS
     app.UseAuthentication();
     app.UseAuthorization();
