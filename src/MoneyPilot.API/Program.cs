@@ -194,27 +194,6 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     if (app.Environment.IsDevelopment())
     {
         app.UseDeveloperExceptionPage();
-        //app.UseSwagger();
-        //app.UseSwaggerUI();
-        // Later in the middleware pipeline:
-        //app.UseSwagger();
-        //app.UseSwaggerUI(c =>
-        //{
-        //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MoneyPilot API v1");
-        //    c.RoutePrefix = "swagger";
-
-        //    // Add custom CSS/JS for auto-login
-        //    c.InjectStylesheet("/swagger-ui/custom.css");
-        //    c.InjectJavascript("/swagger-ui/custom.js");
-
-        //    // Pre-fill the token if available
-        //    c.ConfigObject.AdditionalItems["autoLoginToken"] = "check_local_storage";
-
-        //    // Add a custom index page with auto-login button
-        //    c.IndexStream = () => GetType().Assembly
-        //        .GetManifestResourceStream("MoneyPilot.API.SwaggerIndex.html");
-        //});
-
         app.UseSwagger();
         app.UseSwaggerUI();
 
@@ -222,7 +201,7 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     
     app.UseHttpsRedirection();
 
-    //using custom security headers middleware
+    //using custom security headers middleware from MoneyPilot.SecurityHeaders.Extensions
     app.UseMoneyPilotSecurityHeaders();
     
     // ⚠️ ORDER MATTERS
@@ -557,13 +536,28 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     // View recent logs
     app.MapGet("/api/logs/recent", () =>
     {
-        var logFile = "Logs/moneypilot_api_log.txt";
-        if (!File.Exists(logFile))
+        //var logFile = "Logs/moneypilot_api_log.txt";
+        ////////////
+        var logDir = "Logs";
+        var pattern = "moneypilot_api_log*.txt";
+        var files = Directory.GetFiles(logDir, pattern);
+
+        if (files.Length == 0)
         {
+            // No matching log files found
             return Results.Content("No log file found", "text/plain");
         }
 
-        var lines = File.ReadLines(logFile).TakeLast(50);
+        //////
+
+        //if (!File.Exists(logFile))
+        //{
+        //    return Results.Content("No log file found", "text/plain");
+        //}
+
+            // At least one exists, you can pick the latest:
+        var latestFile = files.OrderByDescending(f => f).First();
+        var lines = File.ReadLines(latestFile).TakeLast(50);
         return Results.Content(string.Join(Environment.NewLine, lines), "text/plain");
     });
 
