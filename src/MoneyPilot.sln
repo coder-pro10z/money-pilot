@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyPilot.Tests", "MoneyPi
 		{FF4F6672-26A5-478A-A130-34085ECB1C50} = {FF4F6672-26A5-478A-A130-34085ECB1C50}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyPilot.SecurityHeaders", "MoneyPilot.SecurityHeaders\MoneyPilot.SecurityHeaders.csproj", "{18F1F018-B6BD-5672-74CB-FD26556F79BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,8 +91,23 @@ Global
 		{515DA4A5-2584-41E9-AE05-3F5993314C8C}.Release|x64.Build.0 = Release|Any CPU
 		{515DA4A5-2584-41E9-AE05-3F5993314C8C}.Release|x86.ActiveCfg = Release|Any CPU
 		{515DA4A5-2584-41E9-AE05-3F5993314C8C}.Release|x86.Build.0 = Release|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Debug|x64.Build.0 = Debug|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Debug|x86.Build.0 = Debug|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Release|x64.ActiveCfg = Release|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Release|x64.Build.0 = Release|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Release|x86.ActiveCfg = Release|Any CPU
+		{18F1F018-B6BD-5672-74CB-FD26556F79BF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C3816B50-DE07-4062-A2EB-6DAE6A4673B9}
 	EndGlobalSection
 EndGlobal
