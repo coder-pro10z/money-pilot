@@ -81,8 +81,11 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 builder.Services.AddScoped<IUnitofWork, UnitOfWork>();
 builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 builder.Services.AddScoped<IBudgetRepository, BudgetRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
 builder.Services.AddScoped<IBudgetService, BudgetService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
     // Add this with your other service registrations
 builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionService>();
 
@@ -196,7 +199,8 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
         app.UseSwaggerUI();
-
+    /// CLEAN DEVELOPMENT API USAGE
+   
     }
     
     app.UseHttpsRedirection();
@@ -213,137 +217,129 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     app.MapGet("/", () => "🎉 MoneyPilot API is running!");
 
 
-    // Map health checks endpoint
-    app.MapHealthChecks("/health");
 
-    //TEST LOGS
-    // Add before app.Run()
-    app.MapGet("/test", (ILogger<Program> logger) =>
+  //log ,db, seed sample
+    if (app.Environment.IsDevelopment())
     {
-        logger.LogInformation("Test endpoint hit at {Time}", DateTime.UtcNow);
-        return Results.Ok(new { message = "Test successful", time = DateTime.UtcNow });
-    });
+        /// CLEAN DEVELOPMENT API USAGE
 
-    app.MapGet("/test-db", async (MoneyPilotDbContext db) =>
-    {
-        try
+        //TEST LOGS
+        // Add before app.Run()
+        app.MapGet("/test", (ILogger<Program> logger) =>
         {
-            var hasRecurringTable = await db.RecurringTransactions.AnyAsync();
-            return Results.Ok(new
+            logger.LogInformation("Test endpoint hit at {Time}", DateTime.UtcNow);
+            return Results.Ok(new { message = "Test successful", time = DateTime.UtcNow });
+        });
+
+        app.MapGet("/test-db", async (MoneyPilotDbContext db) =>
+        {
+            try
             {
-                status = "OK",
-                hasRecurringTable,
-                tables = new[] { "RecurringTransactions", "Expenses", "Categories" }
-            });
-        }
-        catch (Exception ex)
+                var hasRecurringTable = await db.RecurringTransactions.AnyAsync();
+                return Results.Ok(new
+                {
+                    status = "OK",
+                    hasRecurringTable,
+                    tables = new[] { "RecurringTransactions", "Expenses", "Categories" }
+                });
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem($"Database error: {ex.Message}");
+            }
+        });
+
+        app.MapPost("/seed", async (MoneyPilotDbContext db) =>
         {
-            return Results.Problem($"Database error: {ex.Message}");
-        }
-    });
+            // Create a test category if none exists
+            if (!await db.Categories.AnyAsync())
+            {
+                db.Categories.Add(new Category { Name = "Food" });
+                db.Categories.Add(new Category { Name = "Transportation" });
+                db.Categories.Add(new Category { Name = "Entertainment" });
+                await db.SaveChangesAsync();
+            }
 
-    app.MapPost("/seed", async (MoneyPilotDbContext db) =>
-    {
-        // Create a test category if none exists
-        if (!await db.Categories.AnyAsync())
-        {
-            db.Categories.Add(new Category { Name = "Food" });
-            db.Categories.Add(new Category { Name = "Transportation" });
-            db.Categories.Add(new Category { Name = "Entertainment" });
-            await db.SaveChangesAsync();
-        }
-
-        // Get a user (assuming you have at least one)
-        var user = await db.Users.FirstOrDefaultAsync();
-        if (user == null) return Results.Problem("No users found");
-
-        // Create a sample recurring transaction
-        var category = await db.Categories.FirstOrDefaultAsync(c => c.Name == "Food");
-
-        var recurringTransaction = new RecurringTransaction
-    {
-        UserId = user.Id,
-        Description = "Monthly Netflix Subscription",
-        Amount = 15.99m,
-        CategoryId = category.Id,
-        RecurrenceType = RecurrenceType.Monthly, // Keep as string
-        Interval = 1,
-        DayOfMonth = 15,
-        StartDate = DateTime.UtcNow.AddDays(-30),
-        NextOccurrence = DateTime.UtcNow.AddDays(5),
-        IsActive = true,
-        CreatedAt = DateTime.UtcNow
-    };
-    db.RecurringTransactions.Add(recurringTransaction);
-    await db.SaveChangesAsync();
-
-    return Results.Ok(new
-    {
-        message = "Sample data created",
-        transactionId = recurringTransaction.Id
-    });
-});
-
-    app.MapPost("/test-simple", async (MoneyPilotDbContext db) =>
-    {
-        try
-        {
-            // Create a simple category without navigation properties
-            var category = new Category { Name = "TestCategory" };
-            db.Categories.Add(category);
-            await db.SaveChangesAsync();
-
-            // Get any user
+            // Get a user (assuming you have at least one)
             var user = await db.Users.FirstOrDefaultAsync();
             if (user == null) return Results.Problem("No users found");
 
-            // Create simple recurring transaction
-            var transaction = new RecurringTransaction
-            {
-                UserId = user.Id,
-                Description = "Test",
-                Amount = 10.00m,
-                CategoryId = category.Id,
-                // ⚠️ Choose based on your entity type:
-                // If string: RecurrenceType = "Monthly",
-                // If enum: RecurrenceType = RecurrenceType.Monthly,
-                RecurrenceType = RecurrenceType.Monthly, // Adjust this!
-                Interval = 1,
-                StartDate = DateTime.UtcNow,
-                NextOccurrence = DateTime.UtcNow.AddDays(1),
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            };
+            // Create a sample recurring transaction
+            var category = await db.Categories.FirstOrDefaultAsync(c => c.Name == "Food");
 
-            db.RecurringTransactions.Add(transaction);
-            await db.SaveChangesAsync();
-
-            return Results.Ok(new { success = true, id = transaction.Id });
-        }
-        catch (Exception ex)
+            var recurringTransaction = new RecurringTransaction
         {
-            return Results.Problem($"Error: {ex.Message}");
-        }
-    });
+            UserId = user.Id,
+            Description = "Monthly Netflix Subscription",
+            Amount = 15.99m,
+            CategoryId = category.Id,
+            RecurrenceType = RecurrenceType.Monthly, // Keep as string
+            Interval = 1,
+            DayOfMonth = 15,
+            StartDate = DateTime.UtcNow.AddDays(-30),
+            NextOccurrence = DateTime.UtcNow.AddDays(5),
+            IsActive = true,
+            CreatedAt = DateTime.UtcNow
+        };
+        db.RecurringTransactions.Add(recurringTransaction);
+        await db.SaveChangesAsync();
 
-    //user miminal api
-    // Add this endpoint to Program.cs to check users
-    app.MapGet("/users", async (MoneyPilotDbContext db) =>
+        return Results.Ok(new
+        {
+            message = "Sample data created",
+            transactionId = recurringTransaction.Id
+        });
+        });
+    }
+
+    // SIMPLIFIED Auto-login endpoint (development only)
+    //test-bg service ,generate-token, 
+    if (app.Environment.IsDevelopment())
     {
-        var users = await db.Users.ToListAsync();
-        return Results.Ok(users.Select(u => new { u.Id, u.Email }));
-    });
+        app.MapGet("/generate-token", async (TestTokenHelper helper) =>
+        {
+            var token = await helper.GenerateTokenForTestUserAsync("test@email.com");
+            return Results.Content($"""
+               {token} 
+               """, "text/html");
+        });
 
-    app.MapPost("/test-create-user",
-        async (MoneyPilotDbContext db, UserManager<AppUser> userManager)
-        => { try {
-                Log.Information("User creation test!");
-                var user = new AppUser {  UserName = "tester@email.com",Email="tester@email.com"} ;
-                var result = await userManager.CreateAsync(user, "Test@123");
-                return result.Succeeded
-        ? Results.Ok(new { message = "User created", userId = user.Id })
-        : Results.Problem(string.Join(", ", result.Errors.Select(e => e.Description)));
 
+        app.MapPost("/test-simple", async (MoneyPilotDbContext db) =>
+        {
+            try
+            {
+                // Create a simple category without navigation properties
+                var category = new Category { Name = "TestCategory" };
+                db.Categories.Add(category);
+                await db.SaveChangesAsync();
+
+                // Get any user
+                var user = await db.Users.FirstOrDefaultAsync();
+                if (user == null) return Results.Problem("No users found");
+
+                // Create simple recurring transaction
+                var transaction = new RecurringTransaction
+                {
+                    UserId = user.Id,
+                    Description = "Test",
+                    Amount = 10.00m,
+                    CategoryId = category.Id,
+                    // ⚠️ Choose based on your entity type:
+                    // If string: RecurrenceType = "Monthly",
+                    // If enum: RecurrenceType = RecurrenceType.Monthly,
+                    RecurrenceType = RecurrenceType.Monthly, // Adjust this!
+                    Interval = 1,
+                    StartDate = DateTime.UtcNow,
+                    NextOccurrence = DateTime.UtcNow.AddDays(1),
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                db.RecurringTransactions.Add(transaction);
+                await db.SaveChangesAsync();
+
+                return Results.Ok(new { success = true, id = transaction.Id });
             }
             catch (Exception ex)
             {
@@ -351,34 +347,61 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
             }
         });
 
-    // Test user management endpoints
-    app.MapGet("/test-user", async (TestUserService service) =>
-    {
-        var user = await service.EnsureTestUserCreatedAsync();
-        return user != null
-            ? Results.Ok(new { email = user.Email, id = user.Id })
-            : Results.Problem("Test user not created");
-    });
+        //user miminal api
+        // Add this endpoint to Program.cs to check users
+        app.MapGet("/users", async (MoneyPilotDbContext db) =>
+        {
+            var users = await db.Users.ToListAsync();
+            return Results.Ok(users.Select(u => new { u.Id, u.Email }));
+        });
 
-    app.MapGet("/test-token", async (TestTokenHelper helper) =>
-    {
-        try
+        app.MapPost("/test-create-user",
+            async (MoneyPilotDbContext db, UserManager<AppUser> userManager)
+            => {
+                try
+                {
+                    Log.Information("User creation test!");
+                    var user = new AppUser { UserName = "tester@email.com", Email = "tester@email.com" };
+                    var result = await userManager.CreateAsync(user, "Test@123");
+                    return result.Succeeded
+            ? Results.Ok(new { message = "User created", userId = user.Id })
+            : Results.Problem(string.Join(", ", result.Errors.Select(e => e.Description)));
+
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem($"Error: {ex.Message}");
+                }
+            });
+
+        // Test user management endpoints
+        app.MapGet("/test-user", async (TestUserService service) =>
+        {
+            var user = await service.EnsureTestUserCreatedAsync();
+            return user != null
+                ? Results.Ok(new { email = user.Email, id = user.Id })
+                : Results.Problem("Test user not created");
+        });
+
+        app.MapGet("/test-token", async (TestTokenHelper helper) =>
+        {
+            try
+            {
+                var token = await helper.GenerateTokenForTestUserAsync("test@email.com");
+                return Results.Ok(new { token });
+            }
+            catch (Exception ex)
+            {
+                return Results.Problem(ex.Message);
+            }
+        });
+
+        // SIMPLIFIED Auto-login endpoint
+        app.MapGet("/auto-login-simple", async (TestTokenHelper helper) =>
         {
             var token = await helper.GenerateTokenForTestUserAsync("test@email.com");
-            return Results.Ok(new { token });
-        }
-        catch (Exception ex)
-        {
-            return Results.Problem(ex.Message);
-        }
-    });
 
-    // SIMPLIFIED Auto-login endpoint
-    app.MapGet("/auto-login-simple", async (TestTokenHelper helper) =>
-    {
-        var token = await helper.GenerateTokenForTestUserAsync("test@email.com");
-
-        return Results.Content($"""
+            return Results.Content($"""
         <!DOCTYPE html>
         <html>
         <body style="font-family: Arial; padding: 20px;">
@@ -395,20 +418,149 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         </body>
         </html>
         """, "text/html");
-    });
+        });
 
-    // SIMPLIFIED Auto-login endpoint
-    app.MapGet("/generate-token", async (TestTokenHelper helper) =>
+
+        // Comprehensive startup test
+        app.MapGet("/test/startup", async (IRecurringTransactionService service, IServiceProvider sp) =>
+        {
+            var results = new List<string>();
+
+            // 1. Check if service is registered
+            var bgServices = sp.GetServices<IHostedService>();
+            var hasBgService = bgServices.Any(s => s.GetType().Name.Contains("RecurringTransaction"));
+            results.Add($"Background Service Registered: {(hasBgService ? "✅" : "❌")}");
+
+            // 2. Try to process (should show if working)
+            try
+            {
+                var count = await service.ProcessDueTransactionsAsync();
+                results.Add($"Service Method Call Successful: ✅ (processed {count} transactions)");
+            }
+            catch (Exception ex)
+            {
+                results.Add($"Service Method Call Failed: ❌ ({ex.Message})");
+            }
+
+            // 3. Check configuration
+            var config = sp.GetRequiredService<IOptions<RecurringTransactionConfig>>();
+            results.Add($"Configuration Loaded: ✅");
+            results.Add($"- Enabled: {config.Value.Enabled}");
+            results.Add($"- RunOnStartup: {config.Value.RunOnStartup}");
+            results.Add($"- Processing Time: {config.Value.ProcessingTime}");
+
+            // 4. Check log file
+            var logFile = "Logs/moneypilot_api_log.txt";
+            var hasLogFile = File.Exists(logFile);
+            results.Add($"Log File Exists: {(hasLogFile ? "✅" : "❌")}");
+
+            if (hasLogFile)
+            {
+                var logContent = File.ReadLines(logFile).TakeLast(10);
+                var hasBgServiceLogs = logContent.Any(l => l.Contains("background service", StringComparison.OrdinalIgnoreCase));
+                results.Add($"Background Service Logs Found: {(hasBgServiceLogs ? "✅" : "❌")}");
+            }
+
+            return Results.Json(new
+            {
+                test = "Background Service Startup Test",
+                timestamp = DateTime.UtcNow,
+                results
+            });
+        });
+
+
+        // Add this test endpoint to verify config
+        app.MapGet("/debug/config", (IOptions<RecurringTransactionConfig> config) =>
+        {
+            return Results.Json(config.Value);
+        });
+
+        
+
+
+        // Role seeding: ensure roles and a default admin user exist
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            try
+            {
+                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
+                var roles = new[] { "Admin", "User" };
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                    {
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    }
+                }
+
+                // Create default admin if missing
+                var adminEmail = builder.Configuration["DefaultAdmin:Email"] ?? "admin@localhost";
+                var admin = await userManager.FindByEmailAsync(adminEmail);
+                if (admin == null)
+                {
+                    admin = new AppUser { UserName = adminEmail, Email = adminEmail };
+                    var result = await userManager.CreateAsync(admin, builder.Configuration["DefaultAdmin:Password"] ?? "Admin@123");
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(admin, "Admin");
+                    }
+                }
+                else
+                {
+                    // ensure role
+                    if (!await userManager.IsInRoleAsync(admin, "Admin"))
+                        await userManager.AddToRoleAsync(admin, "Admin");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "An error occurred while seeding roles");
+            }
+        }
+
+    }
+
+    // Map health checks endpoint
+    var healthGroup = app.MapGroup("/health")
+    .WithTags("Health");
+
+    //healthGroup.MapGet("/background-service", ...);
+    //healthGroup.MapGet("/monitor", ...);
+    healthGroup.MapHealthChecks("/");
+
+    //monitor
+    healthGroup.MapGet("/monitor", () =>
     {
-        var token = await helper.GenerateTokenForTestUserAsync("test@email.com");
-    return Results.Content($"""
-       {token} 
-       """, "text/html");
+        return Results.Content("""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Live Monitor</title>
+            <script>
+                async function updateLogs() {
+                    const response = await fetch('/api/logs/recent');
+                    const logs = await response.text();
+                    document.getElementById('logs').textContent = logs;
+                }
+                
+                setInterval(updateLogs, 2000);
+                updateLogs();
+            </script>
+        </head>
+        <body>
+            <h1>Live Log Monitor</h1>
+            <pre id="logs" style="background: #000; color: #0f0; padding: 10px;"></pre>
+        </body>
+        </html>
+        """, "text/html");
     });
 
-    //test-bg service
     // Background service health check
-    app.MapGet("/health/background-service", (IServiceProvider services) =>
+    healthGroup.MapGet("/background-service", (IServiceProvider services) =>
     {
         try
         {
@@ -449,20 +601,13 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         }
     });
 
-    // Helper function
-    DateTime CalculateNextRun(string processingTime)
-    {
-        if (TimeSpan.TryParse(processingTime, out var time))
-        {
-            var now = DateTime.Now;
-            var scheduled = now.Date.Add(time);
-            return now > scheduled ? scheduled.AddDays(1) : scheduled;
-        }
-        return DateTime.Now.AddDays(1);
-    }
+
+    // Map Diagnostics endpoint
+    var diagnosticsGroup = app.MapGroup("/diagnostics")
+    .WithTags("Diagnostics");
 
     //// Startup diagnostics page
-    app.MapGet("/diagnostics/startup", async (IServiceProvider services) =>
+    diagnosticsGroup.MapGet("/startup", async (IServiceProvider services) =>
     {
         var html = """
         <!DOCTYPE html>
@@ -534,7 +679,7 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     });
 
     // View recent logs
-    app.MapGet("/api/logs/recent", () =>
+    diagnosticsGroup.MapGet("/logs/recent", () =>
     {
         //var logFile = "Logs/moneypilot_api_log.txt";
         ////////////
@@ -547,100 +692,23 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
             // No matching log files found
             return Results.Content("No log file found", "text/plain");
         }
-
-        //////
-
-        //if (!File.Exists(logFile))
-        //{
-        //    return Results.Content("No log file found", "text/plain");
-        //}
-
-            // At least one exists, you can pick the latest:
+        // At least one exists, you can pick the latest:
         var latestFile = files.OrderByDescending(f => f).First();
         var lines = File.ReadLines(latestFile).TakeLast(50);
         return Results.Content(string.Join(Environment.NewLine, lines), "text/plain");
     });
 
-    // Comprehensive startup test
-    app.MapGet("/test/startup", async (IRecurringTransactionService service, IServiceProvider sp) =>
+    // Helper function
+    DateTime CalculateNextRun(string processingTime)
     {
-        var results = new List<string>();
-
-        // 1. Check if service is registered
-        var bgServices = sp.GetServices<IHostedService>();
-        var hasBgService = bgServices.Any(s => s.GetType().Name.Contains("RecurringTransaction"));
-        results.Add($"Background Service Registered: {(hasBgService ? "✅" : "❌")}");
-
-        // 2. Try to process (should show if working)
-        try
+        if (TimeSpan.TryParse(processingTime, out var time))
         {
-            var count = await service.ProcessDueTransactionsAsync();
-            results.Add($"Service Method Call Successful: ✅ (processed {count} transactions)");
+            var now = DateTime.Now;
+            var scheduled = now.Date.Add(time);
+            return now > scheduled ? scheduled.AddDays(1) : scheduled;
         }
-        catch (Exception ex)
-        {
-            results.Add($"Service Method Call Failed: ❌ ({ex.Message})");
-        }
-
-        // 3. Check configuration
-        var config = sp.GetRequiredService<IOptions<RecurringTransactionConfig>>();
-        results.Add($"Configuration Loaded: ✅");
-        results.Add($"- Enabled: {config.Value.Enabled}");
-        results.Add($"- RunOnStartup: {config.Value.RunOnStartup}");
-        results.Add($"- Processing Time: {config.Value.ProcessingTime}");
-
-        // 4. Check log file
-        var logFile = "Logs/moneypilot_api_log.txt";
-        var hasLogFile = File.Exists(logFile);
-        results.Add($"Log File Exists: {(hasLogFile ? "✅" : "❌")}");
-
-        if (hasLogFile)
-        {
-            var logContent = File.ReadLines(logFile).TakeLast(10);
-            var hasBgServiceLogs = logContent.Any(l => l.Contains("background service", StringComparison.OrdinalIgnoreCase));
-            results.Add($"Background Service Logs Found: {(hasBgServiceLogs ? "✅" : "❌")}");
-        }
-
-        return Results.Json(new
-        {
-            test = "Background Service Startup Test",
-            timestamp = DateTime.UtcNow,
-            results
-        });
-    });
-
-
-    // Add this test endpoint to verify config
-    app.MapGet("/debug/config", (IOptions<RecurringTransactionConfig> config) =>
-    {
-        return Results.Json(config.Value);
-    });
-
-    app.MapGet("/monitor", () =>
-    {
-        return Results.Content("""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Live Monitor</title>
-            <script>
-                async function updateLogs() {
-                    const response = await fetch('/api/logs/recent');
-                    const logs = await response.text();
-                    document.getElementById('logs').textContent = logs;
-                }
-                
-                setInterval(updateLogs, 2000);
-                updateLogs();
-            </script>
-        </head>
-        <body>
-            <h1>Live Log Monitor</h1>
-            <pre id="logs" style="background: #000; color: #0f0; padding: 10px;"></pre>
-        </body>
-        </html>
-        """, "text/html");
-    });
+        return DateTime.Now.AddDays(1);
+    }
 
 
     app.Run();

@@ -19,3 +19,4 @@ node_modules/
 /.gitignore
 /src/MoneyPilot.API/Logs
 /src/MoneyPilot.API/Logs/*
+/docs/Backend_Implementation_Spec.md

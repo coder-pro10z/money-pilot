@@ -7,14 +7,17 @@ public class UnitOfWork : IUnitofWork
 
     public IExpenseRepository Expenses { get; }
     public IBudgetRepository Budgets { get; }
+    public ICategoryRepository Categories { get; }
 
     public UnitOfWork(MoneyPilotDbContext context,
                       IExpenseRepository expenseRepo,
-                      IBudgetRepository budgetRepo)
+                      IBudgetRepository budgetRepo,
+                      ICategoryRepository categoryRepo)
     {
         _context = context;
         Expenses = expenseRepo;
         Budgets = budgetRepo;
+        Categories = categoryRepo;
     }
 
     public Task<int> SaveChangesAsync() => _context.SaveChangesAsync();

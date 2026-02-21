@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MoneyPilot.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using MoneyPilot.Infrastructure.Data;
 namespace MoneyPilot.Infrastructure.Migrations
 {
     [DbContext(typeof(MoneyPilotDbContext))]
-    partial class MoneyPilotDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260221142812_InitialClean")]
+    partial class InitialClean
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

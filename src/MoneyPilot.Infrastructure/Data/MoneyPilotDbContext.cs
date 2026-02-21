@@ -44,6 +44,16 @@ namespace MoneyPilot.Infrastructure.Data
                     .HasForeignKey(b => b.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
 
+                    // Global query filters for soft delete
+                    modelBuilder.Entity<Expense>().HasQueryFilter(e => !e.IsDeleted);
+                    modelBuilder.Entity<Budget>().HasQueryFilter(b => !b.IsDeleted);
+            modelBuilder.Entity<Category>().HasQueryFilter(c => !c.IsDeleted);
+            //modelBuilder.Entity<Category>().
+            //                               .HasOne(r => r.Category) 
+            //                               .WithMany()
+            //                               .IsRequired(false);
+
+
             //Configuring RecurringTransaction relationships
             modelBuilder.Entity<RecurringTransaction>(entity => {
                 //set precision for Amount
@@ -74,9 +84,14 @@ namespace MoneyPilot.Infrastructure.Data
 
                 //configure relationship with Category
                 entity.HasOne(rt => rt.Category)
-                .WithMany(c => c.RecurringTransactions)
-                .HasForeignKey(rt => rt.CategoryId)
-                .OnDelete(DeleteBehavior.Restrict);
+      .WithMany(c => c.RecurringTransactions)
+      .HasForeignKey(rt => rt.CategoryId)
+      .IsRequired(false)  // make it optional
+      .OnDelete(DeleteBehavior.Restrict);
+
+
+                //making relationship with Category optional
+
 
                 // Optional: Add index for performance
                 entity.HasIndex(rt => new { rt.UserId, rt.NextOccurrence, rt.IsActive });
