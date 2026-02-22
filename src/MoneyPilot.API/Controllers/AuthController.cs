@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MoneyPilot.Application.DTOs;
 using MoneyPilot.Application.DTOs.Auth;
+using MoneyPilot.Application.Interfaces;
 using MoneyPilot.Domain.Entities;
+using MoneyPilot.Infrastructure.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -17,11 +19,13 @@ public class AuthController : ControllerBase
 {
     private readonly UserManager<AppUser> _userManager;
     private readonly IConfiguration _configuration;
+    private readonly ILoginTokenService _loginTokenService;
 
-    public AuthController(UserManager<AppUser> userManager, IConfiguration configuration)
+    public AuthController(UserManager<AppUser> userManager, IConfiguration configuration,ILoginTokenService loginTokenService)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _loginTokenService=loginTokenService;
     }
 
     [HttpPost("register")]
@@ -32,6 +36,9 @@ public class AuthController : ControllerBase
 
         if (!result.Succeeded)
             return BadRequest(result.Errors);
+
+        // Assign default role
+        await _userManager.AddToRoleAsync(user, "User");
 
         return Ok("User registered successfully.");
     }
@@ -47,26 +54,27 @@ public class AuthController : ControllerBase
         var jwtSettings = _configuration.GetSection("Jwt");
         var key = jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key is missing");
         var claims = new List<Claim>
-{
+{ 
     new Claim(ClaimTypes.NameIdentifier, user.Id ?? throw new ArgumentNullException(nameof(user.Id))),
     new Claim(ClaimTypes.Name, user.Email ?? throw new ArgumentNullException(nameof(user.Email)))
 };
 
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var tokenKey = Encoding.UTF8.GetBytes(key);
+        var token = await _loginTokenService.GenerateJwtTokenAsync(user);
+        //var tokenHandler = new JwtSecurityTokenHandler();
+        //var tokenKey = Encoding.UTF8.GetBytes(key);
 
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(1),
-            Issuer = jwtSettings["Issuer"],
-            Audience = jwtSettings["Audience"],
-            SigningCredentials = new SigningCredentials(
-        new SymmetricSecurityKey(tokenKey),
-        SecurityAlgorithms.HmacSha256Signature)
-        };
+        //var tokenDescriptor = new SecurityTokenDescriptor
+        //{
+        //    Subject = new ClaimsIdentity(claims),
+        //    Expires = DateTime.UtcNow.AddHours(1),
+        //    Issuer = jwtSettings["Issuer"],
+        //    Audience = jwtSettings["Audience"],
+        //    SigningCredentials = new SigningCredentials(
+        //new SymmetricSecurityKey(tokenKey),
+        //SecurityAlgorithms.HmacSha256Signature)
+        //};
 
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return Ok(new { token = tokenHandler.WriteToken(token) });
+        //var token = tokenHandler.CreateToken(tokenDescriptor);
+        return Ok(new { token });
     }
 }

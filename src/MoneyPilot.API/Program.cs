@@ -88,6 +88,9 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
     // Add this with your other service registrations
 builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionService>();
+  
+  builder.Services.AddScoped<ILoginTokenService, LoginTokenService>();
+
 
     // Registering Recurring Transaction Background Service
     builder.Services.Configure<RecurringTransactionConfig>(
@@ -143,7 +146,7 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     //test token helper 
     builder.Services.AddScoped<TestTokenHelper>();
 
-    builder.Services.AddScoped<AutoLoginTokenService>();
+    builder.Services.AddScoped<LoginTokenService>();
 
     //
     // ====================== SWAGGER-OLD ======================
