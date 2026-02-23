@@ -10,6 +10,7 @@ namespace MoneyPilot.Application.Interfaces
     {
         IExpenseRepository Expenses { get; }
         IBudgetRepository Budgets { get; }
+        ICategoryRepository Categories { get; }
         Task<int> SaveChangesAsync(); // wraps DbContext.SaveChangesAsync()
     }
 }

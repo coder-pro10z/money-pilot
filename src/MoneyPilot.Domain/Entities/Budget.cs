@@ -12,4 +12,5 @@ public class Budget
 
     public decimal MonthlyLimit { get; set; }
     public DateTime Month { get; set; }
+    public bool IsDeleted { get; set; }
 }

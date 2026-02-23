@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using MoneyPilot.Application.Interfaces;
 using MoneyPilot.Domain.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,13 +9,13 @@ using System.Text;
 
 namespace MoneyPilot.Infrastructure.Services
 {
-    public class AutoLoginTokenService
+    public class LoginTokenService : ILoginTokenService
     {
         private readonly IConfiguration _configuration;
         private readonly UserManager<AppUser> _userManager;
         private readonly TestUserService _testUserService;
 
-        public AutoLoginTokenService(
+        public LoginTokenService(
             IConfiguration configuration,
             UserManager<AppUser> userManager,
             TestUserService testUserService)
@@ -41,7 +42,7 @@ namespace MoneyPilot.Infrastructure.Services
             return token;
         }
 
-        private async Task<string> GenerateJwtTokenAsync(AppUser user)
+        public async Task<string> GenerateJwtTokenAsync(AppUser user)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]));

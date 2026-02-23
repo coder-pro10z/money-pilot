@@ -25,23 +25,33 @@ public class ExpenseController : ControllerBase
 
     // GET api/expense
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 20,
+        [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null, [FromQuery] int? categoryId = null)
     {
-        //Logging the action
         var userId = GetUserId();
-        _logger.LogInformation("User {userId} requested all the Expenses, Time:{time}. Request from {RemoteIpAddress} ",
-                                userId,DateTime.Now,HttpContext.Connection.RemoteIpAddress);
-        try
+        _logger.LogInformation("User {userId} requested Expenses page {page} size {pageSize}", userId, page, pageSize);
+
+        var expenses = (await _expenseService.GetAllAsync(userId)).AsQueryable();
+
+        if (startDate.HasValue)
+            expenses = expenses.Where(e => e.Date >= startDate.Value);
+        if (endDate.HasValue)
+            expenses = expenses.Where(e => e.Date <= endDate.Value);
+        if (categoryId.HasValue)
+            expenses = expenses.Where(e => e.CategoryId == categoryId.Value);
+
+        var total = expenses.Count();
+        var items = expenses.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+        var paged = new MoneyPilot.Application.Common.PagedResponse<ExpenseResponseDto>
         {
-        var expenses = await _expenseService.GetAllAsync(userId);
-            _logger.LogDebug("User {userId} has {count} Expenses.",userId,expenses.Count());
-            return Ok(expenses);
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while User {userId} was retrieving Expenses at {time}.", userId, DateTime.Now);
-            return BadRequest();
-        }
+            Items = items,
+            TotalCount = total,
+            Page = page,
+            PageSize = pageSize
+        };
+
+        return Ok(MoneyPilot.Application.Common.ApiResponse<MoneyPilot.Application.Common.PagedResponse<ExpenseResponseDto>>.SuccessResponse(paged));
     }
 
     // GET api/expense/5
