@@ -19,3 +19,4 @@ node_modules/
 /docs/Backend_Implementation_Spec.md
 /docs/Frontend_Implementation_Spec.md
 /backend/src/MoneyPilot.API/Logs/*
+frontend(old)/*
