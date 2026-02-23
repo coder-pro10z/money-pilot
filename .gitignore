@@ -15,9 +15,7 @@ node_modules/
 *.log
 *.tmp
 .env
-/src/MoneyPilot.API/Logs/moneypilot_api_log20260203.txt
 /.gitignore
-/src/MoneyPilot.API/Logs
-/src/MoneyPilot.API/Logs/*
 /docs/Backend_Implementation_Spec.md
 /docs/Frontend_Implementation_Spec.md
+/backend/src/MoneyPilot.API/Logs/*
