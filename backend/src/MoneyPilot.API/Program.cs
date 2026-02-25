@@ -187,6 +187,19 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     });
     });
 
+    //========================CORS========================
+
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAngular",
+            policy =>
+            {
+                policy.WithOrigins("http://localhost:4200")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+    });
     //
     // ====================== APP ======================
     //
@@ -210,7 +223,9 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
     //using custom security headers middleware from MoneyPilot.SecurityHeaders.Extensions
     app.UseMoneyPilotSecurityHeaders();
-    
+
+    app.UseCors("AllowAngular");
+
     // ⚠️ ORDER MATTERS
     app.UseAuthentication();
     app.UseAuthorization();
