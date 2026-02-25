@@ -1,4 +1,4 @@
-# Frontend Implementation — Step-by-step (SDLC)
+# Frontend Implementation - Step-by-step (SDLC)
 
 This document describes a complete engineer-friendly cycle for building the Angular frontend for a backend API (MoneyPilot). It follows Software Development Life Cycle (SDLC) phases and includes concrete commands, checks, and a quick verification workflow for taking data from a service to the UI.
 
@@ -240,3 +240,20 @@ This Steps.md is intended to be a practical, runnable checklist for an engineer 
   - Add unit and e2e tests for critical flows (auth, expenses CRUD).
 
 Notes: this checkpoint has been staged and committed in the repo to capture the current frontend scaffold and documentation progress.
+
+
+---
+
+## 16. Production Architecture Alignment
+
+Before deployment ensure:
+
+- API base URL updated in Angular production build
+- HTTPS certificate trusted locally
+- CORS configured for production domain
+- Environment-specific `appsettings` used
+
+Example:
+
+```bash
+dotnet run --launch-profile https
