@@ -1,0 +1,6 @@
+<section>
+  <h2>Expenses</h2>
+  <ul>
+    <li *ngFor="let e of items">{{ e.description || (e.amount) }}</li>
+  </ul>
+</section>

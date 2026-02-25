@@ -1,0 +1,6 @@
+<section>
+  <h2>Budgets</h2>
+  <ul>
+    <li *ngFor="let b of items">{{ b.name }} — {{ b.limit | currency }}</li>
+  </ul>
+</section>
