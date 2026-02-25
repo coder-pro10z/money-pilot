@@ -1,5 +1,7 @@
 ﻿using HealthChecks.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -15,13 +17,13 @@ using MoneyPilot.Domain.Enums;
 using MoneyPilot.Infrastructure.Data;
 using MoneyPilot.Infrastructure.Repositories;
 using MoneyPilot.Infrastructure.Services;
+using MoneyPilot.SecurityHeaders.Extensions;
 using Serilog;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using static System.Net.Mime.MediaTypeNames;
-using MoneyPilot.SecurityHeaders.Extensions;
 //using MoneyPilot.Application.Configs;
 
 // At the VERY TOP of Program.cs
@@ -206,6 +208,8 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
 
     var app = builder.Build();
+
+ 
 
     //
     // ====================== MIDDLEWARE ======================
@@ -728,6 +732,24 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         return DateTime.Now.AddDays(1);
     }
 
+    //==================================================================
+    // Log active URLs
+    // Add this after app.Build() but before app.Run()
+
+    app.Lifetime.ApplicationStarted.Register(() =>
+    {
+        var logger = app.Services.GetRequiredService<ILogger<Program>>();
+        var server = app.Services.GetRequiredService<IServer>();
+        var addresses = server.Features.Get<IServerAddressesFeature>()?.Addresses;
+
+        if (addresses != null)
+        {
+            foreach (var address in addresses)
+            {
+                logger.LogInformation("🚀 MoneyPilot API running on: {Address}", address);
+            }
+        }
+    });
 
     app.Run();
 }
