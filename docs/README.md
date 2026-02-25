@@ -207,6 +207,55 @@ ng serve
 * PWA support for offline access
 * Multi-tenant organization support
 
+
+---
+
+## 13. Current Backend Capabilities (As Implemented)
+
+### 🔐 Authentication
+
+- JWT-based authentication (HS256)
+- Role-based access control (`User`, `Admin`)
+- Protected endpoints using `[Authorize]`
+- Development test user seeding
+- Token expiration configured via `appsettings.json`
+
+### 💳 Finance Modules (Implemented)
+
+- Categories (Full CRUD)
+- Expenses (Full CRUD)
+- Budgets (Full CRUD)
+- Recurring Transactions (CRUD + Background processing)
+- Dashboard Summary endpoint
+
+---
+
+## 14. Security Architecture
+
+- JWT Bearer Authentication
+- ASP.NET Identity password hashing
+- Configured CORS policy for Angular development server
+- HTTPS redirection enabled
+- Security headers configured:
+  - Content-Security-Policy
+  - X-Frame-Options
+  - X-Content-Type-Options
+  - Strict-Transport-Security
+
+---
+
+## 15. API Response Pattern
+
+All API responses follow a consistent wrapper:
+
+```json
+{
+  "success": true,
+  "message": "Optional message",
+  "data": {}
+}
+```
+
 ### 🤝 Contribution Guidelines
 
 * Fork + PRs welcome

@@ -288,3 +288,118 @@ dotnet ef database update -p MoneyPilot.Infrastructure -s MoneyPilot.API
 Let me know once you’ve added the `DbContext` — I’ll walk you through the next branch: `feature/repository-uow`.
 -------------------------------------------------------------------------
 
+## **Frontend Implementation (Angular)**
+
+This project uses a separate frontend application. The guidance below describes creating an Angular frontend that talks to the existing .NET API. Follow these steps to scaffold, configure, implement, and run the frontend.
+
+1. **Create the Angular app scaffold**
+
+    - From the repo root create a `frontend/` folder and scaffold with Angular CLI (recommended):
+
+    ```bash
+    cd money-pilot
+    npx @angular/cli@latest new frontend --routing --style=scss --strict
+    ```
+
+    - If you prefer, create the directory and manually add package.json later; Angular CLI is recommended for a predictable structure.
+
+2. **Configure a proxy to the backend**
+
+    - To avoid CORS during local development, add `proxy.conf.json` in `frontend/`:
+
+    ```json
+    {
+      "/api": {
+         "target": "http://localhost:5000",
+         "secure": false,
+         "changeOrigin": true,
+         "logLevel": "debug"
+      }
+    }
+    ```
+
+    - Update `package.json` `start` script to use the proxy (Angular CLI):
+
+    ```json
+    "start": "ng serve --proxy-config proxy.conf.json"
+    ```
+
+3. **Environment config**
+
+    - Add `src/environments/environment.ts` / `environment.prod.ts` values with the base API path (e.g., `/api`).
+
+4. **Core services and API integration**
+
+    - Create an `ApiModule` or `core` services folder.
+    - Implement an `AuthService` to handle login, logout and JWT storage (localStorage). Use `HttpClient` to POST credentials to `/api/auth/login`.
+    - Implement `BudgetService`, `ExpenseService`, `CategoryService`, `RecurringService`, and `DashboardService` mapping to the API endpoints under `/api/*`.
+
+5. **Routing and pages**
+
+    - Add routes for: `login`, `register` (if available), `dashboard`, `budgets`, `expenses`, `categories`, `recurring`.
+    - Protect routes with an `AuthGuard` that checks JWT presence / validity.
+
+6. **UI components**
+
+    - Implement reusable components: `Header`, `Nav`, `Footer`, `ExpenseList`, `ExpenseForm`, `BudgetList`, `BudgetForm`, `CategoryList`, `CategoryForm`.
+    - Keep components small and focused. Prefer Reactive Forms for forms and validations.
+
+7. **Authentication flow**
+
+    - `AuthService.login()` should store the JWT and optionally decode claims for display (username/email).
+    - Add `Authorization: Bearer <token>` header via an `HttpInterceptor` for all outgoing requests to the API.
+
+8. **State & caching**
+
+    - For small projects, local RxJS + services is sufficient. If app grows, add NgRx (store/effects) for complex state.
+
+9. **Styling and layout**
+
+    - Use a modern UI library (optional): Angular Material, Tailwind, or Bootstrap.
+    - Create a global layout wrapper with a responsive navbar and a content area.
+
+10. **Testing & linting**
+
+    - Run unit tests with `ng test`. Add E2E tests later with Cypress or Protractor.
+    - Add `lint` script with `ng lint` and integrate formatting (Prettier) and Husky commits if desired.
+
+11. **Build and run**
+
+    - Local development (uses proxy):
+
+    ```bash
+    cd frontend
+    npm install
+    npm start
+    ```
+
+    - Production build:
+
+    ```bash
+    npm run build -- --prod
+    ```
+
+    - The compiled static site can be served by the .NET API (static file middleware) or deployed separately to a static host.
+
+12. **Integrate with API hosting (optional)**
+
+    - To serve the frontend from the API, build and copy `frontend/dist/*` into `MoneyPilot.API/wwwroot` and enable static files in `Program.cs`.
+
+13. **Security**
+
+    - Never store sensitive secrets in the client.
+    - Use HTTPS in production. Keep token lifetime and refresh strategy consistent with backend.
+
+14. **Checklist to complete**
+
+    - [ ] Scaffold Angular app in `frontend/` using Angular CLI
+    - [ ] Add `proxy.conf.json` and update `package.json` scripts
+    - [ ] Create `AuthService`, `HttpInterceptor`, and `AuthGuard`
+    - [ ] Implement pages and components: login, dashboard, expenses, budgets, categories, recurring
+    - [ ] Add environment files and runtime configuration
+    - [ ] Test locally and connect to backend
+
+---
+
+If you want, I can scaffold the minimal files (README, proxy config, package.json with start script) in `frontend/` now and append concrete implementation examples for `AuthService`, interceptor, and a sample component.
+
