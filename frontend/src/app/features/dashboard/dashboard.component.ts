@@ -1,17 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import { DashboardService } from '../../core/services/dashboard.service';
-import { CommonModule } from '@angular/common';
+import { DashboardSummary } from '../../core/models/dashboard.model';
 
+/**
+ * DashboardComponent
+ *
+ * Container component.
+ * Fetches dashboard data and passes it to child components.
+ */
 @Component({
-  standalone: true,
   selector: 'app-dashboard',
-  imports: [CommonModule],
-  templateUrl: './dashboard.component.html'
+  template: `
+    <div *ngIf="loading">Loading...</div>
+
+    <ng-container *ngIf="!loading && data">
+      <app-summary-cards [summary]="data"></app-summary-cards>
+      <app-charts [summary]="data"></app-charts>
+    </ng-container>
+  `
 })
 export class DashboardComponent implements OnInit {
-  data: any;
-  constructor(private svc: DashboardService) {}
+
+  data!: DashboardSummary;
+  loading = true;
+
+  constructor(private dashboardService: DashboardService) {}
+
   ngOnInit(): void {
-    this.svc.summary().subscribe((d) => (this.data = d));
+    this.dashboardService.getSummary().subscribe({
+      next: (res) => {
+        this.data = res;
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
   }
 }
