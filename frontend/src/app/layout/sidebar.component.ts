@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
  */
 @Component({
   selector: 'app-sidebar',
+    standalone: true,
   template: `
     <div class="sidebar">
       <h2>MoneyPilot</h2>

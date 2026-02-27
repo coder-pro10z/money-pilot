@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-
+import { RouterOutlet } from '@angular/router';
+import { SidebarComponent } from './sidebar.component';
+import { NavbarComponent } from './navbar.component';
 /**
  * LayoutComponent
  *
@@ -8,6 +10,12 @@ import { Component } from '@angular/core';
  */
 @Component({
   selector: 'app-layout',
+   standalone: true,
+  imports: [
+    RouterOutlet,
+    SidebarComponent,
+    NavbarComponent
+  ],
   template: `
     <div class="layout">
       <app-sidebar></app-sidebar>
@@ -16,7 +24,7 @@ import { Component } from '@angular/core';
         <app-navbar></app-navbar>
 
         <div class="content">
-          <router-outlet/>
+        <router-outlet/>
         </div>
       </div>
     </div>

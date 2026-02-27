@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
  */
 @Component({
   selector: 'app-navbar',
+    standalone: true,
   template: `
     <div class="navbar">
       <span>Welcome</span>
