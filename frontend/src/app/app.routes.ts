@@ -42,8 +42,26 @@ export const routes: Routes = [
           import('./features/expenses/expense-form.component')
             .then(m => m.ExpenseFormComponent)
       },
-
+//Budget routes
       {
+        path: 'budget',
+        loadComponent: () =>
+          import('./features/budgets/budgets.component')
+            .then(m => m.BudgetsComponent)
+      },
+      // {
+      //   path: 'budget/create',
+      //   loadComponent: () =>
+      //     import('./features/budgets/budget-form.component')
+      //       .then(m => m.BudgetFormComponent)
+      // },
+      // {
+      //   path: 'budget/edit/:id',
+      //   loadComponent: () =>
+      //     import('./features/budgets/budget-form.component')
+      //       .then(m => m.BudgetFormComponent)
+      // },
+    {
         path: 'recurring',
         loadComponent: () =>
           import('./features/recurring/recurring.component')

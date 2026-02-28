@@ -27,17 +27,17 @@ namespace MoneyPilot.Tests.Controller
             var mockBudgetService = new Mock<IBudgetService>();
             //setup mock methods if needed
             //using .setup() method of Moq
-            mockBudgetService.Setup(s => s.GetAllAsync("test-user"))
-                .ReturnsAsync(new List<BudgetResponseDto>
-                { new BudgetResponseDto
-                    {
-                        Id = 1,
-                        MonthlyLimit = 500,
-                        Month = new DateTime(2024, 6, 1),
-                        CategoryId = 1,
-                        //CategoryName = "Groceries"
-                    }
-                });
+            //mockBudgetService.Setup(s => s.GetAllAsync("test-user"))
+            //    .ReturnsAsync(new List<BudgetResponseDto>
+            //    { new BudgetResponseDto
+            //        {
+            //            Id = 1,
+            //            MonthlyLimit = 500,
+            //            Month = new DateTime(2024, 6, 1),
+            //            CategoryId = 1,
+            //            //CategoryName = "Groceries"
+            //        }
+            //    });
 
             //Controller instantiation         
             var controller = new BudgetController(mockBudgetService.Object);
