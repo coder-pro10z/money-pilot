@@ -44,57 +44,48 @@ namespace MoneyPilot.Infrastructure.Data
                     .HasForeignKey(b => b.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                    // Global query filters for soft delete
-                    modelBuilder.Entity<Expense>().HasQueryFilter(e => !e.IsDeleted);
-                    modelBuilder.Entity<Budget>().HasQueryFilter(b => !b.IsDeleted);
-            modelBuilder.Entity<Category>().HasQueryFilter(c => !c.IsDeleted);
-            //modelBuilder.Entity<Category>().
-            //                               .HasOne(r => r.Category) 
-            //                               .WithMany()
-            //                               .IsRequired(false);
+                // Global query filters for soft delete
+                modelBuilder.Entity<Expense>().HasQueryFilter(e => !e.IsDeleted);
+                modelBuilder.Entity<Budget>().HasQueryFilter(b => !b.IsDeleted);
+                modelBuilder.Entity<Category>().HasQueryFilter(c => !c.IsDeleted);
 
 
-            //Configuring RecurringTransaction relationships
-            modelBuilder.Entity<RecurringTransaction>(entity => {
-                //set precision for Amount
-                entity.Property(rt => rt.Amount)
-                .HasPrecision(18, 2);
+                    //Configuring RecurringTransaction relationships
+                modelBuilder.Entity<RecurringTransaction>(entity => {
+                    //set precision for Amount
+                    entity.Property(rt => rt.Amount)
+                    .HasPrecision(18, 2);
 
-
-                // Store enum as string in database (keeps DB readable)
-                //entity.Property(rt => rt.RecurrenceType)
-                //    .HasConversion<string>()
-                //    .HasMaxLength(20);
                 // Store enum as string in database
-                entity.Property(rt => rt.RecurrenceType)
-                    .HasConversion<string>()
-                    .HasMaxLength(20);
+                    entity.Property(rt => rt.RecurrenceType)
+                        .HasConversion<string>()
+                        .HasMaxLength(20);
 
 
-                // Store DayOfWeek as string
-                entity.Property(rt => rt.DayOfWeek)
-                    .HasConversion<string?>()
-                    .HasMaxLength(15);
+                    // Store DayOfWeek as string
+                    entity.Property(rt => rt.DayOfWeek)
+                        .HasConversion<string?>()
+                        .HasMaxLength(15);
 
-                //configure relationship with AppUser
-                entity.HasOne(rt => rt.User)
-                .WithMany(u => u.RecurringTransactions)
-                .HasForeignKey(rt => rt.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                    //configure relationship with AppUser
+                    entity.HasOne(rt => rt.User)
+                        .WithMany(u => u.RecurringTransactions)
+                        .HasForeignKey(rt => rt.UserId)
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                //configure relationship with Category
-                entity.HasOne(rt => rt.Category)
-      .WithMany(c => c.RecurringTransactions)
-      .HasForeignKey(rt => rt.CategoryId)
-      .IsRequired(false)  // make it optional
-      .OnDelete(DeleteBehavior.Restrict);
-
-
-                //making relationship with Category optional
+                    //configure relationship with Category
+                    entity.HasOne(rt => rt.Category)
+                        .WithMany(c => c.RecurringTransactions)
+                        .HasForeignKey(rt => rt.CategoryId)
+                        .IsRequired(false)  // make it optional
+                        .OnDelete(DeleteBehavior.Restrict);
 
 
-                // Optional: Add index for performance
-                entity.HasIndex(rt => new { rt.UserId, rt.NextOccurrence, rt.IsActive });
+                    //making relationship with Category optional
+
+
+                    // Optional: Add index for performance
+                    entity.HasIndex(rt => new { rt.UserId, rt.NextOccurrence, rt.IsActive });
             });  
 
 
