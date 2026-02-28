@@ -24,11 +24,23 @@ export const routes: Routes = [
             .then(m => m.DashboardModule)
       },
 
-      {
-        path: 'expenses',
+        {
+        path: 'expense',
         loadComponent: () =>
           import('./features/expenses/expenses.component')
             .then(m => m.ExpensesComponent)
+      },
+      {
+        path: 'expense/create',
+        loadComponent: () =>
+          import('./features/expenses/expense-form.component')
+            .then(m => m.ExpenseFormComponent)
+      },
+      {
+        path: 'expense/edit/:id',
+        loadComponent: () =>
+          import('./features/expenses/expense-form.component')
+            .then(m => m.ExpenseFormComponent)
       },
 
       {

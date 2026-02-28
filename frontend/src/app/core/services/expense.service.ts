@@ -1,28 +1,36 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
-@Injectable({ providedIn: 'root' })
+import { Injectable } from '@angular/core';
+import { ApiService } from './api.service';
+import { Expense } from '../models/expense.model';
+import { PagedResponse } from '../models/paged-response.model';
+import { ApiResponse } from '../models/api-response.model';
+
+@Injectable({
+  providedIn: 'root'
+})
 export class ExpenseService {
-  private http = inject(HttpClient);
 
-  list(params?: any): Observable<any> {
-    return this.http.get(`${environment.apiBase}/expenses`, { params });
+  constructor(private api: ApiService) {}
+
+  getAll() {
+    // return
+  //  this.api.get<Expense[]>('expense');
+    return  this.api.get<PagedResponse<Expense>>('expense');
+
   }
 
-  get(id: string | number): Observable<any> {
-    return this.http.get(`${environment.apiBase}/expenses/${id}`);
+  getById(id: number) {
+    return this.api.get<Expense>(`expense/${id}`);
   }
 
-  create(payload: any): Observable<any> {
-    return this.http.post(`${environment.apiBase}/expenses`, payload);
+  create(model: Expense) {
+    return this.api.post<Expense>('expense', model);
   }
 
-  update(id: string | number, payload: any): Observable<any> {
-    return this.http.put(`${environment.apiBase}/expenses/${id}`, payload);
+  update(id: number, model: Expense) {
+    return this.api.put<Expense>(`expense/${id}`, model);
   }
 
-  delete(id: string | number): Observable<any> {
-    return this.http.delete(`${environment.apiBase}/expenses/${id}`);
+  delete(id: number) {
+    return this.api.delete<void>(`expense/${id}`);
   }
 }

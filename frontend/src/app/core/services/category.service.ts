@@ -2,11 +2,24 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ApiService } from './api.service';
+import { Category } from '../models/category.model';
 
 @Injectable({ providedIn: 'root' })
+
 export class CategoryService {
+
   private http = inject(HttpClient);
 
+    constructor(private api: ApiService) {}
+
+
+      /**
+   * Get all categories
+   */
+  getAll(){
+    return this.api.get<Category[]>('categories');
+  }
   list(params?: any): Observable<any> {
     return this.http.get(`${environment.apiBase}/categories`, { params });
   }
