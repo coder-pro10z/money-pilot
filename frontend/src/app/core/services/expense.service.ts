@@ -19,6 +19,7 @@ export class ExpenseService {
   }
 
   getById(id: number) {
+    
     return this.api.get<Expense>(`expense/${id}`);
   }
 

@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MoneyPilot.Application.DTOs;
 using System.Security.Claims;
 using Microsoft.Extensions.Logging; // ADD THIS
-
+using MoneyPilot.Application.Common;
+using MoneyPilot.Domain.Entities;
 
 [Authorize]
 [ApiController]
@@ -43,7 +44,7 @@ public class ExpenseController : ControllerBase
         var total = expenses.Count();
         var items = expenses.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-        var paged = new MoneyPilot.Application.Common.PagedResponse<ExpenseResponseDto>
+        var paged = new PagedResponse<ExpenseResponseDto>
         {
             Items = items,
             TotalCount = total,
@@ -51,7 +52,7 @@ public class ExpenseController : ControllerBase
             PageSize = pageSize
         };
 
-        return Ok(MoneyPilot.Application.Common.ApiResponse<MoneyPilot.Application.Common.PagedResponse<ExpenseResponseDto>>.SuccessResponse(paged));
+        return Ok(ApiResponse<PagedResponse<ExpenseResponseDto>>.SuccessResponse(paged));
     }
 
     // GET api/expense/5
@@ -59,7 +60,8 @@ public class ExpenseController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var expense = await _expenseService.GetByIdAsync(id, GetUserId());
-        return expense == null ? NotFound() : Ok(expense);
+        return expense == null ? NotFound(ApiResponse<string>.FailureResponse("Expense not found")) 
+                               : Ok(ApiResponse<ExpenseResponseDto>.SuccessResponse(expense));
     }
 
     // POST api/expense

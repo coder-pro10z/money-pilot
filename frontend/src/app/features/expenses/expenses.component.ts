@@ -94,8 +94,8 @@ loadExpenses() {
     this.expenses = response.items;
     //clear loading state
     this.isLoading = false;
-    console.log(response);
-    console.log(response.items);
+    // console.log(response);
+    // console.log(response.items);
   });
 }
   goToCreate() {
