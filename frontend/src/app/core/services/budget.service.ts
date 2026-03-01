@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { ApiService } from "./api.service";
 import { Budget } from "../models/budget.model";
 import { PagedResponse } from "../models/paged-response.model";
+import { CreateBudgetDto } from "../models/budget-create.model";
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +19,11 @@ export class BudgetService {
     return this.api.get<Budget>(`budget/${id}`);
   }
 
-  create(model: Budget) {
+  create(model: CreateBudgetDto   ) {
     return this.api.post<Budget>('budget', model);
   }
 
-  update(id: number, model: Budget) {
+  update(id: number, model: CreateBudgetDto) {
     return this.api.put<Budget>(`budget/${id}`, model);
   }
 

@@ -20,7 +20,7 @@ import { DashboardSummary } from '../../../core/models/dashboard.model';
 
       <div class="card">
         <h3>Remaining Budget</h3>
-        <p>{{ summary.remainingBudget | currency }}</p>
+        <p>{{ summary.remainingBalance | currency }}</p>
       </div>
     </div>
   `,

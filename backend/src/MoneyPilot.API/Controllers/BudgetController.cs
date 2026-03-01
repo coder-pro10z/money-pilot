@@ -67,6 +67,6 @@ public class BudgetController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var success = await _budgetService.DeleteAsync(id, GetUserId());
-        return success ? NoContent() : NotFound();
+        return success ? Ok(ApiResponse<string>.SuccessResponse("Deleted successfully")) : NotFound();
     }
 }
