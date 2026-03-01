@@ -5,7 +5,7 @@
 export interface DashboardSummary {
   totalExpenses: number;
   totalBudget: number;
-  remainingBudget: number;
+  remainingBalance: number;
   monthlyTrend: MonthlyTrend[];
   categoryBreakdown: CategoryBreakdown[];
 }

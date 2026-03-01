@@ -1,4 +1,5 @@
-﻿using MoneyPilot.Application.DTOs;
+﻿using MoneyPilot.Application.Common;
+using MoneyPilot.Application.DTOs;
 using MoneyPilot.Application.Interfaces;
 using MoneyPilot.Domain.Entities;
 
@@ -12,20 +13,27 @@ namespace MoneyPilot.Infrastructure.Services
         {
             _unitOfWork = unitOfWork;
         }
-
-        public async Task<IEnumerable<BudgetResponseDto>> GetAllAsync(string userId)
+        public async Task<PagedResponse<BudgetResponseDto>> GetAllAsync(string userId)
         {
-            var budgets=  await _unitOfWork.Budgets.GetBudgetsByUserIdAsync(userId);
-            return budgets.Select(s=> new BudgetResponseDto
-            {
-             Id = s.Id,
-             MonthlyLimit =s.MonthlyLimit,  
-             Month  = s.Month,
-             CategoryId  = s.CategoryId,
-             //CategoryName  = s.Category?.Name ?? "Unknown"
-    });
-        }
+            var budgets = await _unitOfWork.Budgets.GetBudgetsByUserIdAsync(userId);
 
+            var mapped = budgets.Select(s => new BudgetResponseDto
+            {
+                Id = s.Id,
+                MonthlyLimit = s.MonthlyLimit,
+                Month = s.Month,
+                CategoryId = s.CategoryId,
+                CategoryName = s.Category?.Name ?? "Unknown"
+            }).ToList();
+
+            return new PagedResponse<BudgetResponseDto>
+            {
+                Items = mapped,
+                TotalCount = mapped.Count,
+                Page = 1,
+                PageSize = mapped.Count
+            };
+        }
         public async Task<BudgetResponseDto?> GetByIdAsync(int id ,string userId)
         {
             var budget =  await _unitOfWork.Budgets.GetByIdAsync(id);

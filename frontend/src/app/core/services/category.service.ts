@@ -24,7 +24,7 @@ export class CategoryService {
     return this.http.get(`${environment.apiBase}/categories`, { params });
   }
 
-  get(id: string | number): Observable<any> {
+  getById(id: string | number): Observable<any> {
     return this.http.get(`${environment.apiBase}/categories/${id}`);
   }
 

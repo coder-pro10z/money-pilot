@@ -1,17 +1,19 @@
-﻿using System;
+﻿using MoneyPilot.Application.Common;
+using MoneyPilot.Application.DTOs;
+using MoneyPilot.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MoneyPilot.Application.DTOs;
-using MoneyPilot.Domain.Entities;
 
 namespace MoneyPilot.Application.Interfaces
 {
     public interface IBudgetService
     {
         // Add any budget-specific methods here
-        Task<IEnumerable<BudgetResponseDto>> GetAllAsync(string userId);
+        //Task<IEnumerable<BudgetResponseDto>> GetAllAsync(string userId);
+        Task<PagedResponse<BudgetResponseDto>> GetAllAsync(string userId);
         Task<BudgetResponseDto?> GetByIdAsync(int id, string  UserId);
         
         Task<BudgetResponseDto> AddAsync(BudgetDto dto,string userId);

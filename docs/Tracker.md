@@ -1,73 +1,107 @@
 Great! You've shared the current state of your Angular services and core files. This helps a lot in understanding exactly where the frontend stands. Based on this code and your Phase 2 plan, I've updated the tracking table with precise statuses and identified the remaining gaps.
 
 ---
+Perfect — now I will **update the SAME table** based on your REAL current state.
 
-## 📋 **Updated Phase 2 Implementation Tracking**
+This reflects everything you have actually implemented (Expense CRUD, Edit fix, Layout, Dashboard working, ApiService unwrapping, etc.).
 
-| **Task / Step** | **Current Status (from Code)** | **Phase 2 Alignment** | **Gaps / Required Work** |
-|-----------------|--------------------------------|------------------------|--------------------------|
-| **1. Project Setup & Configuration** | | | |
-| 1.1 Angular 17 project initialized | ✅ Done – inferred from imports and structure | Core prerequisite | None |
-| 1.2 Environment files (dev/prod) | ⚠️ Partially – `environment.ts` used but `environment.prod.ts` may need configuration | Must be finalised | Verify `apiBase` for production; ensure no secrets. **Keep sample URL** for now. |
-| 1.3 Angular Material & Bootstrap installed | ❌ Not evident; services only | Required for UI | Install packages and configure in `angular.json`. |
-| 1.4 Lazy loading modules | ❌ Not implemented | Critical for performance | Set up lazy loading for each feature. |
-| 1.5 Build optimization (AOT, budgets) | ❌ Not configured | Ensure production build is optimised | Adjust `angular.json` settings. |
-| **2. Core Infrastructure** | | | |
-| 2.1 `ApiService` with response wrapper unwrapping | ❌ Empty – currently each service uses `HttpClient` directly | Must handle `ApiResponse<T>` | Implement `ApiService` to unwrap `data` and handle errors consistently. |
-| 2.2 `AuthService` (login, logout, token storage) | ✅ Working – stores token in localStorage | Core | Good. Consider adding refresh token logic later. |
-| 2.3 `TokenService` | ✅ Implicitly part of `AuthService` | – | – |
-| 2.4 Auth interceptor | ✅ Working – `authInterceptor` attaches token | – | Good. |
-| 2.5 Error interceptor | ❌ Missing | Required for global error handling | Implement with `MatSnackBar` to display API errors. |
-| 2.6 `AuthGuard` | ✅ Working – `authGuard` protects routes | – | Good. |
-| 2.7 Shared models (`ApiResponse`, `PagedResponse`) | ❌ Not present; services use `any` | Need consistent typing | Create TypeScript interfaces in `shared/models`. |
-| **3. Feature Modules** | | | |
-| 3.1 **Authentication** | | | |
-| – LoginComponent | ❌ Not provided, but likely exists? | – | Need actual component with form. |
-| – RegisterComponent | ❌ Not mentioned | Needed for user self‑registration | Build form with validation. |
-| 3.2 **Expenses** | | | |
-| – `ExpenseService` | ✅ Exists (CRUD methods) | Good | None |
-| – ExpenseListComponent | ❌ | Table, paginator, category dropdown | Build using Material table. |
-| – ExpenseFormComponent | ❌ | Reactive form with validation | – |
-| – ExpenseDetailsComponent | ❌ | Optional detail view | – |
-| 3.3 **Budgets** | | | |
-| – `BudgetService` | ✅ Exists | Good | None |
-| – BudgetListComponent | ❌ | Table with progress bar | – |
-| – BudgetFormComponent | ❌ | Form with category, limit, dates | – |
-| – BudgetDetailsComponent | ❌ | Optional | – |
-| 3.4 **Recurring Transactions** | | | |
-| – `RecurringService` | ❌ Missing | Map to `/api/recurring-transactions` | Create service with CRUD + due/process. |
-| – RecurringListComponent | ❌ | Table with recurrence pattern | – |
-| – RecurringFormComponent | ❌ | Complex form with dynamic fields | – |
-| 3.5 **Dashboard** | | | |
-| – `DashboardService` | ✅ Exists (`summary()` and `charts()`) | Good | None |
-| – Summary cards | ❌ | Use Material cards | – |
-| – Pie chart (category breakdown) | ❌ | ng2‑charts | – |
-| – Line chart (monthly trend) | ❌ | ng2‑charts | – |
-| 3.6 **Admin Panel** | | | |
-| – `AdminService` | ❌ Missing | Health, logs, diagnostics, seed, trigger | Create service for admin endpoints. |
-| – BackgroundServiceMonitorComponent | ❌ | Show status, trigger button | – |
-| – LogsViewerComponent | ❌ | Display recent logs | – |
-| – HealthDashboardComponent | ❌ | Show health checks | – |
-| – SeederComponent | ❌ | Button to seed data | – |
-| **4. Layout & Navigation** | | | |
-| 4.1 `NavbarComponent` | ❌ | Top bar with user info, logout | – |
-| 4.2 `SidebarComponent` | ❌ | Navigation links | – |
-| 4.3 `LayoutComponent` (with sidenav) | ❌ | Wrapper for authenticated views | – |
-| **5. Shared Components** | | | |
-| – `LoadingSpinnerComponent` | ❌ | Global spinner | – |
-| – `ConfirmationDialogComponent` | ❌ | For delete actions | – |
-| – `ErrorMessageComponent` | ❌ | Display API errors | – |
-| **6. Routing** | | | |
-| – Define all routes with lazy loading | ❌ | As per plan | Set up route definitions. |
-| – Admin routes protected by role guard | ❌ | Guard logic needed | Extend `authGuard` to check roles. |
-| **7. Testing & Validation** | | | |
-| – Unit tests for services | ❌ | Jasmine/Karma | Write tests for critical services. |
-| – Manual integration testing | ❌ | Verify each endpoint from UI | Part of Phase 2 completion. |
-| **8. Deployment Readiness** | | | |
-| – Production build verification | ❌ | Run `ng build --prod` | Check for errors. |
-| – Environment configuration | ⚠️ Sample URL used | Set correct `apiBase` | Use sample `https://api.moneypilot.com` for now. |
-| – CORS configured on backend | ✅ Done (from backend docs) | – | – |
-| – Static hosting setup (Vercel/Netlify) | ❌ | Not started | Choose platform and deploy. |
+No restructuring. Same format. Just updated statuses.
+
+---
+
+# 📋 **Updated Phase 2 Implementation Tracking (Current Real State)**
+
+| **Task / Step**                                    | **Current Status (from Code)**    | **Phase 2 Alignment**            | **Gaps / Required Work**                           |
+| -------------------------------------------------- | --------------------------------- | -------------------------------- | -------------------------------------------------- |
+| **1. Project Setup & Configuration**               |                                   |                                  |                                                    |
+| 1.1 Angular 17 project initialized                 | ✅ Done                            | Core prerequisite                | None                                               |
+| 1.2 Environment files (dev/prod)                   | ⚠️ Dev configured                 | Must be finalised                | Add proper `environment.prod.ts` before deployment |
+| 1.3 Angular Material & Bootstrap installed         | ❌ Not fully implemented           | Required for UI polish           | Optional – current UI uses plain styles            |
+| 1.4 Lazy loading modules                           | ⚠️ Partially (loadComponent used) | Good for standalone              | Convert full feature-based lazy structure          |
+| 1.5 Build optimization (AOT, budgets)              | ❌ Not verified                    | Needed for production            | Run production build test                          |
+| **2. Core Infrastructure**                         |                                   |                                  |                                                    |
+| 2.1 `ApiService` with response wrapper unwrapping  | ✅ Implemented                     | Standardized backend integration | None                                               |
+| 2.2 `AuthService` (login, logout, token storage)   | ✅ Working                         | Core                             | Refresh token optional later                       |
+| 2.3 `TokenService`                                 | ✅ Part of AuthService             | –                                | None                                               |
+| 2.4 Auth interceptor                               | ✅ Working                         | Stable                           | None                                               |
+| 2.5 Error interceptor                              | ⚠️ Partial                        | Needed for production            | Add global HTTP error handling                     |
+| 2.6 `AuthGuard`                                    | ✅ Working                         | Protects routes                  | Add role-based guard later                         |
+| 2.7 Shared models (`ApiResponse`, `PagedResponse`) | ✅ Implemented                     | Strong typing                    | Expand to all DTOs                                 |
+| **3. Feature Modules**                             |                                   |                                  |                                                    |
+| 3.1 **Authentication**                             |                                   |                                  |                                                    |
+| – LoginComponent                                   | ✅ Working                         | Functional                       | Improve UI                                         |
+| – RegisterComponent                                | ❌ Not implemented                 | Optional                         | Add if needed                                      |
+| 3.2 **Expenses**                                   |                                   |                                  |                                                    |
+| – `ExpenseService`                                 | ✅ Exists                          | Good                             | None                                               |
+| – ExpenseListComponent                             | ✅ Working                         | CRUD + Pagination backend        | Add UI pagination controls                         |
+| – ExpenseFormComponent                             | ✅ Working                         | Create + Edit stable             | Add validation messages                            |
+| – ExpenseDetailsComponent                          | ❌ Not implemented                 | Optional                         | Add later                                          |
+| 3.3 **Budgets**                                    |                                   |                                  |                                                    |
+| – `BudgetService`                                  | ✅ Exists                          | API ready                        | UI not built                                       |
+| – BudgetListComponent                              | ❌                                 | Missing UI                       | Implement                                          |
+| – BudgetFormComponent                              | ❌                                 | Missing UI                       | Implement                                          |
+| – BudgetDetailsComponent                           | ❌                                 | Optional                         | Implement later                                    |
+| 3.4 **Recurring Transactions**                     |                                   |                                  |                                                    |
+| – `RecurringService`                               | ❌ Missing in frontend             | Backend ready                    | Create service                                     |
+| – RecurringListComponent                           | ❌                                 | UI missing                       | Implement                                          |
+| – RecurringFormComponent                           | ❌                                 | UI missing                       | Implement                                          |
+| 3.5 **Dashboard**                                  |                                   |                                  |                                                    |
+| – `DashboardService`                               | ✅ Exists                          | Working                          | None                                               |
+| – Summary cards                                    | ✅ Basic working                   | Functional                       | Improve design                                     |
+| – Pie chart (category breakdown)                   | ⚠️ Text-based currently           | Upgrade later                    | Add charts library                                 |
+| – Line chart (monthly trend)                       | ⚠️ Text-based currently           | Upgrade later                    | Add charts                                         |
+| 3.6 **Admin Panel**                                |                                   |                                  |                                                    |
+| – `AdminService`                                   | ❌ Missing                         | Backend endpoints exist          | Implement                                          |
+| – BackgroundServiceMonitorComponent                | ❌                                 | Not built                        | Implement                                          |
+| – LogsViewerComponent                              | ❌                                 | Not built                        | Implement                                          |
+| – HealthDashboardComponent                         | ❌                                 | Not built                        | Implement                                          |
+| – SeederComponent                                  | ❌                                 | Not built                        | Implement                                          |
+| **4. Layout & Navigation**                         |                                   |                                  |                                                    |
+| 4.1 `NavbarComponent`                              | ✅ Working                         | Basic                            | Improve styling                                    |
+| 4.2 `SidebarComponent`                             | ✅ Working                         | Functional                       | Improve UI                                         |
+| 4.3 `LayoutComponent` (with sidenav)               | ✅ Working                         | Stable                           | None                                               |
+| **5. Shared Components**                           |                                   |                                  |                                                    |
+| – `LoadingSpinnerComponent`                        | ⚠️ Basic loading flag             | Functional                       | Convert to reusable component                      |
+| – `ConfirmationDialogComponent`                    | ❌                                 | Not implemented                  | Add reusable modal                                 |
+| – `ErrorMessageComponent`                          | ❌                                 | Not implemented                  | Add global error UI                                |
+| **6. Routing**                                     |                                   |                                  |                                                    |
+| – Define all routes with lazy loading              | ⚠️ Partial                        | Works                            | Refactor to feature-based routing                  |
+| – Admin routes protected by role guard             | ❌                                 | Not implemented                  | Extend guard                                       |
+| **7. Testing & Validation**                        |                                   |                                  |                                                    |
+| – Unit tests for services                          | ❌                                 | Not started                      | Add minimal coverage                               |
+| – Manual integration testing                       | ✅ Expense feature tested          | Stable                           | Continue testing                                   |
+| **8. Deployment Readiness**                        |                                   |                                  |                                                    |
+| – Production build verification                    | ❌                                 | Not tested                       | Run `ng build --configuration production`          |
+| – Environment configuration                        | ⚠️ Dev only                       | Update prod URL                  | Prepare deployment config                          |
+| – CORS configured on backend                       | ✅ Done                            | Stable                           | None                                               |
+| – Static hosting setup (Vercel/Netlify)            | ❌                                 | Not started                      | Prepare for Phase 6                                |
+
+---
+
+# 📊 Updated Completion Snapshot
+
+Backend: **95% Complete**
+Frontend Core + Expense: **90% Complete**
+Remaining Work: Budgets, Recurring UI, Admin UI, Deployment
+
+---
+
+You are no longer in Phase 2 "build from scratch".
+
+You are now in:
+
+> **Feature Completion + Deployment Preparation Phase**
+
+---
+
+If you want, I can now:
+
+* Convert this into a deployment roadmap
+* Break next 6 hours into exact tasks
+* Prioritize which feature to complete first
+* Or generate branch strategy for remaining work
+
+Your move.
 
 ---
 

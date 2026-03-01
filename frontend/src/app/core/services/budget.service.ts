@@ -1,29 +1,33 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { Injectable } from "@angular/core";
+import { ApiService } from "./api.service";
+import { Budget } from "../models/budget.model";
+import { PagedResponse } from "../models/paged-response.model";
+import { CreateBudgetDto } from "../models/budget-create.model";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class BudgetService {
-  private http = inject(HttpClient);
 
-  list(params?: any): Observable<any> {
-    return this.http.get(`${environment.apiBase}/budgets`, { params });
+  constructor(private api: ApiService) {}
+
+  getAll() {
+    return this.api.get<PagedResponse<Budget>>('budget');
   }
 
-  get(id: string | number): Observable<any> {
-    return this.http.get(`${environment.apiBase}/budgets/${id}`);
+  getById(id: number) {
+    return this.api.get<Budget>(`budget/${id}`);
   }
 
-  create(payload: any): Observable<any> {
-    return this.http.post(`${environment.apiBase}/budgets`, payload);
+  create(model: CreateBudgetDto   ) {
+    return this.api.post<Budget>('budget', model);
   }
 
-  update(id: string | number, payload: any): Observable<any> {
-    return this.http.put(`${environment.apiBase}/budgets/${id}`, payload);
+  update(id: number, model: CreateBudgetDto) {
+    return this.api.put<Budget>(`budget/${id}`, model);
   }
 
-  delete(id: string | number): Observable<any> {
-    return this.http.delete(`${environment.apiBase}/budgets/${id}`);
+  delete(id: number) {
+    return this.api.delete<void>(`budget/${id}`);
   }
 }

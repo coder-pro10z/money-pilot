@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MoneyPilot.Application.Common;
 using MoneyPilot.Application.DTOs;
 using MoneyPilot.Application.Interfaces;
 using System.Security.Claims;
+using MoneyPilot.Application.Common;
 
 [Authorize]
 [ApiController]
@@ -24,14 +26,27 @@ public class BudgetController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var budgets = await _budgetService.GetAllAsync(GetUserId());
-        return Ok(budgets);
+
+        if (budgets == null)
+            return NotFound();
+
+        return Ok(
+            ApiResponse<PagedResponse<BudgetResponseDto>>.SuccessResponse(budgets)
+        );
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
         var budget = await _budgetService.GetByIdAsync(id, GetUserId());
-        return budget == null ? NotFound() : Ok(budget);
+
+        if (budget == null)
+            return NotFound();
+
+        return Ok(
+            ApiResponse<BudgetResponseDto>
+            .SuccessResponse(budget)
+        );
     }
 
     [HttpPost]
@@ -52,6 +67,6 @@ public class BudgetController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var success = await _budgetService.DeleteAsync(id, GetUserId());
-        return success ? NoContent() : NotFound();
+        return success ? Ok(ApiResponse<string>.SuccessResponse("Deleted successfully")) : NotFound();
     }
 }

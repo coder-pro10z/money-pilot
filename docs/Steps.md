@@ -257,3 +257,292 @@ Example:
 
 ```bash
 dotnet run --launch-profile https
+
+---
+Perfect ✅ — I will **append only**, without modifying or replacing any existing text from `Steps.md`.
+
+Below is the content you can **add after the last existing section** of `Steps.md`.
+
+I am continuing the numbering sequentially.
+
+---
+
+````
+---
+
+## 17. Backend–Frontend Integration Stabilization (Completed Phase)
+
+This section documents the real integration work completed after initial scaffold.
+
+### 17.1 Backend URL & Port Alignment
+
+- Confirmed backend runs via CLI using:
+
+```bash
+dotnet run --project .\src\MoneyPilot.API\MoneyPilot.API.csproj
+````
+
+* Verified active URLs logged at startup:
+
+  * [https://localhost:44391](https://localhost:44391)
+  * [http://localhost:5000](http://localhost:5000)
+
+* Updated Angular `environment.ts`:
+
+```ts
+export const environment = {
+  apiBase: 'https://localhost:44391/api'
+};
+```
+
+* Confirmed CORS configuration in backend allows `http://localhost:4200`.
+
+Verification:
+
+* Login successful
+* Network tab shows 200 responses
+* Authorization header attached
+
+---
+
+## 18. ApiResponse & PagedResponse Alignment
+
+Backend returns:
+
+ApiResponse<PagedResponse<T>>
+
+Structure:
+
+{
+success: boolean,
+message: string | null,
+data: {
+items: T[],
+totalCount: number,
+page: number,
+pageSize: number
+}
+}
+
+### 18.1 Implemented Central ApiService
+
+Refactored all services to use ApiService:
+
+```ts
+get<T>(endpoint: string): Observable<T> {
+  return this.http
+    .get<ApiResponse<T>>(`${this.baseUrl}/${endpoint}`)
+    .pipe(map(response => response.data));
+}
+```
+
+Result:
+
+* Automatic unwrapping of `data`
+* Simplified feature services
+* No nested `response.data.data`
+
+---
+
+## 19. Expense Feature Completion
+
+### 19.1 Expense List Page
+
+Implemented:
+
+* Table rendering
+* Currency pipe
+* Edit/Delete buttons
+* Navigation to create/edit
+* Loading state
+
+Verified:
+
+* Pagination response properly mapped
+* `items` extracted correctly
+* Network tab shows `/api/Expense`
+
+### 19.2 Expense Form Page
+
+Implemented:
+
+* Reactive form
+* Create mode
+* Edit mode
+* Route param detection
+* Form patching
+* Navigation after save
+
+Fixed:
+
+* Duplicate `ngOnInit`
+* Incorrect method naming (`save()` vs `submit()`)
+* Incorrect type mapping
+
+### 19.3 Category Dropdown Integration
+
+* Created `CategoryService`
+* Loaded categories on form init
+* Bound dropdown to `categoryId`
+
+Verified:
+
+* Categories load correctly
+* Selected category saved
+* No foreign key conflicts when valid category selected
+
+---
+
+## 20. Layout System Implementation
+
+### 20.1 LayoutComponent
+
+Created main app shell:
+
+* Sidebar
+* Navbar
+* Router outlet
+* Responsive flex layout
+
+### 20.2 Route Protection
+
+Confirmed:
+
+* `authGuard` blocks protected routes
+* Unauthenticated users redirected to `/login`
+
+Verification:
+
+* Clearing localStorage logs user out
+* Direct navigation to `/dashboard` redirects to login
+
+---
+
+## 21. Dashboard Basic Integration
+
+Connected:
+
+* DashboardService → Summary endpoint
+* Displayed:
+
+  * Total Expenses
+  * Total Budget
+  * Remaining Budget
+  * Monthly Trend
+  * Category Breakdown
+
+Verified:
+
+* Data loads correctly
+* No nested response issues
+* Currency pipe working (after importing CommonModule)
+
+---
+
+## 22. Error & Hydration Fixes
+
+Resolved:
+
+* NG0506 hydration issue by ensuring no infinite pending subscriptions
+* Fixed “currency pipe not found” by importing CommonModule
+* Fixed 404 from plural endpoint mismatch (`expense` vs `expenses`)
+* Fixed foreign key conflict (invalid CategoryId)
+
+---
+
+## 23. Logging Improvements
+
+Backend updated to log active URLs properly:
+
+Corrected incorrect string iteration logging.
+
+Now logs:
+
+```
+🚀 MoneyPilot API running on: https://localhost:44391
+🚀 MoneyPilot API running on: http://localhost:5000
+```
+
+---
+
+## 24. Repository & Git Workflow Established
+
+Branch strategy:
+
+* main → production
+* develop → integration
+* feature/* → isolated features
+
+Completed branches:
+
+* feature/frontend-foundation
+* feature/angular-dashboard-ui-v1
+
+Current working branch:
+
+* feature/budget-ui-v1
+
+Workflow:
+
+develop
+→ feature branch
+→ PR to develop
+→ PR develop → main
+
+---
+
+## 25. Current Functional State (Checkpoint)
+
+Working End-to-End:
+
+* Authentication
+* Token interceptor
+* Protected routes
+* Expense CRUD
+* Category integration
+* Dashboard summary
+* Backend background service running
+* CLI + Visual Studio consistency resolved
+
+Pending for Phase 2 Completion:
+
+* Budget UI
+* Recurring UI
+* Admin UI
+* Global error interceptor
+* Pagination controls UI
+* Deployment preparation
+
+---
+
+## 26. Next Active Phase — Budget Feature Implementation
+
+Branch: feature/budget-ui-v1
+
+Goal:
+
+* Complete Budget List
+* Complete Budget Form
+* Integrate with Dashboard
+* Verify CRUD
+* Add navigation entry
+
+Verification checklist before merge:
+
+* Create budget works
+* Edit budget works
+* Delete budget works
+* Dashboard reflects new budgets
+* No console errors
+* No pending HTTP calls
+* All protected routes enforced
+
+---
+
+End of current documented progress.
+
+```
+
+---
+
+```
