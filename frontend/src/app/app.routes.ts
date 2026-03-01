@@ -56,12 +56,12 @@ export const routes: Routes = [
           import('./features/categories/categories.component')
             .then(m => m.CategoriesComponent)
       },
-      // {
-      //   path: 'recurring',
-      //   loadComponent: () =>
-      //     import('./features/recurring/recurring.component')
-      //       .then(m => m.RecurringComponent)
-      // },
+      {
+        path: 'category/create',
+        loadComponent: () =>
+          import('./features/categories/category-form.component')
+            .then(m => m.CategoryFormComponent)
+      },
 // Default route
       {
         path: '',
