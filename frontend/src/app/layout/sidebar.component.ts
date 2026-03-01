@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
         <li (click)="navigate('expense')">Expenses</li>
         <li (click)="navigate('budgets')">Budgets</li>
         <li (click)="navigate('recurring')">Recurring</li>
+        <li (click)="navigate('category')">Categories</li>
       </ul>
     </div>
   `,

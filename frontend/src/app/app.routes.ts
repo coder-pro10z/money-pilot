@@ -49,6 +49,19 @@ export const routes: Routes = [
           import('./features/recurring/recurring.component')
             .then(m => m.RecurringComponent)
       },
+
+      {
+        path: 'category',
+        loadComponent: () =>
+          import('./features/categories/categories.component')
+            .then(m => m.CategoriesComponent)
+      },
+      // {
+      //   path: 'recurring',
+      //   loadComponent: () =>
+      //     import('./features/recurring/recurring.component')
+      //       .then(m => m.RecurringComponent)
+      // },
 // Default route
       {
         path: '',
