@@ -11,7 +11,7 @@ export class BudgetService {
     return this.http.get(`${environment.apiBase}/budgets`, { params });
   }
 
-  get(id: string | number): Observable<any> {
+  getById(id: string | number): Observable<any> {
     return this.http.get(`${environment.apiBase}/budgets/${id}`);
   }
 
