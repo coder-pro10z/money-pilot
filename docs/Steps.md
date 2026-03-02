@@ -546,3 +546,190 @@ End of current documented progress.
 ---
 
 ```
+---
+
+---
+
+## 27. Expense Feature – Final Stabilization (Completed)
+
+### 27.1 ApiResponse & PagedResponse Alignment
+
+Backend returns:
+
+`ApiResponse<PagedResponse<T>>`
+
+Angular `ApiService` updated to unwrap `data`:
+
+```ts
+get<T>(endpoint: string): Observable<T> {
+  return this.http
+    .get<ApiResponse<T>>(`${this.baseUrl}/${endpoint}`)
+    .pipe(map(response => response.data));
+}
+
+Result:
+
+No nested response.data.data
+
+Clean feature service usage
+
+Proper TypeScript typing
+
+27.2 Expense List Fixes
+
+Resolved:
+
+Incorrect endpoint naming (expenses → expense)
+
+PagedResponse extraction (items)
+
+Currency pipe error (imported CommonModule)
+
+Infinite pending state (fixed subscription handling)
+
+Edit form loading empty (corrected GetById mapping)
+
+Verified:
+
+GET /api/Expense returns paged result
+
+Items render in table
+
+Edit loads populated form
+
+Delete refreshes table
+
+No pending HTTP calls
+
+27.3 Category Dropdown Integration
+
+Implemented:
+
+CategoryService
+
+Category dropdown in ExpenseForm
+
+Foreign key validation
+
+Resolved:
+
+SQL FK conflict when invalid category selected
+
+Duplicate test categories cleaned from database
+
+28. Budget Feature – Initial Implementation
+28.1 Backend Adjustment
+
+Converted BudgetService.GetAllAsync to return:
+
+PagedResponse<BudgetResponseDto>
+
+Wrapped response correctly:
+
+return Ok(ApiResponse<PagedResponse<BudgetResponseDto>>.SuccessResponse(paged));
+28.2 Budget Form Alignment
+
+Required backend format:
+
+{
+  "monthlyLimit": number,
+  "categoryId": number,
+  "month": "ISO_DATE"
+}
+
+Angular transformation:
+
+const payload = {
+  monthlyLimit: Number(this.form.value.monthlyLimit),
+  categoryId: Number(this.form.value.categoryId),
+  month: new Date(this.form.value.month).toISOString()
+};
+
+Resolved:
+
+Type mismatch errors
+
+String → number conversion
+
+Date formatting issue
+
+29. Layout & Navigation System
+
+Confirmed working:
+
+Sidebar navigation
+
+Navbar with logout
+
+Layout wrapper component
+
+Protected routes
+
+Redirect when not authenticated
+
+Verified:
+
+Clearing token logs user out
+
+Direct route access redirects to login
+
+30. Backend Runtime Stability
+
+Resolved:
+
+CLI vs Visual Studio port mismatch
+
+launchSettings.json URL confusion
+
+Logging bug that printed each character of URL separately
+
+Now logs correctly:
+
+🚀 MoneyPilot API running on:
+https://localhost:44391
+http://localhost:5000
+31. Current System Status (Checkpoint)
+
+Fully Working End-to-End:
+
+Authentication (JWT)
+
+Interceptor
+
+Route protection
+
+Expense CRUD
+
+Budget CRUD (UI integrated)
+
+Category dropdown integration
+
+Dashboard summary
+
+Background recurring service active
+
+CLI + VS runtime alignment fixed
+
+Remaining Phase 2 Work:
+
+Recurring UI
+
+Global error interceptor
+
+Admin UI endpoints exposure
+
+Pagination UI controls
+
+Production build validation
+
+Deployment setup
+
+32. Next Active Branch
+
+Current working branch:
+
+feature/budget-ui-v1
+
+Next planned branch:
+
+feature/recurring-ui-v1
