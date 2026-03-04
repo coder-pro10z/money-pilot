@@ -10,17 +10,21 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
   imports: [CommonModule,LoadingSpinnerComponent], 
   standalone: true,
   template: `
-    <h2 class="page-title">Expenses</h2>
 
+    <div class="header">
+    <h2 class="page-title">Expenses</h2>
     <button class="btn btn-primary" (click)="goToCreate()">Add Expense</button>
+    </div>
 
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
-    <table *ngIf="expenses.length">
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Amount</th>
-          <th>Date</th>
+    
+    <div class="card" *ngIf="expenses.length">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Date</th>
           <th>Category</th>
           <th>Actions</th>
         </tr>
@@ -39,6 +43,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
         </tr>
       </tbody>
     </table>
+    </div>
   `,
   styles: [`
   table {
@@ -59,6 +64,13 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
 
   button {
     margin-right: 0.5rem;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
   }
 `]})
 export class ExpensesComponent implements OnInit {

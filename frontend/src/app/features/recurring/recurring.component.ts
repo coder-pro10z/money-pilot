@@ -19,7 +19,8 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
 
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
 
-    <table *ngIf="!isLoading && recurringList.length">
+    <div class="card" *ngIf="!isLoading && recurringList.length">
+    <table class="table" *ngIf="!isLoading && recurringList.length">
       <thead>
         <tr>
           <th>Description</th>
@@ -53,6 +54,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
         </tr>
       </tbody>
     </table>
+    </div>
 
     <div *ngIf="!isLoading && !recurringList.length">
       No recurring transactions found.

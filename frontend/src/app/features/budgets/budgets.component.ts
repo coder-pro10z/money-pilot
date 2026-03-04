@@ -23,11 +23,11 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
 
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
  
-
     <div *ngIf="!isLoading && !budgets.length" class="empty">
-      No budgets found.
+    No budgets found.
     </div>
-
+    
+    <div class="card" > 
     <table *ngIf="!isLoading && budgets.length">
       <thead>
         <tr>
@@ -50,6 +50,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
         </tr>
       </tbody>
     </table>
+    </div>
   `,
   styles: [`
     .header {

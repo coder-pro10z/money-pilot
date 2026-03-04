@@ -13,7 +13,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
   template: `
     <div class="header">
       <h2>Categories</h2>
-      <button class="btn" (click)="goToCreate()">Add Category</button>
+      <button class="btn btn-primary" (click)="goToCreate()">Add Category</button>
     </div>
 
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
@@ -22,6 +22,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
       No categories found.
     </div>
 
+    <div class="card" *ngIf="!isLoading && categories.length">
     <table *ngIf="!isLoading && categories.length">
       <thead>
         <tr>
@@ -49,7 +50,16 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
         </tr>
       </tbody>
     </table>
-  `
+    </div>
+  `,
+  styles: [`
+    .header {
+      display: flex;  
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    } `]
+
 })
 export class CategoriesComponent implements OnInit {
 
