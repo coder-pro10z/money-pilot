@@ -19,9 +19,9 @@ export const routes: Routes = [
           // Lazy loaded feature modules
           {
             path: 'dashboard',
-            loadChildren: () =>
-              import('./features/dashboard/dashboard.module')
-                .then(m => m.DashboardModule)
+            loadComponent: () =>
+              import('./features/dashboard/dashboard.component')
+                .then(m => m.DashboardComponent)
           },
             //expense routes
             {

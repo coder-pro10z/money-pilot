@@ -6,13 +6,14 @@ import { Budget } from '../../core/models/budget.model';
 //router
 import { Router } from '@angular/router';
 import {PagedResponse} from '../../core/models/paged-response.model';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
 
 //paged response
 
 @Component({
   standalone: true,
   selector: 'app-budgets',
-  imports: [CommonModule],
+  imports: [CommonModule,LoadingSpinnerComponent],
   // templateUrl: './budgets.component.html'
    template: `
     <div class="header">
@@ -20,9 +21,8 @@ import {PagedResponse} from '../../core/models/paged-response.model';
       <button (click)="goToCreate()">Add Budget</button>
     </div>
 
-    <div *ngIf="isLoading" class="loading">
-      Loading...
-    </div>
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+ 
 
     <div *ngIf="!isLoading && !budgets.length" class="empty">
       No budgets found.

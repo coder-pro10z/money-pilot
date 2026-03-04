@@ -4,18 +4,19 @@ import { Router } from '@angular/router';
 import { CategoryService } from '../../core/services/category.service';
 import { Category } from '../../core/models/category.model';
 import { PagedResponse } from '../../core/models/paged-response.model';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
 
 @Component({
   selector: 'app-categories',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,LoadingSpinnerComponent],
   template: `
     <div class="header">
       <h2>Categories</h2>
       <button (click)="goToCreate()">Add Category</button>
     </div>
 
-    <div *ngIf="isLoading">Loading...</div>
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
 
     <div *ngIf="!isLoading && !categories.length">
       No categories found.

@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { RecurringService } from '../../core/services/recurring.service';
 import { RecurringTransaction } from '../../core/models/recurring.model';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
 
 @Component({
   selector: 'app-recurring',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,LoadingSpinnerComponent],
   template: `
     <h2>Recurring Transactions</h2>
 
@@ -16,9 +17,9 @@ import { RecurringTransaction } from '../../core/models/recurring.model';
       <button class="run" (click)="runNow()">Run Due Now</button>
     </div>
 
-    <div *ngIf="loading">Loading...</div>
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
 
-    <table *ngIf="!loading && recurringList.length">
+    <table *ngIf="!isLoading && recurringList.length">
       <thead>
         <tr>
           <th>Description</th>
@@ -53,7 +54,7 @@ import { RecurringTransaction } from '../../core/models/recurring.model';
       </tbody>
     </table>
 
-    <div *ngIf="!loading && !recurringList.length">
+    <div *ngIf="!isLoading && !recurringList.length">
       No recurring transactions found.
     </div>
   `,
@@ -114,7 +115,7 @@ import { RecurringTransaction } from '../../core/models/recurring.model';
 export class RecurringComponent implements OnInit {
 
   recurringList: RecurringTransaction[] = [];
-  loading = false;
+  isLoading = false;
 
   constructor(
     private recurringService: RecurringService,
@@ -141,7 +142,7 @@ export class RecurringComponent implements OnInit {
   // }
 
   loadRecurring() {
-  this.loading = true;
+  this.isLoading = true;
 
   this.recurringService.getAll().subscribe({
     next: (response) => {
@@ -149,10 +150,10 @@ export class RecurringComponent implements OnInit {
 
       this.recurringList = response.items; // ✅ correct
 
-      this.loading = false;
+      this.isLoading = false;
     },
     error: () => {
-      this.loading = false;
+      this.isLoading = false;
     }
   });
 }

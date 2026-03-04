@@ -3,17 +3,18 @@ import { ExpenseService } from '../../core/services/expense.service';
 import { Expense } from '../../core/models/expense.model';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
 
 @Component({
   selector: 'app-expenses',
-  imports: [CommonModule], 
+  imports: [CommonModule,LoadingSpinnerComponent], 
   standalone: true,
   template: `
     <h2>Expenses</h2>
 
     <button (click)="goToCreate()">Add Expense</button>
 
-    <div *ngIf="isLoading">Loading...</div>
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
     <table *ngIf="expenses.length">
       <thead>
         <tr>

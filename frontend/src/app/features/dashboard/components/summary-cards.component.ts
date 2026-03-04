@@ -1,11 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { DashboardSummary } from '../../../core/models/dashboard.model';
+import { CommonModule } from '@angular/common';
 
 /**
  * Displays top-level financial summary cards.
  */
 @Component({
   selector: 'app-summary-cards',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <div class="card-container">
       <div class="card">
