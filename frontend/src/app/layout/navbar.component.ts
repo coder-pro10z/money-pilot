@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   template: `
     <div class="navbar">
       <span>Welcome</span>
-      <button (click)="logout()">Logout</button>
+      <button class="btn btn-danger" (click)="logout()">Logout</button>
     </div>
   `,
   styles: [`

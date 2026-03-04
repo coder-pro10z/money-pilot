@@ -30,8 +30,8 @@ import { CreateCategoryDto } from '../../core/models/category-create.model';
           <input formControlName="color" type="color" />
         </div>
 
-        <button type="submit" [disabled]="form.invalid">Save</button>
-        <button type="button" (click)="router.navigate(['/category'])">
+        <button class="btn" type="submit" [disabled]="form.invalid">Save</button>
+        <button class="btn" type="button" (click)="router.navigate(['/category'])">
           Cancel
         </button>
       </form>

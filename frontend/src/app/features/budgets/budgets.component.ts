@@ -18,7 +18,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
    template: `
     <div class="header">
       <h2>Budgets</h2>
-      <button (click)="goToCreate()">Add Budget</button>
+      <button class="btn btn-primary" (click)="goToCreate()">Add Budget</button>
     </div>
 
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
@@ -44,8 +44,8 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
           <td>{{ budget.monthlyLimit | currency }}</td>
           <td>{{ budget.month }}</td>
           <td>
-            <button (click)="edit(budget.id)">Edit</button>
-            <button (click)="remove(budget.id)">Delete</button>
+            <button class="btn" (click)="edit(budget.id)">Edit</button>
+            <button class="btn btn-danger" (click)="remove(budget.id)">Delete</button>
           </td>
         </tr>
       </tbody>

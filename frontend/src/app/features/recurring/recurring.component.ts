@@ -13,8 +13,8 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
     <h2>Recurring Transactions</h2>
 
     <div class="actions">
-      <button (click)="goToCreate()">Add Recurring</button>
-      <button class="run" (click)="runNow()">Run Due Now</button>
+      <button class="btn btn-primary" (click)="goToCreate()">Add Recurring</button>
+      <button class="btn run" (click)="runNow()">Run Due Now</button>
     </div>
 
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
@@ -125,21 +125,6 @@ export class RecurringComponent implements OnInit {
   ngOnInit(): void {
     this.loadRecurring();
   }
-
-  // loadRecurring() {
-  //   this.loading = true;
-
-  //   this.recurringService.getAll().subscribe({
-  //     next: (response) => {
-  //       console.log('Recurring transactions loaded:', response);
-  //       // this.recurringList = response;
-  //       this.loading = false;
-  //     },
-  //     error: () => {
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
 
   loadRecurring() {
   this.isLoading = true;

@@ -10,9 +10,9 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
   imports: [CommonModule,LoadingSpinnerComponent], 
   standalone: true,
   template: `
-    <h2>Expenses</h2>
+    <h2 class="page-title">Expenses</h2>
 
-    <button (click)="goToCreate()">Add Expense</button>
+    <button class="btn btn-primary" (click)="goToCreate()">Add Expense</button>
 
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
     <table *ngIf="expenses.length">
@@ -33,8 +33,8 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
           <td>{{ expense.date  | date:'mediumDate'  }}</td>
           <td>{{ expense.categoryName }}</td>
           <td>
-            <button (click)="edit(expense.id)">Edit</button>
-            <button (click)="remove(expense.id)">Delete</button>
+            <button class="btn" (click)="edit(expense.id)">Edit</button>
+            <button class="btn btn-danger" (click)="remove(expense.id)">Delete</button>
           </td>
         </tr>
       </tbody>

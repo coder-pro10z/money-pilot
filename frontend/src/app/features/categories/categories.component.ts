@@ -13,7 +13,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
   template: `
     <div class="header">
       <h2>Categories</h2>
-      <button (click)="goToCreate()">Add Category</button>
+      <button class="btn" (click)="goToCreate()">Add Category</button>
     </div>
 
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
@@ -43,8 +43,8 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
             </span>
           </td>
           <td>
-            <button (click)="edit(c.id)">Edit</button>
-            <button (click)="remove(c.id)">Delete</button>
+            <button class="btn" (click)="edit(c.id)">Edit</button>
+            <button class="btn btn-danger" (click)="remove(c.id)">Delete</button>
           </td>
         </tr>
       </tbody>
