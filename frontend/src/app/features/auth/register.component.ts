@@ -1,0 +1,60 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { AuthFormComponent } from './auth-form.component';
+
+@Component({
+  selector: 'app-register',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule,AuthFormComponent, RouterModule],
+  template: `
+<div class="auth-wrapper">
+
+  <app-auth-form
+    [title]="'Create Account'"
+    [buttonText]="'Register'"
+    [form]="form"
+    (submit)="register()">
+
+    <p class="auth-footer" style="text-align:center;margin-top:10px;">
+      Already have an account?
+      <a routerLink="/login">Login</a>
+    </p>
+
+  </app-auth-form>
+
+</div>`
+})
+export class RegisterComponent {
+
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]]
+  });
+
+  register(){
+
+    if(this.form.invalid) return;
+
+    this.authService.register(this.form.value)
+      .subscribe({
+        next: () => {
+
+          alert('Registration successful');
+
+          this.router.navigate(['/login']);
+
+        }
+      });
+
+  }
+
+}
