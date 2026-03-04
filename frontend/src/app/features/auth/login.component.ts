@@ -19,14 +19,32 @@ export class LoginComponent {
     private fb: FormBuilder
   ) {}
 
-  form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', Validators.required]
-  });
+form = this.fb.group({
+
+  email: [
+    '',
+    [
+      Validators.required,
+      Validators.email
+    ]
+  ],
+
+  password: [
+    '',
+    [
+      Validators.required,
+      Validators.minLength(6)
+    ]
+  ]
+
+});
 
   submit() {
-    if (this.form.invalid) return;
-
+    
+  if (this.form.invalid) {
+    this.form.markAllAsTouched();
+    return;
+  }
     this.auth.login(this.form.value as { email: string; password: string }).subscribe(() => {
       this.router.navigate(['/dashboard']);
     });
