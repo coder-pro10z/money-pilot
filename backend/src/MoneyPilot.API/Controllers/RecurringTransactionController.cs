@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MoneyPilot.Application.Common;
 using MoneyPilot.Application.DTOs;
 using MoneyPilot.Application.Interfaces;
 using System;
@@ -26,19 +27,47 @@ namespace MoneyPilot.API.Controllers
             _logger = logger;
         }
 
+        // [HttpGet]
+        // public async Task<ActionResult<IEnumerable<RecurringTransactionDto>>> GetAll()
+        // {
+        //     try
+        //     {
+        //         var userId = GetUserId();
+        //         var transactions = await _recurringTransactionService.GetAllAsync(userId);
+        //         return Ok(transactions);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _logger.LogError(ex, "Error getting all recurring transactions for user {UserId}", GetUserId());
+        //         return StatusCode(500, "An error occurred while retrieving recurring transactions.");
+        //     }
+        // }
+
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RecurringTransactionDto>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                var userId = GetUserId();
-                var transactions = await _recurringTransactionService.GetAllAsync(userId);
-                return Ok(transactions);
+                
+            var userId = GetUserId();
+            var transactions = await _recurringTransactionService.GetAllAsync(userId);
+            var list = transactions.ToList();
+
+            var paged = new PagedResponse<RecurringTransactionDto>
+            {
+                Items = list,
+                TotalCount = list.Count,
+                Page = 1,
+                PageSize = list.Count
+            };
+            // return Ok(ApiResponse<IEnumerable<RecurringTransactionDto>>
+            //  .SuccessResponse(transactions));
+            return Ok(ApiResponse<PagedResponse<RecurringTransactionDto>>.SuccessResponse(paged));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting all recurring transactions for user {UserId}", GetUserId());
-                return StatusCode(500, "An error occurred while retrieving recurring transactions.");
+            _logger.LogError(ex, "Error getting all recurring transactions for user {UserId}", GetUserId());
+             return StatusCode(500, "An error occurred while retrieving recurring transactions.");
             }
         }
 
