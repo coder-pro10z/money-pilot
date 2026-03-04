@@ -6,28 +6,28 @@ import { Budget } from '../../core/models/budget.model';
 //router
 import { Router } from '@angular/router';
 import {PagedResponse} from '../../core/models/paged-response.model';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
 
 //paged response
 
 @Component({
   standalone: true,
   selector: 'app-budgets',
-  imports: [CommonModule],
+  imports: [CommonModule,LoadingSpinnerComponent],
   // templateUrl: './budgets.component.html'
    template: `
     <div class="header">
       <h2>Budgets</h2>
-      <button (click)="goToCreate()">Add Budget</button>
+      <button class="btn btn-primary" (click)="goToCreate()">Add Budget</button>
     </div>
 
-    <div *ngIf="isLoading" class="loading">
-      Loading...
-    </div>
-
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+ 
     <div *ngIf="!isLoading && !budgets.length" class="empty">
-      No budgets found.
+    No budgets found.
     </div>
-
+    
+    <div class="card" > 
     <table *ngIf="!isLoading && budgets.length">
       <thead>
         <tr>
@@ -44,12 +44,13 @@ import {PagedResponse} from '../../core/models/paged-response.model';
           <td>{{ budget.monthlyLimit | currency }}</td>
           <td>{{ budget.month }}</td>
           <td>
-            <button (click)="edit(budget.id)">Edit</button>
-            <button (click)="remove(budget.id)">Delete</button>
+            <button class="btn" (click)="edit(budget.id)">Edit</button>
+            <button class="btn btn-danger" (click)="remove(budget.id)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
+    </div>
   `,
   styles: [`
     .header {

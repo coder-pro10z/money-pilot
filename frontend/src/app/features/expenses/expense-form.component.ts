@@ -107,6 +107,7 @@ import { CommonModule } from '@angular/common';
     }
 
     button {
+     margin-right: 0.5rem;
       padding: 8px 16px;
       border: none;
       border-radius: 6px;

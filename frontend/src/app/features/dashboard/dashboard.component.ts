@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { DashboardSummary } from '../../core/models/dashboard.model';
-
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
+import { CommonModule } from '@angular/common';
+import { ChartsComponent } from './components/charts.component';
+import { SummaryCardsComponent } from './components/summary-cards.component';
 /**
  * DashboardComponent
  *
@@ -10,10 +13,13 @@ import { DashboardSummary } from '../../core/models/dashboard.model';
  */
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
+  imports:[CommonModule, ChartsComponent,LoadingSpinnerComponent,SummaryCardsComponent],
   template: `
-    <div *ngIf="loading">Loading...</div>
+    
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
 
-    <ng-container *ngIf="!loading && data">
+    <ng-container *ngIf="!isLoading && data">
       <app-summary-cards [summary]="data"></app-summary-cards>
       <app-charts [summary]="data"></app-charts>
     </ng-container>
@@ -22,7 +28,7 @@ import { DashboardSummary } from '../../core/models/dashboard.model';
 export class DashboardComponent implements OnInit {
 
   data!: DashboardSummary;
-  loading = true;
+  isLoading = true;
 
   constructor(private dashboardService: DashboardService) {}
 
@@ -30,10 +36,10 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.getSummary().subscribe({
       next: (res) => {
         this.data = res;
-        this.loading = false;
+        this.isLoading = false;
       },
       error: () => {
-        this.loading = false;
+        this.isLoading = false;
       }
     });
   }

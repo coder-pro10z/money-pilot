@@ -1,8 +1,12 @@
-<div class="login">
-  <h2>Login</h2>
-  <form (ngSubmit)="submit()">
-    <input [(ngModel)]="model.email" name="email" placeholder="Email" />
-    <input [(ngModel)]="model.password" name="password" placeholder="Password" type="password" />
-    <button type="submit">Login</button>
-  </form>
-</div>
+<app-auth-form
+  [title]="'Login'"
+  [buttonText]="'Login'"
+  [form]="form"
+  (submit)="submit()">
+
+  <p style="text-align:center;margin-top:10px;">
+    Don't have an account?
+    <a routerLink="/register">Register</a>
+  </p>
+
+</app-auth-form>

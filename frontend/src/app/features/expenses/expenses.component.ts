@@ -3,23 +3,28 @@ import { ExpenseService } from '../../core/services/expense.service';
 import { Expense } from '../../core/models/expense.model';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
 
 @Component({
   selector: 'app-expenses',
-  imports: [CommonModule], 
+  imports: [CommonModule,LoadingSpinnerComponent], 
   standalone: true,
   template: `
-    <h2>Expenses</h2>
 
-    <button (click)="goToCreate()">Add Expense</button>
+    <div class="header">
+    <h2 class="page-title">Expenses</h2>
+    <button class="btn btn-primary" (click)="goToCreate()">Add Expense</button>
+    </div>
 
-    <div *ngIf="isLoading">Loading...</div>
-    <table *ngIf="expenses.length">
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Amount</th>
-          <th>Date</th>
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+    
+    <div class="card" *ngIf="expenses.length">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Date</th>
           <th>Category</th>
           <th>Actions</th>
         </tr>
@@ -32,12 +37,13 @@ import { CommonModule } from '@angular/common';
           <td>{{ expense.date  | date:'mediumDate'  }}</td>
           <td>{{ expense.categoryName }}</td>
           <td>
-            <button (click)="edit(expense.id)">Edit</button>
-            <button (click)="remove(expense.id)">Delete</button>
+            <button class="btn" (click)="edit(expense.id)">Edit</button>
+            <button class="btn btn-danger" (click)="remove(expense.id)">Delete</button>
           </td>
         </tr>
       </tbody>
     </table>
+    </div>
   `,
   styles: [`
   table {
@@ -58,6 +64,13 @@ import { CommonModule } from '@angular/common';
 
   button {
     margin-right: 0.5rem;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
   }
 `]})
 export class ExpensesComponent implements OnInit {

@@ -3,22 +3,24 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { RecurringService } from '../../core/services/recurring.service';
 import { RecurringTransaction } from '../../core/models/recurring.model';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
 
 @Component({
   selector: 'app-recurring',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,LoadingSpinnerComponent],
   template: `
     <h2>Recurring Transactions</h2>
 
     <div class="actions">
-      <button (click)="goToCreate()">Add Recurring</button>
-      <button class="run" (click)="runNow()">Run Due Now</button>
+      <button class="btn btn-primary" (click)="goToCreate()">Add Recurring</button>
+      <button class="btn run" (click)="runNow()">Run Due Now</button>
     </div>
 
-    <div *ngIf="loading">Loading...</div>
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
 
-    <table *ngIf="!loading && recurringList.length">
+    <div class="card" *ngIf="!isLoading && recurringList.length">
+    <table class="table" *ngIf="!isLoading && recurringList.length">
       <thead>
         <tr>
           <th>Description</th>
@@ -52,8 +54,9 @@ import { RecurringTransaction } from '../../core/models/recurring.model';
         </tr>
       </tbody>
     </table>
+    </div>
 
-    <div *ngIf="!loading && !recurringList.length">
+    <div *ngIf="!isLoading && !recurringList.length">
       No recurring transactions found.
     </div>
   `,
@@ -114,7 +117,7 @@ import { RecurringTransaction } from '../../core/models/recurring.model';
 export class RecurringComponent implements OnInit {
 
   recurringList: RecurringTransaction[] = [];
-  loading = false;
+  isLoading = false;
 
   constructor(
     private recurringService: RecurringService,
@@ -125,23 +128,8 @@ export class RecurringComponent implements OnInit {
     this.loadRecurring();
   }
 
-  // loadRecurring() {
-  //   this.loading = true;
-
-  //   this.recurringService.getAll().subscribe({
-  //     next: (response) => {
-  //       console.log('Recurring transactions loaded:', response);
-  //       // this.recurringList = response;
-  //       this.loading = false;
-  //     },
-  //     error: () => {
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
-
   loadRecurring() {
-  this.loading = true;
+  this.isLoading = true;
 
   this.recurringService.getAll().subscribe({
     next: (response) => {
@@ -149,10 +137,10 @@ export class RecurringComponent implements OnInit {
 
       this.recurringList = response.items; // ✅ correct
 
-      this.loading = false;
+      this.isLoading = false;
     },
     error: () => {
-      this.loading = false;
+      this.isLoading = false;
     }
   });
 }

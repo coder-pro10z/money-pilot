@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using MoneyPilot.Application.Common;
 using MoneyPilot.Application.DTOs;
 using MoneyPilot.Application.DTOs.Auth;
 using MoneyPilot.Application.Interfaces;
@@ -39,8 +40,8 @@ public class AuthController : ControllerBase
 
         // Assign default role
         await _userManager.AddToRoleAsync(user, "User");
-
-        return Ok("User registered successfully.");
+        return Ok(ApiResponse<string>.SuccessResponse("User registered successfully."));
+        // return Ok("User registered successfully.");
     }
 
     [HttpPost("login")]
