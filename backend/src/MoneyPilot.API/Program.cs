@@ -70,12 +70,33 @@ try
             System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 
-// DbContext
-builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    var provider = builder.Configuration["DatabaseProvider"];
+    var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Identity
-builder.Services.AddIdentity<AppUser, IdentityRole>()
+    builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    {
+        if (provider == "Postgres")
+        {
+            options.UseNpgsql(connection);
+        }
+        else
+        {
+            options.UseSqlServer(connection);
+        }
+    });
+    //// DbContext
+    //builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+    var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+    Console.WriteLine($"ConnectionString: {conn}");
+
+    /// use PostgreSQL with Npgsql.EntityFrameworkCore.PostgreSQL package
+    //builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    //    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+    // Identity
+    builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<MoneyPilotDbContext>()
     .AddDefaultTokenProviders();
 
@@ -209,7 +230,13 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
     var app = builder.Build();
 
- 
+
+    // Apply pending migrations at startup
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<MoneyPilotDbContext>();
+        db.Database.Migrate();
+    }
 
     //
     // ====================== MIDDLEWARE ======================
