@@ -70,6 +70,23 @@ try
             System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 
+    //var provider = builder.Configuration["DatabaseProvider"];
+    //var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    //builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    //{
+    //    if (provider == "Postgres")
+    //    {
+    //        options.UseNpgsql(connection);
+    //    }
+    //    else
+    //    {
+    //        options.UseSqlServer(connection);
+    //    }
+    //});
+    //// DbContext
+    //builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
     var provider = builder.Configuration["DatabaseProvider"];
     var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -77,16 +94,15 @@ try
     {
         if (provider == "Postgres")
         {
-            options.UseNpgsql(connection);
+            options.UseNpgsql(connection,
+                x => x.MigrationsAssembly("MoneyPilot.Infrastructure"));
         }
         else
         {
-            options.UseSqlServer(connection);
+            options.UseSqlServer(connection,
+                x => x.MigrationsAssembly("MoneyPilot.Infrastructure"));
         }
     });
-    //// DbContext
-    //builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
-    //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
     var conn = builder.Configuration.GetConnectionString("DefaultConnection");
     Console.WriteLine($"ConnectionString: {conn}");
@@ -218,7 +234,7 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         options.AddPolicy("AllowAngular",
             policy =>
             {
-                policy.WithOrigins("http://localhost:4200")
+                policy.WithOrigins("http://localhost:4200", "https://money-pilot-opal.vercel.app", "https://money-pilot-git-main-coders-projects-237f050f.vercel.app", "money-pilot-ec3ext12v-coders-projects-237f050f.vercel.app")
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
