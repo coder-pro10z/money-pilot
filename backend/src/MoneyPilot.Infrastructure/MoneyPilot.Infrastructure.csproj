@@ -16,7 +16,13 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\MigrationsSqlServer\" />
+    <Folder Include="Migrations\MigrationsPostgres\" />
   </ItemGroup>
 
   <PropertyGroup>

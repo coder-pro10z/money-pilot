@@ -234,11 +234,16 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         options.AddPolicy("AllowAngular",
             policy =>
             {
-                policy.WithOrigins("http://localhost:4200", "https://money-pilot-opal.vercel.app", "https://money-pilot-git-main-coders-projects-237f050f.vercel.app", "money-pilot-ec3ext12v-coders-projects-237f050f.vercel.app")
+                policy.WithOrigins("http://localhost:4200", "https://money-pilot-opal.vercel.app", "https://money-pilot-git-main-coders-projects-237f050f.vercel.app", "https://money-pilot-git-release-v000-coders-projects-237f050f.vercel.app", "money-pilot-ec3ext12v-coders-projects-237f050f.vercel.app")
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
     });
+
+
+    ///////////FIX 
+    ///
+    AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     //
     // ====================== APP ======================
     //
