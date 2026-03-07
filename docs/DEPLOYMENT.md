@@ -1,451 +1,214 @@
-Perfect — this is a **very solid production stack** 👇
+# 🚀 MoneyPilot Deployment Guide
 
-```
-Frontend  →  Vercel (Angular)
-Backend   →  Render (.NET API)
-Database  →  Render PostgreSQL
-```
+This document describes how to deploy **MoneyPilot** to a
+production-ready cloud stack.
 
-This architecture is **clean, modern, and recruiter-friendly**.
+The application is deployed using a modern full-stack architecture:
 
-I’ll give you the **exact deployment pipeline in the correct order** so nothing breaks.
+Frontend → Vercel (Angular)\
+Backend → Render (ASP.NET Core API)\
+Database → Render PostgreSQL
 
----
+------------------------------------------------------------------------
 
-# 🚀 DEPLOYMENT EXECUTION PLAN
+# 🧭 Deployment Order
 
-We deploy in this order:
+1.  PostgreSQL Database (Render)\
+2.  Backend API (Render)\
+3.  Frontend Application (Vercel)\
+4.  Connect services\
+5.  End-to-end verification
 
-```
-1️⃣ Database (Render PostgreSQL)
-2️⃣ Backend API (Render)
-3️⃣ Frontend Angular (Vercel)
-4️⃣ Connect everything
-5️⃣ Test end-to-end
-```
+------------------------------------------------------------------------
 
----
+# 1️⃣ PostgreSQL Database (Render)
 
-# 🧱 STEP 1 — Create PostgreSQL Database (Render)
+1.  Go to: https://dashboard.render.com\
+2.  Click **New → PostgreSQL**\
+3.  Configure:
 
-Go to:
+Name: moneypilot-db\
+Plan: Free\
+Region: Closest available
 
-```
-https://dashboard.render.com
-```
+Render will generate credentials:
 
-### Create Database
-
-```
-New → PostgreSQL
-```
-
-Fill:
-
-```
-Name: moneypilot-db
-Plan: Free
-Region: Closest to you
-```
-
-Render will generate credentials.
-
-You will see something like:
-
-```
-Host
-Database
-User
-Password
+Host\
+Database\
+User\
+Password\
 Port
-```
 
-Example connection string:
+------------------------------------------------------------------------
 
-```
-postgres://user:password@host:5432/dbname
-```
+# 2️⃣ Connection String for ASP.NET
 
----
+Format:
 
-# 🧱 STEP 2 — Convert Connection String for .NET
-
-ASP.NET uses this format:
-
-```
-Host=HOST;
-Port=5432;
-Database=DBNAME;
-Username=USER;
-Password=PASSWORD;
-```
+Host=HOST; Port=5432; Database=DBNAME; Username=USER; Password=PASSWORD;
+SSL Mode=Require
 
 Example:
 
-```
-Host=dpg-xxxx.render.com;
-Port=5432;
-Database=moneypilotdb;
-Username=moneypilot_user;
-Password=xxxx;
-```
+Host=dpg-xxxx.render.com; Port=5432; Database=moneypilot_db;
+Username=moneypilot_user; Password=xxxx; SSL Mode=Require
 
-Save this.
+------------------------------------------------------------------------
 
-You will use it in **Render environment variables**.
+# 3️⃣ Backend Preparation (.NET)
 
----
+Install PostgreSQL provider:
 
-# 🧱 STEP 3 — Prepare Backend for Render
-
-## Install PostgreSQL EF Provider
-
-In backend project:
-
-```bash
 dotnet add package Npgsql.EntityFrameworkCore.PostgreSQL
-```
 
----
+Update Program.cs:
 
-## Update `Program.cs`
+builder.Services.AddDbContext`<MoneyPilotDbContext>`{=html}(options =\>
+options.UseNpgsql(
+builder.Configuration.GetConnectionString("DefaultConnection") ) );
 
-Replace SQL Server with PostgreSQL:
+------------------------------------------------------------------------
 
-```csharp
-builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
-);
-```
-
----
-
-## Remove SQL Server package
-
-Optional but cleaner:
-
-```
-Microsoft.EntityFrameworkCore.SqlServer
-```
-
----
-
-# 🧱 STEP 4 — Reset Migrations (Important)
-
-Because provider changed.
+# 4️⃣ Reset Migrations (If switching DB providers)
 
 Delete:
 
-```
-/Migrations
-```
+Infrastructure/Migrations
 
-Then run:
+Then recreate:
 
-```bash
-dotnet ef migrations add InitialPostgres
+dotnet ef migrations add InitialPostgres\
 dotnet ef database update
-```
 
-Test locally first.
+Verify locally:
 
-Verify:
+-   Login
+-   Expense CRUD
+-   Budget CRUD
+-   Dashboard
 
-```
-Login works
-Expense CRUD works
-Budget CRUD works
-Dashboard works
-```
+------------------------------------------------------------------------
 
----
+# 5️⃣ Deploy Backend to Render
 
-# 🧱 STEP 5 — Push Backend to GitHub
+Render → New → Web Service
 
-Your repo should look like:
-
-```
-MoneyPilot
- ├ backend
- │   ├ src
- │   └ MoneyPilot.API.csproj
-```
-
-Push to GitHub.
-
----
-
-# 🧱 STEP 6 — Deploy Backend to Render
-
-In Render:
-
-```
-New → Web Service
-```
-
-Connect GitHub repo.
-
-Settings:
-
-### Environment
-
-```
 Runtime: .NET
-```
 
----
+Root Directory:
 
-### Build Command
+backend/src/MoneyPilot.API
 
-```
+Build Command:
+
 dotnet publish -c Release -o out
-```
 
----
+Start Command:
 
-### Start Command
-
-```
 dotnet out/MoneyPilot.API.dll
-```
 
----
+------------------------------------------------------------------------
 
-# 🧱 STEP 7 — Add Environment Variables (Render)
+# 6️⃣ Render Environment Variables
 
-Open **Environment tab**.
+ASPNETCORE_ENVIRONMENT=Production
 
-Add:
+ConnectionStrings\_\_DefaultConnection=
+Host=...;Port=5432;Database=...;Username=...;Password=...;SSL
+Mode=Require
 
-### Environment
+Jwt\_\_Key=YOUR_SECURE_KEY\
+Jwt\_\_Issuer=MoneyPilotAPI\
+Jwt\_\_Audience=MoneyPilotUsers
 
-```
-ASPNETCORE_ENVIRONMENT = Production
-```
+------------------------------------------------------------------------
 
----
+# 7️⃣ Configure CORS
 
-### Connection String
+Program.cs:
 
-```
-ConnectionStrings__DefaultConnection = Host=...;Port=5432;Database=...;Username=...;Password=...
-```
+builder.Services.AddCors(options =\> {
+options.AddPolicy("ProductionPolicy", policy =\> { policy.WithOrigins(
+"https://moneypilot.vercel.app" ) .AllowAnyHeader() .AllowAnyMethod();
+}); });
 
----
-
-### JWT
-
-```
-Jwt__Key = YOUR_SECURE_KEY
-Jwt__Issuer = MoneyPilotAPI
-Jwt__Audience = MoneyPilotUsers
-```
-
----
-
-# 🧱 STEP 8 — Enable CORS for Vercel
-
-In backend `Program.cs`:
-
-```csharp
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("ProductionPolicy",
-        policy =>
-        {
-            policy.WithOrigins(
-                "https://your-vercel-app.vercel.app"
-            )
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-        });
-});
-```
-
-Then:
-
-```
 app.UseCors("ProductionPolicy");
-```
 
----
+------------------------------------------------------------------------
 
-# 🧱 STEP 9 — Test Backend
+# 8️⃣ Test Backend
 
-After deployment Render gives URL:
+Example:
 
-```
-https://moneypilot-api.onrender.com
-```
-
-Test:
-
-```
 https://moneypilot-api.onrender.com/swagger
-```
 
-If swagger works → backend deployed.
+------------------------------------------------------------------------
 
----
+# 9️⃣ Deploy Angular Frontend to Vercel
 
-# 🧱 STEP 10 — Deploy Angular to Vercel
+Import GitHub repo in:
 
-Go to:
-
-```
 https://vercel.com
-```
 
-Import GitHub repo.
+Root Directory:
 
----
+frontend
 
-### Build Settings
+Build Command:
 
-Framework:
-
-```
-Other
-```
-
-Build command:
-
-```
 npm run build
-```
 
-Output directory:
+Output Directory:
 
-```
-dist/moneypilot-frontend
-```
+dist/money-pilot
 
----
+------------------------------------------------------------------------
 
-# 🧱 STEP 11 — Update Angular API URL
+# 🔟 Configure Angular API URL
 
-In:
-
-```
 environment.prod.ts
-```
 
-Replace:
+export const environment = { production: true, apiBase:
+"https://moneypilot-api.onrender.com/api" };
 
-```ts
-apiBase: 'https://moneypilot-api.onrender.com/api'
-```
+Push commit → Vercel auto deploys.
 
-Rebuild.
+------------------------------------------------------------------------
 
----
+# 🧪 End-to-End Tests
 
-# 🧱 STEP 12 — Redeploy Frontend
+Login\
+Expense creation\
+Budget CRUD\
+Dashboard analytics
 
-Push commit.
+------------------------------------------------------------------------
 
-Vercel auto deploys.
+# ⚠️ Render Free Tier
 
-You get URL like:
+Services may sleep after inactivity.\
+First request can take \~30 seconds.
 
-```
-https://moneypilot.vercel.app
-```
+------------------------------------------------------------------------
 
----
+# 🏗 Final Architecture
 
-# 🧱 STEP 13 — End-to-End Test
+Internet\
+↓\
+Angular Frontend (Vercel)\
+↓ REST API\
+ASP.NET Core API (Render)\
+↓ EF Core\
+PostgreSQL Database (Render)
 
-Test these flows:
+------------------------------------------------------------------------
 
-### Login
+# 💼 Production Stack
 
-```
-Frontend → Render API
-```
-
----
-
-### Create Expense
-
-```
-Angular → API → PostgreSQL
-```
-
----
-
-### Budget CRUD
-
-```
-Angular → API → PostgreSQL
-```
-
----
-
-### Dashboard
-
-```
-Angular → API aggregates → DB
-```
-
----
-
-# ⚠️ Common Render Issue
-
-Free tier sleeps after inactivity.
-
-First request takes ~30 seconds.
-
-Normal.
-
----
-
-# 🏁 FINAL ARCHITECTURE
-
-```
-                 Internet
-                     │
-                     │
-         https://moneypilot.vercel.app
-                     │
-                     ▼
-        Angular Frontend (Vercel)
-                     │
-                     │ REST API
-                     ▼
-     ASP.NET Core API (Render Web Service)
-                     │
-                     │ EF Core
-                     ▼
-        PostgreSQL Database (Render)
-```
-
----
-
-# 💼 What You Now Have
-
-A **production deployed SaaS app**:
-
-* Angular 17
-* ASP.NET Core API
-* PostgreSQL
-* Render Cloud
-* Vercel Hosting
-* JWT Auth
-* Background services
-
-This is **exactly the kind of architecture companies use**.
-
----
-
-# 🚀 If you want, next I can also show you
-
-* **How to fix Angular routing on Vercel (very important)**
-* **How to add CI/CD pipeline**
-* **How to add custom domain**
-* **How to avoid Render cold starts**
-* **How to monitor API logs**
-
-Those 4 things turn this into a **senior-level deployment**.
+Angular 17\
+ASP.NET Core Web API\
+PostgreSQL\
+JWT Authentication\
+Render Cloud Infrastructure\
+Vercel Hosting\
+Entity Framework Core

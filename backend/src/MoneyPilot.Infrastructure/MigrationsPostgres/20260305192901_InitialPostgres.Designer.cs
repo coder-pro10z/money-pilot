@@ -9,11 +9,11 @@ using MoneyPilot.Infrastructure.Data;
 
 #nullable disable
 
-namespace MoneyPilot.Infrastructure.Migrations
+namespace MoneyPilot.Infrastructure.MigrationsPostgres
 {
     [DbContext(typeof(MoneyPilotDbContext))]
-    [Migration("20260202201359_FixDecimalPrecision")]
-    partial class FixDecimalPrecision
+    [Migration("20260305192901_InitialPostgres")]
+    partial class InitialPostgres
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,9 @@ namespace MoneyPilot.Infrastructure.Migrations
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("Month")
                         .HasColumnType("datetime2");
@@ -262,6 +265,15 @@ namespace MoneyPilot.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -286,12 +298,24 @@ namespace MoneyPilot.Infrastructure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("RecurringTransactionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -301,9 +325,79 @@ namespace MoneyPilot.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("RecurringTransactionId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Expenses");
+                });
+
+            modelBuilder.Entity("MoneyPilot.Domain.Entities.RecurringTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DayOfMonth")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DayOfWeek")
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Interval")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastProcessed")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("NextOccurrence")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RecurrenceType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId", "NextOccurrence", "IsActive");
+
+                    b.ToTable("RecurringTransactions");
                 });
 
             modelBuilder.Entity("Budget", b =>
@@ -384,8 +478,30 @@ namespace MoneyPilot.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MoneyPilot.Domain.Entities.RecurringTransaction", null)
+                        .WithMany("GeneratedExpenses")
+                        .HasForeignKey("RecurringTransactionId");
+
                     b.HasOne("MoneyPilot.Domain.Entities.AppUser", "User")
                         .WithMany("Expenses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MoneyPilot.Domain.Entities.RecurringTransaction", b =>
+                {
+                    b.HasOne("MoneyPilot.Domain.Entities.Category", "Category")
+                        .WithMany("RecurringTransactions")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("MoneyPilot.Domain.Entities.AppUser", "User")
+                        .WithMany("RecurringTransactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -400,6 +516,8 @@ namespace MoneyPilot.Infrastructure.Migrations
                     b.Navigation("Budgets");
 
                     b.Navigation("Expenses");
+
+                    b.Navigation("RecurringTransactions");
                 });
 
             modelBuilder.Entity("MoneyPilot.Domain.Entities.Category", b =>
@@ -407,6 +525,13 @@ namespace MoneyPilot.Infrastructure.Migrations
                     b.Navigation("Budgets");
 
                     b.Navigation("Expenses");
+
+                    b.Navigation("RecurringTransactions");
+                });
+
+            modelBuilder.Entity("MoneyPilot.Domain.Entities.RecurringTransaction", b =>
+                {
+                    b.Navigation("GeneratedExpenses");
                 });
 #pragma warning restore 612, 618
         }
