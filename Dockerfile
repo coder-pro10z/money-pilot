@@ -5,14 +5,16 @@ WORKDIR /app
 # Copy solution and project files
 COPY backend/src/*.sln ./  
 COPY backend/src/MoneyPilot.Infrastructure/*.csproj ./MoneyPilot.Infrastructure/
-COPY backend/src/moneypilot.API/*.csproj ./moneypilot.API/
+COPY backend/src/MoneyPilot.API/*.csproj ./MoneyPilot.API/
+# COPY backend/src/moneypilot.API/*.csproj ./moneypilot.API/
 
 # Restore dependencies
 RUN dotnet restore
 
 # Copy everything else and publish
 COPY backend/src/ ./
-RUN dotnet publish moneypilot.API -c Release -o out
+RUN dotnet publish MoneyPilot.API -c Release -o out
+# RUN dotnet publish moneypilot.API -c Release -o out
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
