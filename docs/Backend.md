@@ -369,7 +369,7 @@ erDiagram
 
 ## 🔌 **API Endpoints**
 
-### **Base URL**: `https://localhost:44391`
+### **Base URL**: `https://money-pilot-webapi.onrender.com`
 
 ### **📊 Authentication Endpoints**
 
@@ -553,13 +553,13 @@ public class ExpensesController : ControllerBase
 ### **Monitoring:**
 ```bash
 # Check service status
-curl https://localhost:44391/health/background-service
+curl https://money-pilot-webapi.onrender.com/health/background-service
 
 # Manual trigger
-curl -X POST https://localhost:44391/admin/background-service/trigger
+curl -X POST https://money-pilot-webapi.onrender.com/admin/background-service/trigger
 
 # View logs
-curl https://localhost:44391/api/logs/recent
+curl https://money-pilot-webapi.onrender.com/api/logs/recent
 ```
 
 ---
@@ -865,9 +865,9 @@ sqlcmd -S DESKTOP-48C94E6\SQLEXPRESS -d MoneyPilotDb -Q "SELECT COUNT(*) FROM Ex
 
 ### **Development**
 - **GitHub Repository**: https://github.com/coder-pro10z/money-pilot
-- **API Documentation**: https://localhost:44391/swagger
-- **Health Dashboard**: https://localhost:44391/diagnostics/startup
-- **Admin Dashboard**: https://localhost:44391/admin/dashboard
+- **API Documentation**: https://money-pilot-webapi.onrender.com/swagger
+- **Health Dashboard**: https://money-pilot-webapi.onrender.com/diagnostics/startup
+- **Admin Dashboard**: https://money-pilot-webapi.onrender.com/admin/dashboard
 
 ### **Tools**
 - **SQL Server Management Studio**: Connect to `DESKTOP-48C94E6\SQLEXPRESS`
@@ -906,7 +906,7 @@ sqlcmd -S DESKTOP-48C94E6\SQLEXPRESS -d MoneyPilotDb -Q "SELECT COUNT(*) FROM Ex
 ---
 
 **Documentation Version**: 1.0.0  
-**Last Updated**: February 2024  
+**Last Updated**: February 2026 
 **Backend Version**: ASP.NET Core 8.0  
 **Database**: SQL Server 2022  
 **Status**: Production-Ready

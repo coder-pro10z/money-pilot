@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MoneyPilot.Application\MoneyPilot.Application.csproj" />
     <ProjectReference Include="..\MoneyPilot.Infrastructure\MoneyPilot.Infrastructure.csproj" />
+    <ProjectReference Include="..\MoneyPilot.SecurityHeaders\MoneyPilot.SecurityHeaders.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +21,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8.0" />
-    <PackageReference Include="MoneyPilot.SecurityHeaders" Version="1.0.0" />
+    <!-- <PackageReference Include="MoneyPilot.SecurityHeaders" Version="1.0.0" /> -->
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />

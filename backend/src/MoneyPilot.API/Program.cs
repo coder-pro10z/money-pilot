@@ -70,12 +70,49 @@ try
             System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
 
-// DbContext
-builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    //var provider = builder.Configuration["DatabaseProvider"];
+    //var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Identity
-builder.Services.AddIdentity<AppUser, IdentityRole>()
+    //builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    //{
+    //    if (provider == "Postgres")
+    //    {
+    //        options.UseNpgsql(connection);
+    //    }
+    //    else
+    //    {
+    //        options.UseSqlServer(connection);
+    //    }
+    //});
+    //// DbContext
+    //builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    var provider = builder.Configuration["DatabaseProvider"];
+    var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    {
+        if (provider == "Postgres")
+        {
+            options.UseNpgsql(connection,
+                x => x.MigrationsAssembly("MoneyPilot.Infrastructure"));
+        }
+        else
+        {
+            options.UseSqlServer(connection,
+                x => x.MigrationsAssembly("MoneyPilot.Infrastructure"));
+        }
+    });
+
+    var conn = builder.Configuration.GetConnectionString("DefaultConnection");
+    Console.WriteLine($"ConnectionString: {conn}");
+
+    /// use PostgreSQL with Npgsql.EntityFrameworkCore.PostgreSQL package
+    //builder.Services.AddDbContext<MoneyPilotDbContext>(options =>
+    //    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+    // Identity
+    builder.Services.AddIdentity<AppUser, IdentityRole>()
     .AddEntityFrameworkStores<MoneyPilotDbContext>()
     .AddDefaultTokenProviders();
 
@@ -197,11 +234,28 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         options.AddPolicy("AllowAngular",
             policy =>
             {
-                policy.WithOrigins("http://localhost:4200")
+                policy.WithOrigins("http://localhost:4200", "https://money-pilot-opal.vercel.app", "https://money-pilot-git-main-coders-projects-237f050f.vercel.app", "https://money-pilot-git-release-v000-coders-projects-237f050f.vercel.app", "money-pilot-ec3ext12v-coders-projects-237f050f.vercel.app")
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
     });
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowVercel", policy =>
+        {
+            policy.WithOrigins("https://money-pilot-git-release-v000-coders-projects-237f050f.vercel.app", "https://money-pilot-5vozyg7zf-coders-projects-237f050f.vercel.app", "https://money-pilot-opal.vercel.app")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // if you use cookies/authorization headers
+        });
+    });
+
+    // After app building
+
+    ///////////FIX 
+    ///
+    AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     //
     // ====================== APP ======================
     //
@@ -209,7 +263,14 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
     var app = builder.Build();
 
- 
+    app.UseCors("AllowVercel");
+
+    // Apply pending migrations at startup
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<MoneyPilotDbContext>();
+        db.Database.Migrate();
+    }
 
     //
     // ====================== MIDDLEWARE ======================
@@ -218,13 +279,13 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     {
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
-        app.UseSwaggerUI();
+    app.UseHttpsRedirection();
     /// CLEAN DEVELOPMENT API USAGE
    
     }
-    
-    app.UseHttpsRedirection();
+        app.UseSwaggerUI();
 
+    
     //using custom security headers middleware from MoneyPilot.SecurityHeaders.Extensions
     app.UseMoneyPilotSecurityHeaders();
 
@@ -238,9 +299,10 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
     app.MapGet("/", () => "🎉 MoneyPilot API is running!");
 
+    app.MapGet("/health", () => "Healthy");
 
 
-  //log ,db, seed sample
+    //log ,db, seed sample
     if (app.Environment.IsDevelopment())
     {
         /// CLEAN DEVELOPMENT API USAGE
