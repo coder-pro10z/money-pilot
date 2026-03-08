@@ -286,9 +286,10 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
     app.MapGet("/", () => "🎉 MoneyPilot API is running!");
 
+    app.MapGet("/health", () => "Healthy");
 
 
-  //log ,db, seed sample
+    //log ,db, seed sample
     if (app.Environment.IsDevelopment())
     {
         /// CLEAN DEVELOPMENT API USAGE
