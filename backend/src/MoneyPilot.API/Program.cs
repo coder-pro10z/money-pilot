@@ -266,13 +266,13 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     {
         app.UseDeveloperExceptionPage();
         app.UseSwagger();
+    app.UseHttpsRedirection();
         app.UseSwaggerUI();
     /// CLEAN DEVELOPMENT API USAGE
    
     }
-    
-    app.UseHttpsRedirection();
 
+    
     //using custom security headers middleware from MoneyPilot.SecurityHeaders.Extensions
     app.UseMoneyPilotSecurityHeaders();
 
