@@ -244,7 +244,7 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     {
         options.AddPolicy("AllowVercel", policy =>
         {
-            policy.WithOrigins("https://money-pilot-git-release-v000-coders-projects-237f050f.vercel.app")
+            policy.WithOrigins("https://money-pilot-git-release-v000-coders-projects-237f050f.vercel.app", "https://money-pilot-opal.vercel.app/")
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials(); // if you use cookies/authorization headers
