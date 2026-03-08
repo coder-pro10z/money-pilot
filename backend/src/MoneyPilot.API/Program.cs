@@ -240,6 +240,18 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
             });
     });
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowVercel", policy =>
+        {
+            policy.WithOrigins("https://money-pilot-git-release-v000-coders-projects-237f050f.vercel.app")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials(); // if you use cookies/authorization headers
+        });
+    });
+
+    // After app building
 
     ///////////FIX 
     ///
@@ -251,6 +263,7 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
     var app = builder.Build();
 
+    app.UseCors("AllowVercel");
 
     // Apply pending migrations at startup
     using (var scope = app.Services.CreateScope())
