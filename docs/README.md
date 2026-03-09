@@ -29,17 +29,32 @@ Initial production-ready release of MoneyPilot.
 
 ---
 
-## 📸 Application Screenshots
+```markdown
 
-### Dashboard
-![Dashboard Screenshot](docs/screenshots/dashboard.png)
+# 📸 Application Screenshots
 
-### Expense Management
-![Expenses Screenshot](docs/screenshots/expenses.png)
+## Dashboard
 
-### Budget Tracking
-![Budget Screenshot](docs/screenshots/budgets.png)
+![Dashboard](docs/screenshots/dashboard.png)
 
+---
+
+## Expense Management
+
+![Expenses](docs/screenshots/expenses.png)
+
+---
+
+## Budget Tracking
+
+![Budgets](docs/screenshots/budgets.png)
+
+---
+
+## Login
+
+![Login](docs/screenshots/login.png)
+````
 ---
 
 ### 🎯 Target Users
@@ -96,8 +111,6 @@ Initial production-ready release of MoneyPilot.
 ![Swagger](https://img.shields.io/badge/API-Swagger-green)
 ---
 
----
-
 # 🏗 System Architecture
 
 MoneyPilot follows **Clean Architecture principles** with a layered backend and modular Angular frontend.
@@ -137,6 +150,7 @@ MoneyPilot follows **Clean Architecture principles** with a layered backend and 
                     │  SQL Server/Postgres │
                     └──────────────────────┘
 ```
+
 ### Architecture Highlights
 
 MoneyPilot implements **Clean Architecture** to ensure separation of concerns and maintainability.
@@ -161,6 +175,128 @@ Benefits:
 3. Application Service accesses Repository via Unit of Work
 4. Repository queries SQL DB via DbContext
 5. Response returns to frontend for display
+
+---
+
+# ✨ Feature Documentation
+
+MoneyPilot is designed as a modular personal finance management system.  
+Each module handles a specific financial workflow.
+
+---
+
+## 🔐 Authentication System
+
+The authentication module provides secure user access to the application.
+
+Features:
+
+- JWT-based authentication
+- Secure login and registration
+- Role-based access control
+- Protected API endpoints
+- Angular route guards
+
+Security mechanisms:
+
+- Password hashing via ASP.NET Identity
+- Token expiration
+- Bearer token authentication
+
+---
+
+## 💰 Expense Management
+
+This module allows users to track daily expenses.
+
+Capabilities:
+
+- Create new expenses
+- Edit or update existing expenses
+- Delete expenses
+- Categorize expenses
+- View expense history
+
+Backend:
+
+- RESTful CRUD APIs
+- Entity Framework Core data access
+
+Frontend:
+
+- Reactive forms
+- Expense list view
+- Editable expense forms
+
+---
+
+## 📊 Budget Management
+
+Users can define budgets to control their spending.
+
+Features:
+
+- Create monthly budgets
+- Track spending against budget
+- View remaining balance
+- Budget summaries on dashboard
+
+The budget module integrates directly with the expense system to calculate real-time usage.
+
+---
+
+## 🔁 Recurring Transactions
+
+Automates regularly occurring expenses such as:
+
+- Rent
+- Subscriptions
+- Utility bills
+
+Capabilities:
+
+- Create recurring transactions
+- Scheduled background processing
+- Manual trigger via admin panel
+- Automatic expense generation
+
+Implemented using:
+
+- ASP.NET Core background services
+
+---
+
+## 📈 Dashboard Analytics
+
+The dashboard provides financial insights.
+
+Includes:
+
+- Total expense summary
+- Budget usage
+- Category breakdown
+- Monthly spending trends
+
+Technologies used:
+
+- Angular charts
+- Aggregated backend endpoints
+
+---
+
+## 🛠 Admin Monitoring
+
+Admin tools allow monitoring system health.
+
+Features:
+
+- Application health checks
+- Background job status
+- Logs viewer
+- Database connection test
+- Seeder for development data
+
+These endpoints help with diagnostics and system reliability.
 
 ---
 
@@ -402,8 +538,6 @@ All API responses follow a consistent wrapper:
 
 ---
 
----
-
 ## 🧠 Architecture Principles
 
 MoneyPilot follows enterprise-grade development principles:
@@ -437,7 +571,161 @@ This project demonstrates:
 - Production-ready development practices
 
 ---
+# ⚙️ Local Development Setup
 
+Follow these steps to run MoneyPilot locally.
+
+## Prerequisites
+
+Install the following tools:
+
+- .NET SDK 8.0+
+- Node.js 18+
+- Angular CLI
+- SQL Server / PostgreSQL
+- Git
+
+Verify installation:
+
+```bash
+dotnet --version
+node --version
+ng version
+```
+---
+
+
+## 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/coder-pro10z/moneypilot.git
+cd moneypilot
+```
+
+---
+
+## 2️⃣ Backend Setup
+
+Navigate to the backend project.
+
+```bash
+cd backend/MoneyPilot.API
+```
+
+Restore dependencies:
+
+```bash
+dotnet restore
+```
+
+Apply database migrations:
+
+```bash
+dotnet ef database update
+```
+
+Run the backend:
+
+```bash
+dotnet run
+```
+
+Backend will start at:
+
+```
+https://localhost:5001
+```
+
+Swagger docs:
+
+```
+https://localhost:5001/swagger
+```
+
+---
+
+## 3️⃣ Frontend Setup
+
+Navigate to the frontend project.
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run Angular development server:
+
+```bash
+ng serve
+```
+
+Application will run at:
+
+```
+http://localhost:4200
+```
+
+# ✅ Task 6 — Environment Variables Guide
+
+
+# 🔐 Environment Configuration
+
+The application uses environment variables for configuration.
+
+## Backend Configuration
+
+Update `appsettings.json` or environment variables.
+
+Example configuration:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=MoneyPilotDB;Trusted_Connection=True;"
+  },
+  "Jwt": {
+    "Key": "your-secret-key",
+    "Issuer": "MoneyPilot",
+    "Audience": "MoneyPilotUsers",
+    "ExpireMinutes": 60
+  }
+}
+````
+
+---
+
+## Frontend Configuration
+
+Update Angular environment file.
+
+```
+src/environments/environment.ts
+```
+
+Example:
+
+```ts
+export const environment = {
+  production: false,
+  apiUrl: "https://localhost:5001/api"
+};
+```
+
+For production:
+
+```
+src/environments/environment.prod.ts
+```
+
+```
+apiUrl: https://your-render-api.onrender.com/api
+```
+---
 ## 📌 Author
 
 **Praveen Kashyap**
