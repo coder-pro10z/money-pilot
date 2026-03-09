@@ -4,6 +4,7 @@
 ![Release](https://img.shields.io/badge/Release-v0.0.0-blue)
 ![Status](https://img.shields.io/badge/Status-Active-success)
 ![API Docs](https://img.shields.io/badge/API-Swagger-green)
+![Architecture](https://img.shields.io/badge/Architecture-Clean_Architecture-blue)
 # 🧾 MoneyPilot Project Documentation
 
 ## 1. Project Overview
@@ -95,23 +96,63 @@ Initial production-ready release of MoneyPilot.
 ![Swagger](https://img.shields.io/badge/API-Swagger-green)
 ---
 
-## 3. System Architecture
+---
+
+# 🏗 System Architecture
+
+MoneyPilot follows **Clean Architecture principles** with a layered backend and modular Angular frontend.
+
 
 ### 📐 Layered Design (Clean Architecture)
 
 ```
-Frontend (Angular)
-  ↓
-API Controllers (MoneyPilot.API)
-  ↓
-Application Layer (MoneyPilot.Application)
-  ↓
-Infrastructure Layer (MoneyPilot.Infrastructure)
-  ↓
-Domain Layer (MoneyPilot.Domain)
-  ↓
-SQL Server (EF Core)
+                    ┌──────────────────────┐
+                    │      Frontend        │
+                    │      Angular 17      │
+                    │  (Hosted on Vercel)  │
+                    └──────────┬───────────┘
+                               │
+                               │ HTTP + JWT
+                               ▼
+                    ┌──────────────────────┐
+                    │   ASP.NET Core API   │
+                    │   (Render Hosting)   │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │  Application Layer   │
+                    │   Business Logic     │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │ Infrastructure Layer │
+                    │ EF Core / Repos      │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │      Database        │
+                    │  SQL Server/Postgres │
+                    └──────────────────────┘
 ```
+### Architecture Highlights
+
+MoneyPilot implements **Clean Architecture** to ensure separation of concerns and maintainability.
+
+Key principles used:
+
+- **Domain Layer** → Core business entities
+- **Application Layer** → Use cases and services
+- **Infrastructure Layer** → Database and external integrations
+- **API Layer** → Controllers and request handling
+
+Benefits:
+
+- Testable architecture
+- Clear dependency flow
+- Maintainable and scalable system
 
 ### 🔁 Flow of Request
 
