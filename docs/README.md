@@ -3,6 +3,7 @@
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Release](https://img.shields.io/badge/Release-v0.0.0-blue)
 ![Status](https://img.shields.io/badge/Status-Active-success)
+![API Docs](https://img.shields.io/badge/API-Swagger-green)
 # 🧾 MoneyPilot Project Documentation
 
 ## 1. Project Overview
@@ -15,7 +16,7 @@
 |-------|------|
 Frontend | https://money-pilot-opal.vercel.app
 Backend API | https://money-pilot-webapi.onrender.com
-Swagger API Docs | /swagger
+Swagger API Docs | https://money-pilot-webapi.onrender.com/swagger
 
 ---
 
@@ -160,22 +161,69 @@ SQL Server (EF Core)
 
 ## 6. API Documentation (Sample)
 
-### 🔐 Authentication
+---
 
-* `POST /api/auth/login`
-* `POST /api/auth/register`
+# 🔐 Authentication APIs
 
-### 📊 Expenses
+| Method | Endpoint | Description |
+|------|------|------|
+POST | `/api/auth/register` | Register a new user |
+POST | `/api/auth/login` | Authenticate user and return JWT token |
+POST | `/api/auth/refresh` | Refresh authentication token |
+POST | `/api/auth/logout` | Logout user |
 
-* `GET /api/expenses` (paginated, filtered)
-* `POST /api/expenses`
-* `PUT /api/expenses/{id}`
-* `DELETE /api/expenses/{id}`
+---
 
-### 💰 Budget
+# 💰 Expense APIs
 
-* `GET /api/budgets`
-* `POST /api/budgets`
+| Method | Endpoint | Description |
+|------|------|------|
+GET | `/api/expenses` | Get all expenses |
+GET | `/api/expenses/{id}` | Get expense by ID |
+POST | `/api/expenses` | Create new expense |
+PUT | `/api/expenses/{id}` | Update expense |
+DELETE | `/api/expenses/{id}` | Delete expense |
+GET | `/api/expenses/summary` | Get expense summary for dashboard |
+
+---
+
+# 📊 Budget APIs
+
+| Method | Endpoint | Description |
+|------|------|------|
+GET | `/api/budgets` | List all budgets |
+GET | `/api/budgets/{id}` | Get budget details |
+POST | `/api/budgets` | Create budget |
+PUT | `/api/budgets/{id}` | Update budget |
+DELETE | `/api/budgets/{id}` | Delete budget |
+GET | `/api/budgets/current` | Get active budget |
+
+---
+
+# 🔁 Recurring Transaction APIs
+
+| Method | Endpoint | Description |
+|------|------|------|
+GET | `/api/recurring-transactions` | Get all recurring transactions |
+GET | `/api/recurring-transactions/{id}` | Get transaction by ID |
+POST | `/api/recurring-transactions` | Create recurring transaction |
+PUT | `/api/recurring-transactions/{id}` | Update recurring transaction |
+DELETE | `/api/recurring-transactions/{id}` | Delete recurring transaction |
+GET | `/api/recurring-transactions/due` | Get transactions due for execution |
+POST | `/api/recurring-transactions/process-due` | Trigger processing of due transactions |
+
+---
+
+# 🏥 Monitoring APIs
+
+| Method | Endpoint | Description |
+|------|------|------|
+GET | `/health` | Application health check |
+GET | `/health/background-service` | Background service status |
+GET | `/diagnostics/startup` | Startup diagnostics |
+GET | `/api/logs/recent` | Retrieve recent logs |
+POST | `/seed` | Seed test data |
+GET | `/test-db` | Test database connection |
 
 ---
 
