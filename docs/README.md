@@ -1,8 +1,44 @@
+![.NET](https://img.shields.io/badge/.NET-8.0-purple)
+![Angular](https://img.shields.io/badge/Angular-17-red)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Release](https://img.shields.io/badge/Release-v0.0.0-blue)
+![Status](https://img.shields.io/badge/Status-Active-success)
 # 🧾 MoneyPilot Project Documentation
 
 ## 1. Project Overview
 
 **MoneyPilot** is a full-stack finance and productivity web application that enables users to manage personal expenses, track budgets and investments, and build good financial habits. It is designed with a modular architecture using ASP.NET Core and Angular, following best practices for security, maintainability, and scalability.
+
+## 🚀 Live Demo
+
+| Service | Link |
+|-------|------|
+Frontend | https://money-pilot-opal.vercel.app
+Backend API | https://money-pilot-webapi.onrender.com
+Swagger API Docs | /swagger
+
+---
+
+## 🏷 Release Version
+
+Current Release: **v0.0.0**
+
+Initial production-ready release of MoneyPilot.
+
+---
+
+## 📸 Application Screenshots
+
+### Dashboard
+![Dashboard Screenshot](docs/screenshots/dashboard.png)
+
+### Expense Management
+![Expenses Screenshot](docs/screenshots/expenses.png)
+
+### Budget Tracking
+![Budget Screenshot](docs/screenshots/budgets.png)
+
+---
 
 ### 🎯 Target Users
 
@@ -21,28 +57,41 @@
 
 ---
 
-## 2. Tech Stack
+## 🛠 Tech Stack
 
 ### Backend
 
-* ASP.NET Core 8 (Web API)
-* Entity Framework Core (Code-First, SQL Server)
-* C#, LINQ, AutoMapper, FluentValidation
+![.NET](https://img.shields.io/badge/.NET-8.0-purple)
+![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-Web_API-blue)
+![Entity Framework](https://img.shields.io/badge/Entity_Framework-Core-green)
+![C#](https://img.shields.io/badge/C%23-Language-blue)
+![LINQ](https://img.shields.io/badge/LINQ-Queries-orange)
+![FluentValidation](https://img.shields.io/badge/FluentValidation-Validation-red)
+
+---
 
 ### Frontend
 
-* Angular 17, TypeScript
-* Angular Material or Tailwind CSS
-* Chart.js or ngx-charts
+![Angular](https://img.shields.io/badge/Angular-17-red)
+![TypeScript](https://img.shields.io/badge/TypeScript-Language-blue)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-UI-purple)
+![Chart.js](https://img.shields.io/badge/Chart.js-Analytics-yellow)
 
-### DevOps & Tooling
+---
 
-* Git + GitHub
-* Swagger / OpenAPI
-* Azure App Service (planned)
-* Jenkins / GitHub Actions
-* Octopus Deploy (CI/CD optional)
+### Database
 
+![SQL Server](https://img.shields.io/badge/SQL_Server-Database-red)
+![Entity Framework](https://img.shields.io/badge/EF_Core-ORM-green)
+
+---
+
+### Deployment & DevOps
+
+![Render](https://img.shields.io/badge/Backend-Render-black)
+![Vercel](https://img.shields.io/badge/Frontend-Vercel-black)
+![GitHub](https://img.shields.io/badge/Source-GitHub-lightgrey)
+![Swagger](https://img.shields.io/badge/API-Swagger-green)
 ---
 
 ## 3. System Architecture
@@ -264,5 +313,48 @@ All API responses follow a consistent wrapper:
 
 ---
 
+---
+
+## 🧠 Architecture Principles
+
+MoneyPilot follows enterprise-grade development principles:
+
+- Clean Architecture
+- SOLID Principles
+- Repository Pattern
+- Unit of Work
+- DTO-based API design
+- Modular Angular architecture
+- Secure JWT authentication
+
+---
+
+## 📦 Release History
+
+| Version | Description |
+|------|------|
+v0.0.0 | Initial portfolio release |
+
+---
+
+## ⭐ Project Purpose
+
+This project demonstrates:
+
+- Full-stack system design
+- Secure API development
+- Clean architecture in .NET
+- Angular enterprise frontend
+- Production-ready development practices
+
+---
+
 ## 📌 Author
-Praveen Kashyap(coder-pro10z)
+
+**Praveen Kashyap**
+
+GitHub  
+https://github.com/coder-pro10z
+
+LinkedIn  
+https://linkedin.com/in/coder-pro10z
