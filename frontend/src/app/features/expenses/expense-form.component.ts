@@ -35,13 +35,32 @@ import { CommonModule } from '@angular/common';
 
         <!-- Category -->
         <div class="form-group">
-          <label>Category</label>
-          <select formControlName="categoryId">
-            <option value="">Select Category</option>
-            <option *ngFor="let c of categories" [value]="c.id">
-              {{ c.name }}
-            </option>
-          </select>
+
+        <label>Category</label>
+
+        <div class="category-row">
+
+        <select formControlName="categoryId">
+
+        <option value="">Select Category</option>
+
+        <option *ngFor="let c of categories"
+                [value]="c.id">
+                {{c.name}}
+        </option>
+
+        </select>
+
+        <button type="button"
+                class="btn btn-secondary"
+                (click)="goToAddCategory()">
+
+        + Add Category
+
+        </button>
+
+        </div>
+
         </div>
 
         <!-- Actions -->
@@ -137,6 +156,16 @@ import { CommonModule } from '@angular/common';
     .cancel:hover {
       background: #c6c6c6;
     }
+
+    .category-row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .category-row select{
+      flex:1;
+    }
   `]
 })
 export class ExpenseFormComponent implements OnInit {
@@ -197,4 +226,8 @@ export class ExpenseFormComponent implements OnInit {
         .subscribe(() => this.router.navigate(['/expense']));
     }
   }
+
+  goToAddCategory(){
+  this.router.navigate(['/category/create']);
+}
 }

@@ -44,8 +44,10 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
             </span>
           </td>
           <td>
+          <div class="actions">
             <button class="btn" (click)="edit(c.id)">Edit</button>
             <button class="btn btn-danger" (click)="remove(c.id)">Delete</button>
+          </div>
           </td>
         </tr>
       </tbody>
@@ -58,7 +60,11 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
-    } `]
+    } 
+      .actions{
+  display:flex;
+  gap:8px;
+}`]
 
 })
 export class CategoriesComponent implements OnInit {
