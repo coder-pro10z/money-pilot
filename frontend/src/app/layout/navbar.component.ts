@@ -20,6 +20,7 @@ import { Router } from '@angular/router';
       padding: 1rem;
       background: #f3f4f6;
       border-bottom: 1px solid #ddd;
+      
     }
 
     button {

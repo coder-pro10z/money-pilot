@@ -21,14 +21,15 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
       <button class="btn btn-primary" (click)="goToCreate()">Add Budget</button>
     </div>
 
-    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
- 
+    
     <div *ngIf="!isLoading && !budgets.length" class="empty">
     No budgets found.
     </div>
     
+    <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+
     <div class="card" > 
-    <table *ngIf="!isLoading && budgets.length">
+    <table  class="data-table" *ngIf="!isLoading && budgets.length">
       <thead>
         <tr>
           <th>Category</th>
@@ -42,7 +43,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
         <tr *ngFor="let budget of budgets">
           <td>{{ budget.categoryName }}</td>
           <td>{{ budget.monthlyLimit | currency }}</td>
-          <td>{{ budget.month }}</td>
+          <td>{{ budget.month |  date:'MMM yyyy'  }}</td>
           <td>
             <button class="btn" (click)="edit(budget.id)">Edit</button>
             <button class="btn btn-danger" (click)="remove(budget.id)">Delete</button>
@@ -78,6 +79,16 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
     .loading, .empty {
       margin-top: 1rem;
     }
+
+    /* Categories table: category, Monthly Limit, Month, Actions */
+    .col-category { width: 25%; }
+.col-limit { width: 20%; }
+.col-month { width: 20%; }
+.col-actions { width: 35%; }
+  /* Category */
+  /* Monthly Limit */
+  /* Month */
+  /* Actions */
   `]
 })
 

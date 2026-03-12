@@ -23,7 +23,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
     </div>
 
     <div class="card" *ngIf="!isLoading && categories.length">
-    <table *ngIf="!isLoading && categories.length">
+    <table  class="data-table" *ngIf="!isLoading && categories.length">
       <thead>
         <tr>
           <th>Name</th>
@@ -44,8 +44,10 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
             </span>
           </td>
           <td>
+          <div class="actions">
             <button class="btn" (click)="edit(c.id)">Edit</button>
             <button class="btn btn-danger" (click)="remove(c.id)">Delete</button>
+          </div>
           </td>
         </tr>
       </tbody>
@@ -58,7 +60,18 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1rem;
-    } `]
+    } 
+      .actions{
+  display:flex;
+  gap:8px;
+}
+  
+/* Categories table: Name, Description, Color, Actions */
+.data-table th:nth-child(1) { width: 25%; }  /* Name */
+.data-table th:nth-child(2) { width: 30%; }  /* Description */
+.data-table th:nth-child(3) { width: 10%; }  /* Color */
+.data-table th:nth-child(4) { width: 20%; }  /* Actions */
+`]
 
 })
 export class CategoriesComponent implements OnInit {

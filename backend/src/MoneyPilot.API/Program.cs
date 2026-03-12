@@ -242,9 +242,9 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
     builder.Services.AddCors(options =>
     {
-        options.AddPolicy("AllowVercel", policy =>
+        options.AddPolicy("AllowFrontend", policy =>
         {
-            policy.WithOrigins("https://money-pilot-git-release-v000-coders-projects-237f050f.vercel.app", "https://money-pilot-5vozyg7zf-coders-projects-237f050f.vercel.app", "https://money-pilot-opal.vercel.app")
+            policy.WithOrigins("http://localhost:4200", "https://money-pilot-git-release-v000-coders-projects-237f050f.vercel.app", "https://money-pilot-5vozyg7zf-coders-projects-237f050f.vercel.app", "https://money-pilot-opal.vercel.app")
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials(); // if you use cookies/authorization headers
@@ -264,6 +264,7 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
     var app = builder.Build();
 
     app.UseCors("AllowVercel");
+    app.UseCors("AllowFrontend");
 
     // Apply pending migrations at startup
     using (var scope = app.Services.CreateScope())

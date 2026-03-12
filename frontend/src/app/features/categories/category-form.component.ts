@@ -10,33 +10,68 @@ import { CreateCategoryDto } from '../../core/models/category-create.model';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   template: `
-    <div class="form-container">
-      <h2>{{ isEdit ? 'Edit Category' : 'Create Category' }}</h2>
+  <div class="form-container">
 
-      <form [formGroup]="form" (ngSubmit)="submit()">
+    <h2>{{ isEdit ? 'Edit Category' : 'Create Category' }}</h2>
 
-        <div>
-          <label>Name</label>
-          <input formControlName="name" type="text" />
-        </div>
+    <form [formGroup]="form" (ngSubmit)="submit()">
 
-        <div>
-          <label>Description</label>
-          <input formControlName="description" type="text" />
-        </div>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" formControlName="name">
+      </div>
 
-        <div>
-          <label>Color</label>
-          <input formControlName="color" type="color" />
-        </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" formControlName="description">
+      </div>
 
-        <button class="btn" type="submit" [disabled]="form.invalid">Save</button>
-        <button class="btn" type="button" (click)="router.navigate(['/category'])">
-          Cancel
-        </button>
-      </form>
-    </div>
-  `
+      <div class="form-group">
+        <label>Color</label>
+        <input type="color" formControlName="color">
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit" [disabled]="form.invalid">Save</button>
+        <button class="btn btn-secondary" type="button" (click)="cancel()">Cancel</button>
+      </div>
+
+    </form>
+
+  </div>
+  `,
+  styles:[`
+    .form-container{
+      max-width:500px;
+      background:white;
+      padding:25px;
+      border-radius:10px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .form-group{
+      display:flex;
+      flex-direction:column;
+      margin-bottom:15px;
+    }
+
+    .form-group label{
+      margin-bottom:5px;
+      font-weight:500;
+    }
+
+    .form-group input{
+      padding:8px;
+      border:1px solid #ddd;
+      border-radius:6px;
+    }
+
+    .form-actions{
+      display:flex;
+      gap:10px;
+      margin-top:10px;
+    }
+  `]
 })
 export class CategoryFormComponent implements OnInit {
 
@@ -48,7 +83,7 @@ export class CategoryFormComponent implements OnInit {
     private fb: FormBuilder,
     private categoryService: CategoryService,
     private route: ActivatedRoute,
-    public router: Router
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -85,5 +120,9 @@ export class CategoryFormComponent implements OnInit {
       this.categoryService.create(payload)
         .subscribe(() => this.router.navigate(['/category']));
     }
+  }
+
+  cancel(){
+    this.router.navigate(['/category']);
   }
 }
