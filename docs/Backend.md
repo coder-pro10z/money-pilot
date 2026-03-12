@@ -129,76 +129,131 @@ sequenceDiagram
 
 ```
 MoneyPilot/
-├── MoneyPilot.API/                    # API Layer (Presentation)
-│   ├── Controllers/                   # API Endpoints
+│
+├── MoneyPilot.API/                         # Presentation Layer (API)
+│   ├── Controllers/                        # REST API Controllers
 │   │   ├── AuthController.cs
 │   │   ├── ExpensesController.cs
 │   │   ├── BudgetController.cs
-│   │   └── RecurringTransactionsController.cs
-│   ├── Middleware/                    # Custom Middleware
-│   │   └── ExceptionHandlingMiddleware.cs
+│   │   ├── CategoriesController.cs
+│   │   ├── RecurringTransactionsController.cs
+│   │   └── DashboardController.cs
+│   │
+│   ├── Middleware/                         # Custom Middleware
+│   │   ├── ExceptionHandlingMiddleware.cs
+│   │   └── SecurityHeadersMiddleware.cs
+│   │
+│   ├── Extensions/                         # API Extensions
+│   │   ├── SwaggerExtensions.cs
+│   │   ├── HealthEndpointExtensions.cs
+│   │   └── DiagnosticEndpointExtensions.cs
+│   │
 │   ├── Properties/
 │   │   └── launchSettings.json
-│   ├── Program.cs                     # Startup Configuration
-│   ├── appsettings.json              # Configuration
-│   └── appsettings.Development.json
+│   │
+│   ├── Program.cs                          # Application Startup & Pipeline
+│   ├── appsettings.json                    # Production Configuration
+│   └── appsettings.Development.json        # Dev Overrides
 │
-├── MoneyPilot.Application/            # Application Layer
-│   ├── DTOs/                          # Data Transfer Objects
+│
+├── MoneyPilot.Application/                 # Application Layer
+│   ├── DTOs/                               # Data Transfer Objects
 │   │   ├── Auth/
 │   │   │   ├── LoginDto.cs
 │   │   │   └── RegisterDto.cs
-│   │   ├── ExpenseDto.cs
-│   │   ├── BudgetDto.cs
-│   │   ├── RecurringTransactionDto.cs
-│   │   ├── CreateRecurringTransactionDto.cs
-│   │   ├── UpdateRecurringTransactionDto.cs
-│   │   └── RecurringTransactionProcessingResultDto.cs
-│   ├── Configs/                       # Configuration Classes
-│   │   └── RecurringTransactionConfig.cs
-│   └── Interfaces/                    # Service Contracts
-│       ├── IExpenseService.cs
-│       ├── IBudgetService.cs
-│       ├── IRecurringTransactionService.cs
-│       ├── IRepository.cs
-│       └── IUnitOfWork.cs
+│   │   │
+│   │   ├── Category/
+│   │   │   ├── CategoryDto.cs
+│   │   │   └── CreateCategoryDto.cs
+│   │   │
+│   │   ├── Expense/
+│   │   │   ├── ExpenseDto.cs
+│   │   │   └── CreateExpenseDto.cs
+│   │   │
+│   │   ├── Budget/
+│   │   │   ├── BudgetDto.cs
+│   │   │   └── CreateBudgetDto.cs
+│   │   │
+│   │   ├── RecurringTransaction/
+│   │   │   ├── RecurringTransactionDto.cs
+│   │   │   ├── CreateRecurringTransactionDto.cs
+│   │   │   ├── UpdateRecurringTransactionDto.cs
+│   │   │   └── RecurringTransactionProcessingResultDto.cs
+│   │   │
+│   │   ├── DashboardSummaryDto.cs
+│   │   ├── ApiResponse.cs
+│   │   └── PagedResponse.cs
+│   │
+│   ├── Interfaces/                         # Service Contracts
+│   │   ├── IExpenseService.cs
+│   │   ├── IBudgetService.cs
+│   │   ├── ICategoryService.cs
+│   │   ├── IRecurringTransactionService.cs
+│   │   ├── IDashboardService.cs
+│   │   ├── IRepository.cs
+│   │   └── IUnitOfWork.cs
+│   │
+│   └── Configs/
+│       └── RecurringTransactionConfig.cs
 │
-├── MoneyPilot.Domain/                 # Domain Layer
-│   ├── Entities/                      # Core Business Entities
-│   │   ├── AppUser.cs                 # Inherits IdentityUser
+│
+├── MoneyPilot.Domain/                      # Core Business Layer
+│   ├── Entities/
+│   │   ├── AppUser.cs
 │   │   ├── Expense.cs
 │   │   ├── Budget.cs
 │   │   ├── Category.cs
 │   │   └── RecurringTransaction.cs
-│   ├── Enums/                         # Domain Enumerations
+│   │
+│   ├── Enums/
 │   │   └── RecurrenceType.cs
-│   └── Common/                        # Shared Domain Objects
-│       └── BaseAuditableEntity.cs     # Audit Trail Base Class
+│   │
+│   └── Common/
+│       └── BaseAuditableEntity.cs
 │
-├── MoneyPilot.Infrastructure/         # Infrastructure Layer
-│   ├── Data/                          # Data Access
-│   │   └── MoneyPilotDbContext.cs
-│   ├── Migrations/                    # EF Core Migrations
-│   │   └── 20240216000000_Initial.cs
-│   ├── Repositories/                  # Repository Implementations
-│   │   ├── Repository.cs              # Generic Repository
+│
+├── MoneyPilot.Infrastructure/              # Infrastructure Layer
+│   ├── Data/
+│   │   ├── MoneyPilotDbContext.cs
+│   │   └── DesignTimeDbContextFactory.cs
+│   │
+│   ├── Migrations/
+│   │   └── <MigrationFiles>
+│   │
+│   ├── Repositories/
+│   │   ├── Repository.cs
 │   │   ├── ExpenseRepository.cs
 │   │   ├── BudgetRepository.cs
 │   │   └── UnitOfWork.cs
-│   ├── Services/                      # Domain Services
+│   │
+│   ├── Services/
 │   │   ├── ExpenseService.cs
 │   │   ├── BudgetService.cs
+│   │   ├── CategoryService.cs
+│   │   ├── DashboardService.cs
 │   │   ├── RecurringTransactionService.cs
-│   │   ├── RecurringTransactionBackgroundService.cs
-│   │   ├── TestUserService.cs
-│   │   └── TestTokenHelper.cs
-│   └── Extensions/                    # Infrastructure Extensions
+│   │   └── RecurringTransactionBackgroundService.cs
+│   │
+│   ├── Logging/
+│   │   └── SerilogExtensions.cs
+│   │
+│   └── Extensions/
 │       └── ServiceExtensions.cs
 │
-└── MoneyPilot.Tests/                  # Test Projects
+│
+└── MoneyPilot.Tests/                       # Testing Layer
     ├── UnitTests/
+    │   ├── ExpenseServiceTests.cs
+    │   ├── BudgetServiceTests.cs
+    │   └── RecurringTransactionServiceTests.cs
+    │
     ├── IntegrationTests/
+    │   ├── ExpenseControllerTests.cs
+    │   └── AuthControllerTests.cs
+    │
     └── TestHelpers/
+        └── MockDataFactory.cs
+
 ```
 
 ---
@@ -209,76 +264,81 @@ MoneyPilot/
 
 ```mermaid
 erDiagram
+
     AppUser ||--o{ Expense : creates
     AppUser ||--o{ Budget : manages
     AppUser ||--o{ RecurringTransaction : schedules
-    AppUser }|--|| IdentityUser : extends
-    
+
     Category ||--o{ Expense : categorizes
     Category ||--o{ RecurringTransaction : categorizes
     Category ||--o{ Budget : categorizes
-    
-    RecurringTransaction ||--o{ Expense : generates
-    Budget ||--o{ Expense : tracks
-    
+
+    RecurringTransaction ||--o{ Expense : generates_logically
+    Budget ||--o{ Expense : tracks_logically
+
     AppUser {
         string Id PK "From IdentityUser"
         string UserName
         string Email
         bool EmailConfirmed
         datetime CreatedAt
-        datetime? UpdatedAt
+        datetime UpdatedAt "Nullable"
     }
-    
-    Expense {
-        int Id PK
-        string UserId FK
-        int CategoryId FK
-        decimal Amount
-        string Description
-        datetime Date
-        string Notes
-        datetime CreatedAt
-        datetime? UpdatedAt
-    }
-    
-    Budget {
-        int Id PK
-        string UserId FK
-        int CategoryId FK
-        decimal Limit
-        decimal CurrentSpent
-        datetime StartDate
-        datetime EndDate
-        bool IsActive
-        datetime CreatedAt
-    }
-    
+
     Category {
         int Id PK
         string Name
         string Description
         string Color
+        bool IsDeleted
         datetime CreatedAt
+        datetime UpdatedAt "Nullable"
     }
-    
+
+    Expense {
+        int Id PK
+        string UserId FK
+        int CategoryId FK "Optional"
+        decimal Amount "Precision(18,2)"
+        string Description
+        string Notes
+        datetime Date
+        bool IsDeleted
+        datetime CreatedAt
+        datetime UpdatedAt "Nullable"
+    }
+
+    Budget {
+        int Id PK
+        string UserId FK
+        int CategoryId FK "Optional"
+        decimal MonthlyLimit "Precision(18,2)"
+        decimal CurrentSpent
+        datetime StartDate
+        datetime EndDate
+        bool IsActive
+        bool IsDeleted
+        datetime CreatedAt
+        datetime UpdatedAt "Nullable"
+    }
+
     RecurringTransaction {
         int Id PK
         string UserId FK
-        int CategoryId FK
+        int CategoryId FK "Optional"
         string Description
-        decimal Amount
+        decimal Amount "Precision(18,2)"
         enum RecurrenceType
         int Interval
-        int? DayOfMonth
-        DayOfWeek? DayOfWeek
+        int DayOfMonth "Nullable"
+        string DayOfWeek "Nullable"
         datetime StartDate
-        datetime? EndDate
+        datetime EndDate "Nullable"
         datetime NextOccurrence
-        datetime? LastProcessed
+        datetime LastProcessed "Nullable"
         bool IsActive
         datetime CreatedAt
-        datetime? UpdatedAt
+        datetime UpdatedAt "Nullable"
     }
 ```
 

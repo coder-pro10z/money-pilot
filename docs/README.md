@@ -1,8 +1,61 @@
+![.NET](https://img.shields.io/badge/.NET-8.0-purple)
+![Angular](https://img.shields.io/badge/Angular-17-red)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Release](https://img.shields.io/badge/Release-v0.0.0-blue)
+![Status](https://img.shields.io/badge/Status-Active-success)
+![API Docs](https://img.shields.io/badge/API-Swagger-green)
+![Architecture](https://img.shields.io/badge/Architecture-Clean_Architecture-blue)
 # 🧾 MoneyPilot Project Documentation
 
 ## 1. Project Overview
 
 **MoneyPilot** is a full-stack finance and productivity web application that enables users to manage personal expenses, track budgets and investments, and build good financial habits. It is designed with a modular architecture using ASP.NET Core and Angular, following best practices for security, maintainability, and scalability.
+
+## 🚀 Live Demo
+
+| Service | Link |
+|-------|------|
+Frontend | https://money-pilot-opal.vercel.app
+Backend API | https://money-pilot-webapi.onrender.com
+Swagger API Docs | https://money-pilot-webapi.onrender.com/swagger
+
+---
+
+## 🏷 Release Version
+
+Current Release: **v0.0.0**
+
+Initial production-ready release of MoneyPilot.
+
+---
+
+```markdown
+
+# 📸 Application Screenshots
+
+## Dashboard
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+---
+
+## Expense Management
+
+![Expenses](docs/screenshots/expenses.png)
+
+---
+
+## Budget Tracking
+
+![Budgets](docs/screenshots/budgets.png)
+
+---
+
+## Login
+
+![Login](docs/screenshots/login.png)
+````
+---
 
 ### 🎯 Target Users
 
@@ -21,47 +74,99 @@
 
 ---
 
-## 2. Tech Stack
+## 🛠 Tech Stack
 
 ### Backend
 
-* ASP.NET Core 8 (Web API)
-* Entity Framework Core (Code-First, SQL Server)
-* C#, LINQ, AutoMapper, FluentValidation
-
-### Frontend
-
-* Angular 17, TypeScript
-* Angular Material or Tailwind CSS
-* Chart.js or ngx-charts
-
-### DevOps & Tooling
-
-* Git + GitHub
-* Swagger / OpenAPI
-* Azure App Service (planned)
-* Jenkins / GitHub Actions
-* Octopus Deploy (CI/CD optional)
+![.NET](https://img.shields.io/badge/.NET-8.0-purple)
+![ASP.NET Core](https://img.shields.io/badge/ASP.NET_Core-Web_API-blue)
+![Entity Framework](https://img.shields.io/badge/Entity_Framework-Core-green)
+![C#](https://img.shields.io/badge/C%23-Language-blue)
+![LINQ](https://img.shields.io/badge/LINQ-Queries-orange)
+![FluentValidation](https://img.shields.io/badge/FluentValidation-Validation-red)
 
 ---
 
-## 3. System Architecture
+### Frontend
+
+![Angular](https://img.shields.io/badge/Angular-17-red)
+![TypeScript](https://img.shields.io/badge/TypeScript-Language-blue)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-UI-purple)
+![Chart.js](https://img.shields.io/badge/Chart.js-Analytics-yellow)
+
+---
+
+### Database
+
+![SQL Server](https://img.shields.io/badge/SQL_Server-Database-red)
+![Entity Framework](https://img.shields.io/badge/EF_Core-ORM-green)
+
+---
+
+### Deployment & DevOps
+
+![Render](https://img.shields.io/badge/Backend-Render-black)
+![Vercel](https://img.shields.io/badge/Frontend-Vercel-black)
+![GitHub](https://img.shields.io/badge/Source-GitHub-lightgrey)
+![Swagger](https://img.shields.io/badge/API-Swagger-green)
+---
+
+# 🏗 System Architecture
+
+MoneyPilot follows **Clean Architecture principles** with a layered backend and modular Angular frontend.
+
 
 ### 📐 Layered Design (Clean Architecture)
 
 ```
-Frontend (Angular)
-  ↓
-API Controllers (MoneyPilot.API)
-  ↓
-Application Layer (MoneyPilot.Application)
-  ↓
-Infrastructure Layer (MoneyPilot.Infrastructure)
-  ↓
-Domain Layer (MoneyPilot.Domain)
-  ↓
-SQL Server (EF Core)
+                    ┌──────────────────────┐
+                    │      Frontend        │
+                    │      Angular 17      │
+                    │  (Hosted on Vercel)  │
+                    └──────────┬───────────┘
+                               │
+                               │ HTTP + JWT
+                               ▼
+                    ┌──────────────────────┐
+                    │   ASP.NET Core API   │
+                    │   (Render Hosting)   │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │  Application Layer   │
+                    │   Business Logic     │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │ Infrastructure Layer │
+                    │ EF Core / Repos      │
+                    └──────────┬───────────┘
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │      Database        │
+                    │  SQL Server/Postgres │
+                    └──────────────────────┘
 ```
+
+### Architecture Highlights
+
+MoneyPilot implements **Clean Architecture** to ensure separation of concerns and maintainability.
+
+Key principles used:
+
+- **Domain Layer** → Core business entities
+- **Application Layer** → Use cases and services
+- **Infrastructure Layer** → Database and external integrations
+- **API Layer** → Controllers and request handling
+
+Benefits:
+
+- Testable architecture
+- Clear dependency flow
+- Maintainable and scalable system
 
 ### 🔁 Flow of Request
 
@@ -70,6 +175,128 @@ SQL Server (EF Core)
 3. Application Service accesses Repository via Unit of Work
 4. Repository queries SQL DB via DbContext
 5. Response returns to frontend for display
+
+---
+
+# ✨ Feature Documentation
+
+MoneyPilot is designed as a modular personal finance management system.  
+Each module handles a specific financial workflow.
+
+---
+
+## 🔐 Authentication System
+
+The authentication module provides secure user access to the application.
+
+Features:
+
+- JWT-based authentication
+- Secure login and registration
+- Role-based access control
+- Protected API endpoints
+- Angular route guards
+
+Security mechanisms:
+
+- Password hashing via ASP.NET Identity
+- Token expiration
+- Bearer token authentication
+
+---
+
+## 💰 Expense Management
+
+This module allows users to track daily expenses.
+
+Capabilities:
+
+- Create new expenses
+- Edit or update existing expenses
+- Delete expenses
+- Categorize expenses
+- View expense history
+
+Backend:
+
+- RESTful CRUD APIs
+- Entity Framework Core data access
+
+Frontend:
+
+- Reactive forms
+- Expense list view
+- Editable expense forms
+
+---
+
+## 📊 Budget Management
+
+Users can define budgets to control their spending.
+
+Features:
+
+- Create monthly budgets
+- Track spending against budget
+- View remaining balance
+- Budget summaries on dashboard
+
+The budget module integrates directly with the expense system to calculate real-time usage.
+
+---
+
+## 🔁 Recurring Transactions
+
+Automates regularly occurring expenses such as:
+
+- Rent
+- Subscriptions
+- Utility bills
+
+Capabilities:
+
+- Create recurring transactions
+- Scheduled background processing
+- Manual trigger via admin panel
+- Automatic expense generation
+
+Implemented using:
+
+- ASP.NET Core background services
+
+---
+
+## 📈 Dashboard Analytics
+
+The dashboard provides financial insights.
+
+Includes:
+
+- Total expense summary
+- Budget usage
+- Category breakdown
+- Monthly spending trends
+
+Technologies used:
+
+- Angular charts
+- Aggregated backend endpoints
+
+---
+
+## 🛠 Admin Monitoring
+
+Admin tools allow monitoring system health.
+
+Features:
+
+- Application health checks
+- Background job status
+- Logs viewer
+- Database connection test
+- Seeder for development data
+
+These endpoints help with diagnostics and system reliability.
 
 ---
 
@@ -111,22 +338,69 @@ SQL Server (EF Core)
 
 ## 6. API Documentation (Sample)
 
-### 🔐 Authentication
+---
 
-* `POST /api/auth/login`
-* `POST /api/auth/register`
+# 🔐 Authentication APIs
 
-### 📊 Expenses
+| Method | Endpoint | Description |
+|------|------|------|
+POST | `/api/auth/register` | Register a new user |
+POST | `/api/auth/login` | Authenticate user and return JWT token |
+POST | `/api/auth/refresh` | Refresh authentication token |
+POST | `/api/auth/logout` | Logout user |
 
-* `GET /api/expenses` (paginated, filtered)
-* `POST /api/expenses`
-* `PUT /api/expenses/{id}`
-* `DELETE /api/expenses/{id}`
+---
 
-### 💰 Budget
+# 💰 Expense APIs
 
-* `GET /api/budgets`
-* `POST /api/budgets`
+| Method | Endpoint | Description |
+|------|------|------|
+GET | `/api/expenses` | Get all expenses |
+GET | `/api/expenses/{id}` | Get expense by ID |
+POST | `/api/expenses` | Create new expense |
+PUT | `/api/expenses/{id}` | Update expense |
+DELETE | `/api/expenses/{id}` | Delete expense |
+GET | `/api/expenses/summary` | Get expense summary for dashboard |
+
+---
+
+# 📊 Budget APIs
+
+| Method | Endpoint | Description |
+|------|------|------|
+GET | `/api/budgets` | List all budgets |
+GET | `/api/budgets/{id}` | Get budget details |
+POST | `/api/budgets` | Create budget |
+PUT | `/api/budgets/{id}` | Update budget |
+DELETE | `/api/budgets/{id}` | Delete budget |
+GET | `/api/budgets/current` | Get active budget |
+
+---
+
+# 🔁 Recurring Transaction APIs
+
+| Method | Endpoint | Description |
+|------|------|------|
+GET | `/api/recurring-transactions` | Get all recurring transactions |
+GET | `/api/recurring-transactions/{id}` | Get transaction by ID |
+POST | `/api/recurring-transactions` | Create recurring transaction |
+PUT | `/api/recurring-transactions/{id}` | Update recurring transaction |
+DELETE | `/api/recurring-transactions/{id}` | Delete recurring transaction |
+GET | `/api/recurring-transactions/due` | Get transactions due for execution |
+POST | `/api/recurring-transactions/process-due` | Trigger processing of due transactions |
+
+---
+
+# 🏥 Monitoring APIs
+
+| Method | Endpoint | Description |
+|------|------|------|
+GET | `/health` | Application health check |
+GET | `/health/background-service` | Background service status |
+GET | `/diagnostics/startup` | Startup diagnostics |
+GET | `/api/logs/recent` | Retrieve recent logs |
+POST | `/seed` | Seed test data |
+GET | `/test-db` | Test database connection |
 
 ---
 
@@ -264,5 +538,200 @@ All API responses follow a consistent wrapper:
 
 ---
 
+## 🧠 Architecture Principles
+
+MoneyPilot follows enterprise-grade development principles:
+
+- Clean Architecture
+- SOLID Principles
+- Repository Pattern
+- Unit of Work
+- DTO-based API design
+- Modular Angular architecture
+- Secure JWT authentication
+
+---
+
+## 📦 Release History
+
+| Version | Description |
+|------|------|
+v0.0.0 | Initial portfolio release |
+
+---
+
+## ⭐ Project Purpose
+
+This project demonstrates:
+
+- Full-stack system design
+- Secure API development
+- Clean architecture in .NET
+- Angular enterprise frontend
+- Production-ready development practices
+
+---
+# ⚙️ Local Development Setup
+
+Follow these steps to run MoneyPilot locally.
+
+## Prerequisites
+
+Install the following tools:
+
+- .NET SDK 8.0+
+- Node.js 18+
+- Angular CLI
+- SQL Server / PostgreSQL
+- Git
+
+Verify installation:
+
+```bash
+dotnet --version
+node --version
+ng version
+```
+---
+
+
+## 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/coder-pro10z/moneypilot.git
+cd moneypilot
+```
+
+---
+
+## 2️⃣ Backend Setup
+
+Navigate to the backend project.
+
+```bash
+cd backend/MoneyPilot.API
+```
+
+Restore dependencies:
+
+```bash
+dotnet restore
+```
+
+Apply database migrations:
+
+```bash
+dotnet ef database update
+```
+
+Run the backend:
+
+```bash
+dotnet run
+```
+
+Backend will start at:
+
+```
+https://localhost:5001
+```
+
+Swagger docs:
+
+```
+https://localhost:5001/swagger
+```
+
+---
+
+## 3️⃣ Frontend Setup
+
+Navigate to the frontend project.
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run Angular development server:
+
+```bash
+ng serve
+```
+
+Application will run at:
+
+```
+http://localhost:4200
+```
+
+# ✅ Task 6 — Environment Variables Guide
+
+
+# 🔐 Environment Configuration
+
+The application uses environment variables for configuration.
+
+## Backend Configuration
+
+Update `appsettings.json` or environment variables.
+
+Example configuration:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Database=MoneyPilotDB;Trusted_Connection=True;"
+  },
+  "Jwt": {
+    "Key": "your-secret-key",
+    "Issuer": "MoneyPilot",
+    "Audience": "MoneyPilotUsers",
+    "ExpireMinutes": 60
+  }
+}
+````
+
+---
+
+## Frontend Configuration
+
+Update Angular environment file.
+
+```
+src/environments/environment.ts
+```
+
+Example:
+
+```ts
+export const environment = {
+  production: false,
+  apiUrl: "https://localhost:5001/api"
+};
+```
+
+For production:
+
+```
+src/environments/environment.prod.ts
+```
+
+```
+apiUrl: https://your-render-api.onrender.com/api
+```
+---
 ## 📌 Author
-Praveen Kashyap(coder-pro10z)
+
+**Praveen Kashyap**
+
+GitHub  
+https://github.com/coder-pro10z
+
+LinkedIn  
+https://linkedin.com/in/coder-pro10z

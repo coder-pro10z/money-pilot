@@ -4,6 +4,7 @@ import { Expense } from '../../core/models/expense.model';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
+import { ConfirmationService } from '../../shared/services/confirmation.service';
 
 @Component({
   selector: 'app-expenses',
@@ -19,7 +20,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
     
     <div class="card" *ngIf="expenses.length">
-      <table class="table">
+      <table class="data-table">
         <thead>
           <tr>
             <th>Description</th>
@@ -38,7 +39,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
           <td>{{ expense.categoryName }}</td>
           <td>
             <button class="btn" (click)="edit(expense.id)">Edit</button>
-            <button class="btn btn-danger" (click)="remove(expense.id)">Delete</button>
+            <button class="btn btn-danger" (click)="confirmDelete(expense.id)">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -72,6 +73,14 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component'
     align-items: center;
     margin-bottom: 1rem;
   }
+
+  /* Column widths for Expenses table */
+.data-table th:nth-child(1) { width: 25%; }  /* Description */
+.data-table th:nth-child(2) { width: 15%; }  /* Amount */
+.data-table th:nth-child(3) { width: 15%; }  /* Date */
+.data-table th:nth-child(4) { width: 20%; }  /* Category */
+.data-table th:nth-child(5) { width: 25%; }  /* Actions (two buttons) */
+
 `]})
 export class ExpensesComponent implements OnInit {
 
@@ -80,24 +89,14 @@ export class ExpensesComponent implements OnInit {
  isLoading = false;
   constructor(
     private expenseService: ExpenseService,
-    private router: Router
+    private router: Router,
+    private confirmationService: ConfirmationService 
   ) {}
 
   ngOnInit(): void {
     this.loadExpenses();
   }
 
-  // loadExpenses() {
-  //   this.expenseService.getAll().subscribe(data => {
-  //     this.expenses = data;
-  //   });
-  // }
-
-//   loadExpenses() {
-//   this.expenseService.getAll().subscribe(response => {
-//      response; // Adjust based on your API response structure
-//   });
-// }
 
 loadExpenses() {
   //set loading state
@@ -119,11 +118,27 @@ loadExpenses() {
     this.router.navigate(['expense/edit', id]);
   }
 
-  remove(id: number) {
+  remove_1(id: number) {
     if (confirm('Are you sure?')) {
       this.expenseService.delete(id).subscribe(() => {
         this.loadExpenses();
       });
     }
+  }
+
+   confirmDelete(id: number) {
+    this.confirmationService.confirm({
+      title: 'Delete Expense',
+      message: 'Are you sure you want to delete this expense? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
+    }).subscribe(confirmed => {
+      if (confirmed) {
+        this.expenseService.delete(id).subscribe({
+          next: () => this.router.navigate(['/expense']),
+          error: (err) => console.error('Delete failed', err)
+        });
+      }
+    });
   }
 }
