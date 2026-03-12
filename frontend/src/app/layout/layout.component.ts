@@ -11,115 +11,96 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, RouterOutlet, SidebarComponent, NavbarComponent],
   template: `
     <div class="app-layout">
-      <app-sidebar [collapsed]="sidebarCollapsed" (toggle)="toggleSidebar()"></app-sidebar>
+  <app-sidebar [collapsed]="sidebarCollapsed" (toggle)="toggleSidebar()"></app-sidebar>
 
-      <main class="main-content" [class.sidebar-collapsed]="sidebarCollapsed">
-        <!-- Mobile header (only on small screens) -->
-        <div class="mobile-header" *ngIf="isHandset">
-          <button class="menu-btn" (click)="toggleSidebar()">☰</button>
-          <span class="app-title">MoneyPilot</span>
-        </div>
-
-        <!-- Navbar (visible on all screens) -->
-        <app-navbar></app-navbar>
-
-        <!-- Page content -->
-        <router-outlet></router-outlet>
-      </main>
+  <main class="main-content">
+    <!-- Mobile header -->
+    <div class="mobile-header" *ngIf="isHandset">
+      <button class="menu-btn" (click)="toggleSidebar()">☰</button>
+      <span class="app-title">MoneyPilot</span>
     </div>
+
+    <app-navbar></app-navbar>
+    <router-outlet></router-outlet>
+  </main>
+</div>
   `,
-  styles: [`
-    app-navbar {
-      display: block;
-      margin-bottom: 20px;
-    }
+  styles: [`  
+.app-layout {
+  display: flex;
+  height: 100vh;
+}
 
-    @media (max-width: 768px) {
-      app-navbar {
-        margin-top: 10px;
-      }
-    }
+.main-content {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
 
-    .app-layout {
-      display: flex;
-      height: 100vh;
-    }
+}
 
-    .main-content {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      transition: margin-left 0.3s ease;
-    }
+/* Desktop styles – no margin-left needed */
+@media (min-width: 769px) {
+  .mobile-header {
+    display: none;
+  }
+}
 
-    /* Desktop styles */
-    @media (min-width: 769px) {
-      .main-content:not(.sidebar-collapsed) {
-        margin-left: 220px;
-      }
-      .main-content.sidebar-collapsed {
-        margin-left: 60px;
-      }
-      .mobile-header {
-        display: none;
-      }
-    }
+/* Mobile styles (unchanged) */
+@media (max-width: 768px) {
+  .app-layout {
+    position: relative;
+  }
 
-    /* Mobile styles */
-    @media (max-width: 768px) {
-      .app-layout {
-        position: relative;
-      }
+  app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
 
-      app-sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        z-index: 1000;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-      }
+  app-sidebar:not(.collapsed) {
+    transform: translateX(0);
+  }
 
-      app-sidebar:not(.collapsed) {
-        transform: translateX(0);
-      }
+  .main-content {
+    margin-left: 0 !important;
+    width: 100%;
+    margin-top: 10px; /* space for mobile header */
+  }
 
-      .main-content {
-        margin-left: 0 !important;
-        width: 100%;
-      }
+  .mobile-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    background: #1f2937;
+    color: white;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
 
-      .mobile-header {
-        display: flex;
-        align-items: center;
-        padding: 10px 16px;
-        background: #1f2937;
-        color: white;
-        margin-bottom: 20px;
-        border-radius: 4px;
-      }
+  .menu-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    margin-right: 12px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-      .menu-btn {
-        background: transparent;
-        border: none;
-        color: white;
-        font-size: 1.5rem;
-        margin-right: 12px;
-        cursor: pointer;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .app-title {
-        font-weight: 500;
-        font-size: 1.2rem;
-      }
-    }
-  `]
+  .app-title {
+    font-weight: 500;
+    font-size: 1.2rem;
+  }
+}
+    `]
 })
 export class LayoutComponent {
   sidebarCollapsed = false;

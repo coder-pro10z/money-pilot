@@ -137,7 +137,11 @@ import { Router } from '@angular/router';
     .sidebar.collapsed .toggle-btn {
       margin: 0 auto;
     }
-  `]
+    
+    .sidebar.collapsed {
+    width: 60px;  /*this was missing */
+    }
+   `]
 })
 export class SidebarComponent {
   @Input() collapsed = false;
