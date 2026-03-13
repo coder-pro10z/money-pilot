@@ -1,93 +1,92 @@
-<div class="auth-container">
+<div class="auth-page">
 
-  <h2>{{ title }}</h2>
+  <div class="auth-container">
 
-  <form [formGroup]="form" (ngSubmit)="submit.emit()">
+    <h1 class="brand">MoneyPilot</h1>
+    <p class="subtitle">Personal Finance Tracker</p>
+    <h2>{{ title }}</h2>
 
-    <!-- Email -->
-   <div class="form-group">
+    <form [formGroup]="form" (ngSubmit)="submit.emit()">
 
-  <label>Email</label>
+      <!-- Email -->
+      <div class="form-group">
 
-  <input
-    type="email"
-    formControlName="email"
-    placeholder="Enter email"
-  />
+        <label>Email</label>
 
-  <div  class="error" *ngIf="form.controls['email'].touched && form.controls['email'].invalid">
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Enter email"
+        />
 
-  <small *ngIf="form.controls['email'].errors?.['required']">
-    Email is required
-  </small>
+        <div class="error">
+          <small *ngIf="form.controls['email'].touched && form.controls['email'].errors?.['required']">
+            Email is required
+          </small>
 
-  <small *ngIf="form.controls['email'].errors?.['email']">
-    Invalid email format
-  </small>
+          <small *ngIf="form.controls['email'].touched && form.controls['email'].errors?.['email']">
+            Invalid email format
+          </small>
+        </div>
 
-</div>
-  <!-- <div class="error" *ngIf="form.controls.email.touched && form.controls.email.invalid">
+      </div>
 
-    <small *ngIf="form.controls.email.errors?.['required']">
-      Email is required
-    </small>
+      <!-- Password -->
+      <div class="form-group">
 
-    <small *ngIf="form.controls.email.errors?.['email']">
-      Invalid email format
-    </small>
+        <label>Password</label>
 
-  </div> -->
+        <div class="password-wrapper">
 
-</div>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Enter password"
+          />
 
-    <!-- Password -->
-    <div class="form-group">
+          <!-- <button
+            type="button"
+            class="toggle-btn"
+            (click)="showPassword = !showPassword">
+            👁
+          </button> -->
 
-  <label>Password</label>
+          <button type="button" class="toggle-btn">
+          <span class="material-icons" (click)="showPassword = !showPassword">
+            {{ showPassword ? 'visibility_off' : 'visibility' }}
+          </span> 
+          </button>
+        </div>
 
-  <input
-    type="password"
-    formControlName="password"
-    placeholder="Enter password"
-  />
-<div class="error" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+        <div class="error">
+          <small *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['required']">
+            Password is required
+          </small>
 
-  <small *ngIf="form.get('password')?.errors?.['required']">
-    Password is required
-  </small>
+          <small *ngIf="form.get('password')?.touched && form.get('password')?.errors?.['minlength']">
+            Minimum 6 characters required
+          </small>
+        </div>
 
-  <small *ngIf="form.get('password')?.errors?.['minlength']">
-    Minimum 6 characters required
-  </small>
+      </div>
 
-</div>
-  <!-- <div class="error" *ngIf="form.controls.password.touched && form.controls.password.invalid">
-
-    <small *ngIf="form.controls.password.errors?.['required']">
-      Password is required
-    </small>
-
-    <small *ngIf="form.controls.password.errors?.['minlength']">
-      Password must be at least 6 characters
-    </small>
-
-  </div> -->
-
-</div>
-
-    <!-- <button type="submit" [disabled]="form.invalid">
-      {{ buttonText }}
-    </button> -->
-
-    <button
+      <!-- Submit -->
+      <button
         type="submit"
-        [disabled]="form.invalid || form.pending"
-        class="submit-btn">
-    {{ buttonText }}
-    </button>
-    <!-- optional footer slot -->
-    <ng-content></ng-content>
+        class="submit-btn"
+        [disabled]="!form.dirty || form.invalid || loading">
 
-  </form>
+        {{ loading ? 'Processing...' : buttonText }}
+
+      </button>
+
+      <!-- Footer -->
+      <div class="auth-footer">
+        <ng-content></ng-content>
+      </div>
+
+    </form>
+
+  </div>
 
 </div>

@@ -17,6 +17,15 @@ export class AuthFormComponent {
 
   @Input() form!: FormGroup;
 
+  // @Output() submit = new EventEmitter<void>();
+
+  //  @Input() form!: FormGroup;
+  // @Input() title = '';
+  // @Input() buttonText = '';
+  @Input() loading = false;
+
   @Output() submit = new EventEmitter<void>();
+
+  showPassword = false;
 
 }
