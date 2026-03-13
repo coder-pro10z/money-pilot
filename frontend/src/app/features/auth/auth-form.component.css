@@ -1,68 +1,174 @@
-.auth-container {
-  max-width: 400px;
-  margin: 80px auto;
-  padding: 30px;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+.auth-page{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#f1f5f9,#e2e8f0);
 }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
+.auth-container{
+  width:420px;
+  padding:35px;
+  background:white;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+  animation: fadeIn .35s ease;
 }
 
-.form-group {
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
+.brand{
+  text-align:center;
+  color:#3b82f6;
+  margin-bottom:4px;
 }
 
-input {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+.subtitle{
+  text-align:center;
+  color:#64748b;
+  font-size:14px;
+  margin-bottom:10px;
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background: #3f51b5;
-  color: white;
-  border-radius: 6px;
-  margin-top: 10px;
+h2{
+  text-align:center;
+  margin-bottom:20px;
 }
 
-.error {
-  color: #d32f2f;
-  font-size: 12px;
-  margin-top: 4px;
+.form-group{
+  display:flex;
+  flex-direction:column;
+  margin-bottom:18px;
 }
 
-input.ng-invalid.ng-touched {
-  border-color: #d32f2f;
+input{
+  width:90%;
+  padding:15px;
+  border-radius:6px;
+  border:1px solid #ddd;
 }
 
-input.ng-valid.ng-touched {
-  border-color: #2e7d32;
+input:focus{
+  outline:none;
+  border-color:#3b82f6;
 }
 
-/* //login button */
-.submit-btn {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 6px;
-  background: #3f51b5;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.2s;
+/* Password wrapper */
+
+.password-wrapper{
+  position:relative;
+  width:90%;
 }
 
-/* Disabled button */
-.submit-btn:disabled {
-  background: #c4c4c4;
-  cursor: not-allowed;
+.password-wrapper input{
+  padding-right:40px;
+}
+
+.toggle-btn{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:none;
+  cursor:pointer;
+}
+
+/* Button */
+
+.submit-btn{
+  width:100%;
+  padding:10px;
+  border:none;
+  border-radius:6px;
+  background:#3b82f6;
+  color:white;
+  font-weight:500;
+  cursor:pointer;
+}
+
+.submit-btn:hover{
+  background:#2563eb;
+}
+
+.submit-btn:disabled{
+  background:#94a3b8;
+  cursor:not-allowed;
+}
+
+/* Errors */
+
+.error{
+  color:#ef4444;
+  font-size:13px;
+  margin-top:5px;
+}
+
+.auth-footer{
+  margin-top:15px;
+  text-align:center;
+}
+
+/* Animation */
+
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.auth-container{
+  backdrop-filter: blur(10px);
+}
+
+.password-wrapper{
+  position:relative;
+  width:100%;
+}
+
+.password-wrapper input{
+  width:100%;
+  padding-right:40px;
+}
+
+/* .toggle-btn{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:none;
+  cursor:pointer;
+  font-size:16px;
+} */
+
+.error{
+  min-height:18px;
+  color:#ef4444;
+  font-size:13px;
+  margin-top:5px;
+}
+
+.password-wrapper{
+  position:relative;
+  width:95%;
+}
+
+.password-wrapper input{
+  width:90%;
+  /* padding-right:40px; */
+}
+
+.toggle-btn{
+  position:absolute;
+  right:20px;
+  top:50%;
+  transform:translateY(-50%);
+  border:none;
+  background:none;
+  cursor:pointer;
+  font-size:12px;
 }
