@@ -7,6 +7,8 @@ import { Budget } from '../../core/models/budget.model';
 import { Router } from '@angular/router';
 import {PagedResponse} from '../../core/models/paged-response.model';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
+import { ConfirmationService } from '../../shared/services/confirmation.service';
+import { NotificationService } from '../../shared/services/notification.service';
 
 //paged response
 
@@ -98,7 +100,9 @@ export class BudgetsComponent implements OnInit {
   isLoading = false;
 
   constructor(private router: Router,
-    private budgetService: BudgetService
+    private budgetService: BudgetService,
+    private confirmationService: ConfirmationService,
+    private notificationService: NotificationService
   ) {}
   ngOnInit(): void {
     this.loadBudgets();
@@ -131,10 +135,21 @@ export class BudgetsComponent implements OnInit {
    * Delete budget
    */
   remove(id: number) {
-    if (!confirm('Are you sure you want to delete this budget?')) return;
+    this.confirmationService.confirm({
+      title: 'Delete Budget',
+      message: 'Are you sure you want to delete this budget? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
+    }).subscribe(confirmed => {
+      if (!confirmed) {
+        return;
+      }
 
-    this.budgetService.delete(id)
-      .subscribe(() => this.loadBudgets());
+      this.budgetService.delete(id).subscribe(() => {
+        this.notificationService.success('Budget deleted successfully.');
+        this.loadBudgets();
+      });
+    });
   }   
 }
 

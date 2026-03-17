@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
 import { ConfirmationService } from '../../shared/services/confirmation.service';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-expenses',
@@ -90,7 +91,8 @@ export class ExpensesComponent implements OnInit {
   constructor(
     private expenseService: ExpenseService,
     private router: Router,
-    private confirmationService: ConfirmationService 
+    private confirmationService: ConfirmationService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -118,14 +120,6 @@ loadExpenses() {
     this.router.navigate(['expense/edit', id]);
   }
 
-  remove_1(id: number) {
-    if (confirm('Are you sure?')) {
-      this.expenseService.delete(id).subscribe(() => {
-        this.loadExpenses();
-      });
-    }
-  }
-
    confirmDelete(id: number) {
     this.confirmationService.confirm({
       title: 'Delete Expense',
@@ -135,7 +129,10 @@ loadExpenses() {
     }).subscribe(confirmed => {
       if (confirmed) {
         this.expenseService.delete(id).subscribe({
-          next: () => this.router.navigate(['/expense']),
+          next: () => {
+            this.notificationService.success('Expense deleted successfully.');
+            this.loadExpenses();
+          },
           error: (err) => console.error('Delete failed', err)
         });
       }

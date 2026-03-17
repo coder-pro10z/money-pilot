@@ -123,3 +123,35 @@ Your project now demonstrates:
 - [ ] (Optional) Implement unit tests for critical services
 
 Let me know if you need help implementing delete confirmation in any of these remaining modules!v
+
+---
+
+## Tracker Update - 2026-03-17
+
+### UI Enhancement Progress
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Shared notification system | Completed | Added snackbar-based `NotificationService` for consistent success, warning, and error feedback |
+| Error interceptor UX | Completed | Replaced native `alert()` handling with notification-based messages for `400`, `401`, `403`, `500`, and network failures |
+| Session expiry handling | Completed | Protected-route `401` now clears token, shows a session-expired message, and redirects to login |
+| Auth success feedback | Completed | Registration success now uses the shared notification system |
+| Recurring action feedback | Completed | `Run Due Now` now shows a success notification instead of a native alert |
+| Shared delete confirmation - Expenses | Completed | Uses the Material dialog-based confirmation flow |
+| Shared delete confirmation - Categories | Completed | Replaced native `confirm()` with shared confirmation dialog and success notification |
+| Shared delete confirmation - Budgets | Completed | Replaced native `confirm()` with shared confirmation dialog and success notification |
+| Shared delete confirmation - Recurring | Completed | Replaced native `confirm()` with shared confirmation dialog and success notification |
+| Native `alert()` / `confirm()` usage in frontend app code | Completed | Removed remaining direct usage from feature components |
+
+### Current UX Baseline
+
+- All current destructive actions now use the same confirmation dialog pattern.
+- Global HTTP failures now use consistent snackbar notifications instead of blocking browser alerts.
+- Success feedback has started to be standardized for key actions.
+
+### Remaining UX Follow-Ups
+
+- Add success notifications for all create/update flows
+- Add inline validation messages and touched-state handling to non-auth forms
+- Add active navigation state in sidebar
+- Improve empty/error states on dashboard and list screens

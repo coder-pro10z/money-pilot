@@ -5,6 +5,8 @@ import { CategoryService } from '../../core/services/category.service';
 import { Category } from '../../core/models/category.model';
 import { PagedResponse } from '../../core/models/paged-response.model';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
+import { ConfirmationService } from '../../shared/services/confirmation.service';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-categories',
@@ -81,7 +83,9 @@ export class CategoriesComponent implements OnInit {
 
   constructor(
     private categoryService: CategoryService,
-    private router: Router
+    private router: Router,
+    private confirmationService: ConfirmationService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -108,9 +112,20 @@ export class CategoriesComponent implements OnInit {
   }
 
   remove(id: number) {
-    if (!confirm('Delete this category?')) return;
+    this.confirmationService.confirm({
+      title: 'Delete Category',
+      message: 'Are you sure you want to delete this category? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
+    }).subscribe(confirmed => {
+      if (!confirmed) {
+        return;
+      }
 
-    this.categoryService.delete(id)
-      .subscribe(() => this.loadCategories());
+      this.categoryService.delete(id).subscribe(() => {
+        this.notificationService.success('Category deleted successfully.');
+        this.loadCategories();
+      });
+    });
   }
 }

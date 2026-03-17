@@ -5,6 +5,7 @@ import { RecurringService } from '../../core/services/recurring.service';
 import { RecurringTransaction } from '../../core/models/recurring.model';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
 import { NotificationService } from '../../shared/services/notification.service';
+import { ConfirmationService } from '../../shared/services/confirmation.service';
 
 @Component({
   selector: 'app-recurring',
@@ -123,7 +124,8 @@ export class RecurringComponent implements OnInit {
   constructor(
     private recurringService: RecurringService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -156,10 +158,20 @@ export class RecurringComponent implements OnInit {
   }
 
   remove(id: number) {
-    if (!confirm('Are you sure you want to delete this recurring transaction?')) return;
+    this.confirmationService.confirm({
+      title: 'Delete Recurring Transaction',
+      message: 'Are you sure you want to delete this recurring transaction? This action cannot be undone.',
+      confirmText: 'Delete',
+      cancelText: 'Cancel'
+    }).subscribe(confirmed => {
+      if (!confirmed) {
+        return;
+      }
 
-    this.recurringService.delete(id).subscribe(() => {
-      this.loadRecurring();
+      this.recurringService.delete(id).subscribe(() => {
+        this.notificationService.success('Recurring transaction deleted successfully.');
+        this.loadRecurring();
+      });
     });
   }
 
