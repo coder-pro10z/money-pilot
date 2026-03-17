@@ -23,9 +23,10 @@ import { NotificationService } from '../../shared/services/notification.service'
       <button class="btn btn-primary" (click)="goToCreate()">Add Budget</button>
     </div>
 
-    
-    <div *ngIf="!isLoading && !budgets.length" class="empty">
-    No budgets found.
+    <div *ngIf="!isLoading && !budgets.length" class="empty-state">
+      <h3>No budgets yet</h3>
+      <p>Create a budget to track spending limits and stay on target.</p>
+      <button class="btn btn-primary" (click)="goToCreate()">Create Your First Budget</button>
     </div>
     
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
@@ -78,8 +79,27 @@ import { NotificationService } from '../../shared/services/notification.service'
       cursor: pointer;
     }
 
-    .loading, .empty {
+    .loading {
       margin-top: 1rem;
+    }
+
+    .empty-state {
+      margin-top: 1rem;
+      background: #ffffff;
+      border: 1px dashed #d0d5dd;
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      color: #344054;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 8px;
+      color: #101828;
+    }
+
+    .empty-state p {
+      margin: 0 0 16px;
     }
 
     /* Categories table: category, Monthly Limit, Month, Actions */

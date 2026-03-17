@@ -19,6 +19,12 @@ import { NotificationService } from '../../shared/services/notification.service'
     </div>
 
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+
+    <div class="empty-state" *ngIf="!isLoading && !expenses.length">
+      <h3>No expenses yet</h3>
+      <p>Start tracking your spending by adding your first expense.</p>
+      <button class="btn btn-primary" (click)="goToCreate()">Add Your First Expense</button>
+    </div>
     
     <div class="card" *ngIf="expenses.length">
       <table class="data-table">
@@ -73,6 +79,24 @@ import { NotificationService } from '../../shared/services/notification.service'
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
+  }
+
+  .empty-state {
+    background: #ffffff;
+    border: 1px dashed #d0d5dd;
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+    color: #344054;
+  }
+
+  .empty-state h3 {
+    margin: 0 0 8px;
+    color: #101828;
+  }
+
+  .empty-state p {
+    margin: 0 0 16px;
   }
 
   /* Column widths for Expenses table */

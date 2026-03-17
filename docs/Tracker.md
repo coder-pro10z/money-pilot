@@ -174,3 +174,12 @@ Let me know if you need help implementing delete confirmation in any of these re
 | Category create/update feedback | Completed | Success toast added after save |
 | Recurring create/update feedback | Completed | Success toast added after save |
 | Category edit route | Completed | Added missing `category/edit/:id` route to frontend routing |
+
+### Empty State Update - 2026-03-17
+
+| Screen | Status | Notes |
+|------|--------|-------|
+| Expenses list | Completed | Added empty-state card with primary CTA to create first expense |
+| Budgets list | Completed | Added empty-state card with primary CTA to create first budget |
+| Categories list | Completed | Added empty-state card with primary CTA to create first category |
+| Recurring list | Completed | Added empty-state card with primary CTA to create first recurring transaction |

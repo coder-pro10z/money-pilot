@@ -58,8 +58,10 @@ import { ConfirmationService } from '../../shared/services/confirmation.service'
     </table>
     </div>
 
-    <div *ngIf="!isLoading && !recurringList.length">
-      No recurring transactions found.
+    <div class="empty-state" *ngIf="!isLoading && !recurringList.length">
+      <h3>No recurring transactions yet</h3>
+      <p>Set up recurring items for rent, subscriptions, and other repeat spending.</p>
+      <button class="btn btn-primary" (click)="goToCreate()">Add Your First Recurring Transaction</button>
     </div>
   `,
   styles: [`
@@ -113,6 +115,24 @@ import { ConfirmationService } from '../../shared/services/confirmation.service'
     .active {
       font-weight: bold;
       color: green;
+    }
+
+    .empty-state {
+      background: #ffffff;
+      border: 1px dashed #d0d5dd;
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      color: #344054;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 8px;
+      color: #101828;
+    }
+
+    .empty-state p {
+      margin: 0 0 16px;
     }
   `]
 })
