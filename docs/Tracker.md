@@ -155,3 +155,12 @@ Let me know if you need help implementing delete confirmation in any of these re
 - Add inline validation messages and touched-state handling to non-auth forms
 - Add active navigation state in sidebar
 - Improve empty/error states on dashboard and list screens
+
+### Validation Update - 2026-03-17
+
+| Form | Status | Notes |
+|------|--------|-------|
+| Expense form | Completed | Added inline messages for description, amount, date, and category. Invalid submit now calls `markAllAsTouched()` |
+| Budget form | Completed | Added inline messages for monthly limit, month, and category. Invalid submit now calls `markAllAsTouched()` |
+| Category form | Completed | Added inline messages for name and description length. Invalid submit now calls `markAllAsTouched()` |
+| Recurring form | Completed | Added inline messages for description, amount, category, recurrence type, and start date. Invalid submit now calls `markAllAsTouched()` |

@@ -19,18 +19,29 @@ import { CommonModule } from '@angular/common';
         <div class="form-group">
           <label>Description</label>
           <input formControlName="description" type="text" />
+          <div class="error" *ngIf="form.get('description')?.touched && form.get('description')?.invalid">
+            <small *ngIf="form.get('description')?.errors?.['required']">Description is required.</small>
+            <small *ngIf="form.get('description')?.errors?.['maxlength']">Description must be 100 characters or fewer.</small>
+          </div>
         </div>
 
         <!-- Amount -->
         <div class="form-group">
           <label>Amount</label>
           <input formControlName="amount" type="number" />
+          <div class="error" *ngIf="form.get('amount')?.touched && form.get('amount')?.invalid">
+            <small *ngIf="form.get('amount')?.errors?.['required']">Amount is required.</small>
+            <small *ngIf="form.get('amount')?.errors?.['min']">Amount must be greater than 0.</small>
+          </div>
         </div>
 
         <!-- Date -->
         <div class="form-group">
           <label>Date</label>
           <input formControlName="date" type="date" />
+          <div class="error" *ngIf="form.get('date')?.touched && form.get('date')?.invalid">
+            <small *ngIf="form.get('date')?.errors?.['required']">Date is required.</small>
+          </div>
         </div>
 
         <!-- Category -->
@@ -59,6 +70,10 @@ import { CommonModule } from '@angular/common';
 
         </button>
 
+        </div>
+
+        <div class="error" *ngIf="form.get('categoryId')?.touched && form.get('categoryId')?.invalid">
+          <small *ngIf="form.get('categoryId')?.errors?.['required']">Please select a category.</small>
         </div>
 
         </div>
@@ -166,6 +181,16 @@ import { CommonModule } from '@angular/common';
     .category-row select{
       flex:1;
     }
+
+    .error {
+      margin-top: 6px;
+      color: #b42318;
+      min-height: 18px;
+    }
+
+    .error small {
+      display: block;
+    }
   `]
 })
 export class ExpenseFormComponent implements OnInit {
@@ -186,8 +211,8 @@ export class ExpenseFormComponent implements OnInit {
   ngOnInit(): void {
 
     this.form = this.fb.group({
-      description: ['', Validators.required],
-      amount: [0, Validators.required],
+      description: ['', [Validators.required, Validators.maxLength(100)]],
+      amount: [null, [Validators.required, Validators.min(0.01)]],
       date: ['', Validators.required],
       categoryId: [null, Validators.required]
     });
@@ -216,7 +241,10 @@ export class ExpenseFormComponent implements OnInit {
   }
 
   submit() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     if (this.isEdit) {
       this.expenseService.update(this.expenseId, this.form.value)

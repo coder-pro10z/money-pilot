@@ -19,12 +19,20 @@ import { CategoryService } from '../../core/services/category.service';
         <div class="form-group">
           <label>Description</label>
           <input type="text" formControlName="description" />
+          <div class="error" *ngIf="form.get('description')?.touched && form.get('description')?.invalid">
+            <small *ngIf="form.get('description')?.errors?.['required']">Description is required.</small>
+            <small *ngIf="form.get('description')?.errors?.['maxlength']">Description must be 100 characters or fewer.</small>
+          </div>
         </div>
 
         <!-- Amount -->
         <div class="form-group">
           <label>Amount</label>
           <input type="number" formControlName="amount" />
+          <div class="error" *ngIf="form.get('amount')?.touched && form.get('amount')?.invalid">
+            <small *ngIf="form.get('amount')?.errors?.['required']">Amount is required.</small>
+            <small *ngIf="form.get('amount')?.errors?.['min']">Amount must be greater than 0.</small>
+          </div>
         </div>
 
         <!-- Category -->
@@ -36,6 +44,9 @@ import { CategoryService } from '../../core/services/category.service';
               {{ c.name }}
             </option>
           </select>
+          <div class="error" *ngIf="form.get('categoryId')?.touched && form.get('categoryId')?.invalid">
+            <small *ngIf="form.get('categoryId')?.errors?.['required']">Please select a category.</small>
+          </div>
         </div>
 
         <!-- Recurrence Type -->
@@ -46,12 +57,18 @@ import { CategoryService } from '../../core/services/category.service';
             <option [value]="1">Weekly</option>
             <option [value]="2">Monthly</option>
           </select>
+          <div class="error" *ngIf="form.get('recurrenceType')?.touched && form.get('recurrenceType')?.invalid">
+            <small *ngIf="form.get('recurrenceType')?.errors?.['required']">Recurrence type is required.</small>
+          </div>
         </div>
 
         <!-- Start Date -->
         <div class="form-group">
           <label>Start Date</label>
           <input type="date" formControlName="startDate" />
+          <div class="error" *ngIf="form.get('startDate')?.touched && form.get('startDate')?.invalid">
+            <small *ngIf="form.get('startDate')?.errors?.['required']">Start date is required.</small>
+          </div>
         </div>
 
         <!-- End Date -->
@@ -150,6 +167,16 @@ import { CategoryService } from '../../core/services/category.service';
     .cancel {
       background: #e0e0e0;
     }
+
+    .error {
+      margin-top: 6px;
+      color: #b42318;
+      min-height: 18px;
+    }
+
+    .error small {
+      display: block;
+    }
   `]
 })
 export class RecurringFormComponent implements OnInit {
@@ -170,8 +197,8 @@ export class RecurringFormComponent implements OnInit {
   ngOnInit(): void {
 
     this.form = this.fb.group({
-      description: ['', Validators.required],
-      amount: [0, Validators.required],
+      description: ['', [Validators.required, Validators.maxLength(100)]],
+      amount: [null, [Validators.required, Validators.min(0.01)]],
       categoryId: [null, Validators.required],
       recurrenceType: [2, Validators.required], // default Monthly
       startDate: ['', Validators.required],
@@ -208,7 +235,10 @@ export class RecurringFormComponent implements OnInit {
 
   submit() {
 
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     const raw = this.form.value;
 

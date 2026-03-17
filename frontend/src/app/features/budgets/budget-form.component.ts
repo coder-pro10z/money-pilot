@@ -27,12 +27,19 @@ import { CreateBudgetDto } from '../../core/models/budget-create.model';
         <div class="form-group">
           <label>Monthly Limit</label>
           <input formControlName="monthlyLimit" type="number" />
+          <div class="error" *ngIf="form.get('monthlyLimit')?.touched && form.get('monthlyLimit')?.invalid">
+            <small *ngIf="form.get('monthlyLimit')?.errors?.['required']">Monthly limit is required.</small>
+            <small *ngIf="form.get('monthlyLimit')?.errors?.['min']">Monthly limit must be greater than 0.</small>
+          </div>
         </div>
 
         <!-- Month -->
         <div class="form-group">
           <label>Month</label>
           <input formControlName="month" type="month" />
+          <div class="error" *ngIf="form.get('month')?.touched && form.get('month')?.invalid">
+            <small *ngIf="form.get('month')?.errors?.['required']">Month is required.</small>
+          </div>
         </div>
 
         <!-- Category -->
@@ -44,6 +51,9 @@ import { CreateBudgetDto } from '../../core/models/budget-create.model';
               {{ c.name }}
             </option>
           </select>
+          <div class="error" *ngIf="form.get('categoryId')?.touched && form.get('categoryId')?.invalid">
+            <small *ngIf="form.get('categoryId')?.errors?.['required']">Please select a category.</small>
+          </div>
         </div>
 
         <!-- Actions -->
@@ -138,6 +148,16 @@ import { CreateBudgetDto } from '../../core/models/budget-create.model';
     .cancel:hover {
       background: #c6c6c6;
     }
+
+    .error {
+      margin-top: 6px;
+      color: #b42318;
+      min-height: 18px;
+    }
+
+    .error small {
+      display: block;
+    }
   `]
 })
 export class BudgetFormComponent implements OnInit {
@@ -194,7 +214,10 @@ export class BudgetFormComponent implements OnInit {
 
   submit() {
 
-  if (this.form.invalid) return;
+  if (this.form.invalid) {
+    this.form.markAllAsTouched();
+    return;
+  }
 
   // ✅ Transform month to ISO date (first day of month)
   const monthValue = this.form.value.month;

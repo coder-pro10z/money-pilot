@@ -19,11 +19,18 @@ import { CreateCategoryDto } from '../../core/models/category-create.model';
       <div class="form-group">
         <label>Name</label>
         <input type="text" formControlName="name">
+        <div class="error" *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+          <small *ngIf="form.get('name')?.errors?.['required']">Category name is required.</small>
+          <small *ngIf="form.get('name')?.errors?.['maxlength']">Category name must be 50 characters or fewer.</small>
+        </div>
       </div>
 
       <div class="form-group">
         <label>Description</label>
         <input type="text" formControlName="description">
+        <div class="error" *ngIf="form.get('description')?.touched && form.get('description')?.invalid">
+          <small *ngIf="form.get('description')?.errors?.['maxlength']">Description must be 120 characters or fewer.</small>
+        </div>
       </div>
 
       <div class="form-group">
@@ -71,6 +78,16 @@ import { CreateCategoryDto } from '../../core/models/category-create.model';
       gap:10px;
       margin-top:10px;
     }
+
+    .error{
+      margin-top:6px;
+      color:#b42318;
+      min-height:18px;
+    }
+
+    .error small{
+      display:block;
+    }
   `]
 })
 export class CategoryFormComponent implements OnInit {
@@ -89,8 +106,8 @@ export class CategoryFormComponent implements OnInit {
   ngOnInit(): void {
 
     this.form = this.fb.group({
-      name: ['', Validators.required],
-      description: [''],
+      name: ['', [Validators.required, Validators.maxLength(50)]],
+      description: ['', Validators.maxLength(120)],
       color: ['#000000']
     });
 
@@ -109,7 +126,10 @@ export class CategoryFormComponent implements OnInit {
 
   submit() {
 
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     const payload: CreateCategoryDto = this.form.value;
 
