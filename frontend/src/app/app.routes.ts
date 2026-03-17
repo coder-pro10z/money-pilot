@@ -99,6 +99,12 @@ export const routes: Routes = [
               import('./features/categories/category-form.component')
                 .then(m => m.CategoryFormComponent)
           },
+          {
+            path: 'category/edit/:id',
+            loadComponent: () =>
+              import('./features/categories/category-form.component')
+                .then(m => m.CategoryFormComponent)
+          },
     // Default route
           {
             path: '',

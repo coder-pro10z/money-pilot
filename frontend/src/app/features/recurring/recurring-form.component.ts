@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RecurringService } from '../../core/services/recurring.service';
 import { CategoryService } from '../../core/services/category.service';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-recurring-form',
@@ -191,7 +192,8 @@ export class RecurringFormComponent implements OnInit {
     private recurringService: RecurringService,
     private categoryService: CategoryService,
     private route: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -254,10 +256,16 @@ export class RecurringFormComponent implements OnInit {
 
     if (this.isEdit) {
       this.recurringService.update(this.recurringId, payload)
-        .subscribe(() => this.router.navigate(['/recurring']));
+        .subscribe(() => {
+          this.notificationService.success('Recurring transaction updated successfully.');
+          this.router.navigate(['/recurring']);
+        });
     } else {
       this.recurringService.create(payload)
-        .subscribe(() => this.router.navigate(['/recurring']));
+        .subscribe(() => {
+          this.notificationService.success('Recurring transaction created successfully.');
+          this.router.navigate(['/recurring']);
+        });
     }
   }
 }

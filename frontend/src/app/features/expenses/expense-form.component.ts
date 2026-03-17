@@ -4,6 +4,7 @@ import { ExpenseService } from '../../core/services/expense.service';
 import { CategoryService } from '../../core/services/category.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-expense-form',
@@ -205,7 +206,8 @@ export class ExpenseFormComponent implements OnInit {
     private expenseService: ExpenseService,
     private categoryService: CategoryService,
     private route: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -248,10 +250,16 @@ export class ExpenseFormComponent implements OnInit {
 
     if (this.isEdit) {
       this.expenseService.update(this.expenseId, this.form.value)
-        .subscribe(() => this.router.navigate(['/expense']));
+        .subscribe(() => {
+          this.notificationService.success('Expense updated successfully.');
+          this.router.navigate(['/expense']);
+        });
     } else {
       this.expenseService.create(this.form.value)
-        .subscribe(() => this.router.navigate(['/expense']));
+        .subscribe(() => {
+          this.notificationService.success('Expense created successfully.');
+          this.router.navigate(['/expense']);
+        });
     }
   }
 

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { CategoryService } from '../../core/services/category.service';
 import { CreateCategoryDto } from '../../core/models/category-create.model';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-category-form',
@@ -100,7 +101,8 @@ export class CategoryFormComponent implements OnInit {
     private fb: FormBuilder,
     private categoryService: CategoryService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -135,10 +137,16 @@ export class CategoryFormComponent implements OnInit {
 
     if (this.isEdit) {
       this.categoryService.update(this.categoryId, payload)
-        .subscribe(() => this.router.navigate(['/category']));
+        .subscribe(() => {
+          this.notificationService.success('Category updated successfully.');
+          this.router.navigate(['/category']);
+        });
     } else {
       this.categoryService.create(payload)
-        .subscribe(() => this.router.navigate(['/category']));
+        .subscribe(() => {
+          this.notificationService.success('Category created successfully.');
+          this.router.navigate(['/category']);
+        });
     }
   }
 

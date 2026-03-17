@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { BudgetService } from '../../core/services/budget.service';
 import { CreateBudgetDto } from '../../core/models/budget-create.model';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-budget-form',
@@ -172,7 +173,8 @@ export class BudgetFormComponent implements OnInit {
     private budgetService: BudgetService,
     private categoryService: CategoryService,
     private route: ActivatedRoute,
-    public router: Router
+    public router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -234,10 +236,16 @@ export class BudgetFormComponent implements OnInit {
 
   if (this.isEdit) {
     this.budgetService.update(this.BudgetId, payload)
-      .subscribe(() => this.router.navigate(['/budget']));
+      .subscribe(() => {
+        this.notificationService.success('Budget updated successfully.');
+        this.router.navigate(['/budget']);
+      });
   } else {
     this.budgetService.create(payload)
-      .subscribe(() => this.router.navigate(['/budget']));
+      .subscribe(() => {
+        this.notificationService.success('Budget created successfully.');
+        this.router.navigate(['/budget']);
+      });
   }
 }
 }

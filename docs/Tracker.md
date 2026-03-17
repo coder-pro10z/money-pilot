@@ -164,3 +164,13 @@ Let me know if you need help implementing delete confirmation in any of these re
 | Budget form | Completed | Added inline messages for monthly limit, month, and category. Invalid submit now calls `markAllAsTouched()` |
 | Category form | Completed | Added inline messages for name and description length. Invalid submit now calls `markAllAsTouched()` |
 | Recurring form | Completed | Added inline messages for description, amount, category, recurrence type, and start date. Invalid submit now calls `markAllAsTouched()` |
+
+### Save Feedback Update - 2026-03-17
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Expense create/update feedback | Completed | Success toast added after save |
+| Budget create/update feedback | Completed | Success toast added after save |
+| Category create/update feedback | Completed | Success toast added after save |
+| Recurring create/update feedback | Completed | Success toast added after save |
+| Category edit route | Completed | Added missing `category/edit/:id` route to frontend routing |
