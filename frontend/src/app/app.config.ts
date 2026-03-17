@@ -14,6 +14,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,7 +29,8 @@ export const appConfig: ApplicationConfig = {
       MatSidenavModule,
       MatToolbarModule,
       MatIconModule,
-      MatListModule
+      MatListModule,
+      MatSnackBarModule
     )
     ]
 };

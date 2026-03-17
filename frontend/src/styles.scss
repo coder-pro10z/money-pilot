@@ -10,6 +10,28 @@ body {
   color: $text-main;
 }
 
+.app-snackbar {
+  --mdc-snackbar-container-color: #1f2937;
+  --mdc-snackbar-supporting-text-color: #ffffff;
+  --mat-snack-bar-button-color: #ffffff;
+}
+
+.app-snackbar-success {
+  --mdc-snackbar-container-color: #1f7a4c;
+}
+
+.app-snackbar-error {
+  --mdc-snackbar-container-color: #b42318;
+}
+
+.app-snackbar-warning {
+  --mdc-snackbar-container-color: #b54708;
+}
+
+.app-snackbar-info {
+  --mdc-snackbar-container-color: #175cd3;
+}
+
 /* Add to styles.css */
 .data-table {
   width: 100%;

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { RecurringService } from '../../core/services/recurring.service';
 import { RecurringTransaction } from '../../core/models/recurring.model';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
+import { NotificationService } from '../../shared/services/notification.service';
 
 @Component({
   selector: 'app-recurring',
@@ -121,7 +122,8 @@ export class RecurringComponent implements OnInit {
 
   constructor(
     private recurringService: RecurringService,
-    private router: Router
+    private router: Router,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -163,7 +165,7 @@ export class RecurringComponent implements OnInit {
 
   runNow() {
     this.recurringService.processDue().subscribe(() => {
-      alert('Recurring processing executed.');
+      this.notificationService.success('Recurring processing executed.');
     });
   }
 
