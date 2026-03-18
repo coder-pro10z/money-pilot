@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 export interface ConfirmDialogData {
   title: string;
   message: string;
+  warningText?: string;
   confirmText?: string;
   cancelText?: string;
 }
@@ -21,7 +22,13 @@ export interface ConfirmDialogData {
   imports: [CommonModule, MatDialogModule, MatButtonModule],
   template: `
     <h1 mat-dialog-title>{{ data.title }}</h1>
-    <div mat-dialog-content>{{ data.message }}</div>
+    <div mat-dialog-content>
+      <div>{{ data.message }}</div>
+      <div class="delete-warning" *ngIf="data.warningText">
+        <span class="warning-icon">⚠️</span>
+        <span>{{ data.warningText }}</span>
+      </div>
+    </div>
     <div mat-dialog-actions align="end">
       <button mat-button (click)="onCancel()">
         {{ data.cancelText || 'Cancel' }}
@@ -31,6 +38,20 @@ export interface ConfirmDialogData {
       </button>
     </div>
   `,
+  styles: [`
+    .delete-warning {
+      color: #dc2626;
+      font-size: 13px;
+      margin-top: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .warning-icon {
+      line-height: 1;
+    }
+  `]
 })
 export class ConfirmDialogComponent {
   constructor(

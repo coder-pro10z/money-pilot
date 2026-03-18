@@ -226,3 +226,11 @@ Let me know if you need help implementing delete confirmation in any of these re
 | Mobile duplicate header removal | Completed | Removed separate `mobile-header` from layout |
 | Single global navbar | Completed | Navbar remains only in layout and now handles the mobile menu toggle |
 | Mobile navbar behavior | Completed | Hamburger button moved into the shared navbar so mobile shows one header only |
+
+### Category Management UI Update - 2026-03-18
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Category delete warning | Completed | Added red warning message to category delete confirmation about associated expenses and budgets |
+| Category color picker UI | Completed | Replaced plain color input with lightweight selectable color swatches |
+| Category form mobile safety | Completed | Added width and overflow-safe styling so color controls stay inside small screens |

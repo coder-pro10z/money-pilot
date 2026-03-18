@@ -232,6 +232,7 @@ export class CategoriesComponent implements OnInit {
     this.confirmationService.confirm({
       title: 'Delete Category',
       message: 'Are you sure you want to delete this category? This action cannot be undone.',
+      warningText: 'Deleting this category will also delete all associated expenses and budgets.',
       confirmText: 'Delete',
       cancelText: 'Cancel'
     }).subscribe(confirmed => {
