@@ -7,6 +7,9 @@ import { CommonModule } from '@angular/common';
 import { BudgetService } from '../../core/services/budget.service';
 import { CreateBudgetDto } from '../../core/models/budget-create.model';
 import { NotificationService } from '../../shared/services/notification.service';
+import { MatDialog } from '@angular/material/dialog';
+import { QuickCategoryDialogComponent } from '../../shared/components/quick-category-dialog/quick-category-dialog.component';
+import { Category } from '../../core/models/category.model';
 
 @Component({
   selector: 'app-budget-form',
@@ -46,12 +49,17 @@ import { NotificationService } from '../../shared/services/notification.service'
         <!-- Category -->
         <div class="form-group">
           <label>Category</label>
-          <select formControlName="categoryId">
-            <option value="">Select Category</option>
-            <option *ngFor="let c of categories" [value]="c.id">
-              {{ c.name }}
-            </option>
-          </select>
+          <div class="category-row">
+            <select formControlName="categoryId">
+              <option value="">Select Category</option>
+              <option *ngFor="let c of categories" [value]="c.id">
+                {{ c.name }}
+              </option>
+            </select>
+            <button type="button" class="btn btn-secondary" (click)="openQuickCreateCategory()">
+              + Quick Add Category
+            </button>
+          </div>
           <div class="error" *ngIf="form.get('categoryId')?.touched && form.get('categoryId')?.invalid">
             <small *ngIf="form.get('categoryId')?.errors?.['required']">Please select a category.</small>
           </div>
@@ -159,6 +167,16 @@ import { NotificationService } from '../../shared/services/notification.service'
     .error small {
       display: block;
     }
+
+    .category-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .category-row select {
+      flex: 1;
+    }
   `]
 })
 export class BudgetFormComponent implements OnInit {
@@ -174,7 +192,8 @@ export class BudgetFormComponent implements OnInit {
     private categoryService: CategoryService,
     private route: ActivatedRoute,
     public router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -187,9 +206,7 @@ export class BudgetFormComponent implements OnInit {
   });
 
   // ✅ Load categories (paged response handled)
-  this.categoryService.getAll().subscribe(response => {
-    this.categories =  response;
-  });
+  this.loadCategories();
 
   // ✅ Detect edit mode
   const id = this.route.snapshot.paramMap.get('id');
@@ -248,4 +265,27 @@ export class BudgetFormComponent implements OnInit {
       });
   }
 }
+
+  loadCategories(selectedCategoryId?: number): void {
+    this.categoryService.getAll().subscribe(response => {
+      this.categories = response;
+
+      if (selectedCategoryId) {
+        this.form.patchValue({ categoryId: selectedCategoryId });
+      }
+    });
+  }
+
+  openQuickCreateCategory(): void {
+    this.dialog.open(QuickCategoryDialogComponent, {
+      width: '460px',
+      disableClose: true
+    }).afterClosed().subscribe((createdCategory?: Category) => {
+      if (!createdCategory?.id) {
+        return;
+      }
+
+      this.loadCategories(createdCategory.id);
+    });
+  }
 }

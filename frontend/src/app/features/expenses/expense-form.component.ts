@@ -5,6 +5,9 @@ import { CategoryService } from '../../core/services/category.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../shared/services/notification.service';
+import { MatDialog } from '@angular/material/dialog';
+import { QuickCategoryDialogComponent } from '../../shared/components/quick-category-dialog/quick-category-dialog.component';
+import { Category } from '../../core/models/category.model';
 
 @Component({
   selector: 'app-expense-form',
@@ -65,9 +68,9 @@ import { NotificationService } from '../../shared/services/notification.service'
 
         <button type="button"
                 class="btn btn-secondary"
-                (click)="goToAddCategory()">
+                (click)="openQuickCreateCategory()">
 
-        + Add Category
+        + Quick Add Category
 
         </button>
 
@@ -207,7 +210,8 @@ export class ExpenseFormComponent implements OnInit {
     private categoryService: CategoryService,
     private route: ActivatedRoute,
     public router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -220,9 +224,7 @@ export class ExpenseFormComponent implements OnInit {
     });
 
     // Load categories
-    this.categoryService.getAll().subscribe(res => {
-      this.categories = res;
-    });
+    this.loadCategories();
 
     const id = this.route.snapshot.paramMap.get('id');
 
@@ -263,7 +265,26 @@ export class ExpenseFormComponent implements OnInit {
     }
   }
 
-  goToAddCategory(){
-  this.router.navigate(['/category/create']);
-}
+  loadCategories(selectedCategoryId?: number): void {
+    this.categoryService.getAll().subscribe(res => {
+      this.categories = res;
+
+      if (selectedCategoryId) {
+        this.form.patchValue({ categoryId: selectedCategoryId });
+      }
+    });
+  }
+
+  openQuickCreateCategory(): void {
+    this.dialog.open(QuickCategoryDialogComponent, {
+      width: '460px',
+      disableClose: true
+    }).afterClosed().subscribe((createdCategory?: Category) => {
+      if (!createdCategory?.id) {
+        return;
+      }
+
+      this.loadCategories(createdCategory.id);
+    });
+  }
 }

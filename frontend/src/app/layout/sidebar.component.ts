@@ -1,14 +1,14 @@
-import { Component, Input, Output, EventEmitter, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, RouterLink, RouterLinkActive],
   template: `
-    <div class="sidebar" [class.collapsed]="collapsed">
+    <div class="sidebar" [class.collapsed]="collapsed" [class.mobile-open]="isHandset && !collapsed">
       <div class="sidebar-header">
         <h2 *ngIf="!collapsed">MoneyPilot</h2>
         <button class="toggle-btn" (click)="toggle.emit()">
@@ -16,28 +16,28 @@ import { Router } from '@angular/router';
         </button>
       </div>
 
-      <ul class="nav-links">
-        <li (click)="navigate('dashboard')">
+      <nav class="nav-links">
+        <a routerLink="/dashboard" routerLinkActive="active-link" (click)="navigate()">
           <mat-icon>dashboard</mat-icon>
           <span *ngIf="!collapsed" class="label">Dashboard</span>
-        </li>
-        <li (click)="navigate('expense')">
+        </a>
+        <a routerLink="/expense" routerLinkActive="active-link" (click)="navigate()">
           <mat-icon>receipt</mat-icon>
           <span *ngIf="!collapsed" class="label">Expenses</span>
-        </li>
-        <li (click)="navigate('budget')">
+        </a>
+        <a routerLink="/budget" routerLinkActive="active-link" (click)="navigate()">
           <mat-icon>account_balance_wallet</mat-icon>
           <span *ngIf="!collapsed" class="label">Budgets</span>
-        </li>
-        <li (click)="navigate('recurring')">
+        </a>
+        <a routerLink="/recurring" routerLinkActive="active-link" (click)="navigate()">
           <mat-icon>repeat</mat-icon>
           <span *ngIf="!collapsed" class="label">Recurring</span>
-        </li>
-        <li (click)="navigate('category')">
+        </a>
+        <a routerLink="/category" routerLinkActive="active-link" (click)="navigate()">
           <mat-icon>category</mat-icon>
           <span *ngIf="!collapsed" class="label">Categories</span>
-        </li>
-      </ul>
+        </a>
+      </nav>
     </div>
   `,
   styles: [`
@@ -47,11 +47,12 @@ import { Router } from '@angular/router';
       color: #333;
       border-right: 1px solid #e0e0e0;
       box-shadow: 2px 0 5px rgba(0,0,0,0.05);
-      height: 100vh;
-      transition: width 0.3s ease;
+      min-height: 100vh;
+      transition: width 0.3s ease, transform 0.3s ease;
       overflow-x: hidden;
       display: flex;
       flex-direction: column;
+      z-index: 950;
     }
 
     .sidebar-header {
@@ -91,41 +92,48 @@ import { Router } from '@angular/router';
     }
 
     .nav-links {
-      list-style: none;
+      display: flex;
+      flex-direction: column;
       padding: 0;
       margin: 0;
     }
 
-    .nav-links li {
+    .nav-links a {
       color: #555;
       padding: 0.75rem 1rem;
       display: flex;
       align-items: center;
       cursor: pointer;
       transition: background 0.2s;
+      text-decoration: none;
     }
 
-    .nav-links li:hover {
+    .nav-links a:hover {
       background: #f5f5f5;
       color: #1f2937;
     }
 
-    .nav-links li mat-icon {
+    .nav-links a mat-icon {
       color: #5f6368;
       margin-right: 12px;
     }
 
-    .nav-links li:hover mat-icon {
-      color: #1f2937;
+    .nav-links a.active-link {
+      background: #eef2ff;
+      color: #1d4ed8;
+      font-weight: 600;
     }
 
-    /* Collapsed state adjustments */
-    .sidebar.collapsed .nav-links li {
+    .nav-links a.active-link mat-icon {
+      color: #1d4ed8;
+    }
+
+    .sidebar.collapsed .nav-links a {
       justify-content: center;
       padding: 0.75rem 0;
     }
 
-    .sidebar.collapsed .nav-links li mat-icon {
+    .sidebar.collapsed .nav-links a mat-icon {
       margin-right: 0;
     }
 
@@ -139,21 +147,34 @@ import { Router } from '@angular/router';
     }
     
     .sidebar.collapsed {
-    width: 60px;  /*this was missing */
+      width: 60px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translateX(-100%);
+      }
+
+      .sidebar.mobile-open {
+        transform: translateX(0);
+      }
     }
    `]
 })
 export class SidebarComponent {
   @Input() collapsed = false;
+  @Input() isHandset = false;
   @Output() toggle = new EventEmitter<void>();
+  @Output() navigated = new EventEmitter<void>();
 
-  @HostBinding('class.collapsed') get isCollapsed() {
+  @HostBinding('class.collapsed') get isCollapsed(): boolean {
     return this.collapsed;
   }
 
-  constructor(private router: Router) {}
-
-  navigate(path: string) {
-    this.router.navigate([path]);
+  navigate(): void {
+    this.navigated.emit();
   }
 }

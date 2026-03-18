@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { SidebarComponent } from './sidebar.component';
-import { NavbarComponent } from './navbar.component';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './navbar.component';
+import { SidebarComponent } from './sidebar.component';
 
 @Component({
   selector: 'app-layout',
@@ -11,96 +11,90 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, RouterOutlet, SidebarComponent, NavbarComponent],
   template: `
     <div class="app-layout">
-  <app-sidebar [collapsed]="sidebarCollapsed" (toggle)="toggleSidebar()"></app-sidebar>
+      <div class="sidebar-backdrop" *ngIf="isHandset && !sidebarCollapsed" (click)="closeSidebar()"></div>
 
-  <main class="main-content">
-    <!-- Mobile header -->
-    <div class="mobile-header" *ngIf="isHandset">
-      <button class="menu-btn" (click)="toggleSidebar()">☰</button>
-      <span class="app-title">MoneyPilot</span>
+      <app-sidebar
+        [collapsed]="sidebarCollapsed"
+        [isHandset]="isHandset"
+        (toggle)="toggleSidebar()"
+        (navigated)="handleSidebarNavigation()">
+      </app-sidebar>
+
+      <main class="main-content">
+        <div class="mobile-header" *ngIf="isHandset">
+          <button class="menu-btn" (click)="toggleSidebar()">☰</button>
+          <span class="app-title">MoneyPilot</span>
+        </div>
+
+        <app-navbar></app-navbar>
+        <router-outlet></router-outlet>
+      </main>
     </div>
-
-    <app-navbar></app-navbar>
-    <router-outlet></router-outlet>
-  </main>
-</div>
   `,
-  styles: [`  
-.app-layout {
-  display: flex;
-  height: 100vh;
-}
+  styles: [`
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+    }
 
-.main-content {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
+    .main-content {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      position: relative;
+      z-index: 1;
+    }
 
-}
+    .sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      z-index: 900;
+    }
 
-/* Desktop styles – no margin-left needed */
-@media (min-width: 769px) {
-  .mobile-header {
-    display: none;
-  }
-}
+    @media (min-width: 769px) {
+      .mobile-header {
+        display: none;
+      }
+    }
 
-/* Mobile styles (unchanged) */
-@media (max-width: 768px) {
-  .app-layout {
-    position: relative;
-  }
+    @media (max-width: 768px) {
+      .main-content {
+        width: 100%;
+        margin-top: 10px;
+      }
 
-  app-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    z-index: 1000;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
+      .mobile-header {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px;
+        background: #1f2937;
+        color: white;
+        margin-bottom: 20px;
+        border-radius: 8px;
+      }
 
-  app-sidebar:not(.collapsed) {
-    transform: translateX(0);
-  }
+      .menu-btn {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        margin-right: 12px;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-  .main-content {
-    margin-left: 0 !important;
-    width: 100%;
-    margin-top: 10px; /* space for mobile header */
-  }
-
-  .mobile-header {
-    display: flex;
-    align-items: center;
-    padding: 10px 16px;
-    background: #1f2937;
-    color: white;
-    margin-bottom: 20px;
-    border-radius: 4px;
-  }
-
-  .menu-btn {
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    margin-right: 12px;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .app-title {
-    font-weight: 500;
-    font-size: 1.2rem;
-  }
-}
-    `]
+      .app-title {
+        font-weight: 500;
+        font-size: 1.2rem;
+      }
+    }
+  `]
 })
 export class LayoutComponent {
   sidebarCollapsed = false;
@@ -109,11 +103,21 @@ export class LayoutComponent {
   constructor(private breakpointObserver: BreakpointObserver) {
     this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
       this.isHandset = result.matches;
-      this.sidebarCollapsed = this.isHandset; // collapsed = hidden on mobile
+      this.sidebarCollapsed = this.isHandset;
     });
   }
 
-  toggleSidebar() {
+  toggleSidebar(): void {
     this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
+
+  closeSidebar(): void {
+    if (this.isHandset) {
+      this.sidebarCollapsed = true;
+    }
+  }
+
+  handleSidebarNavigation(): void {
+    this.closeSidebar();
   }
 }

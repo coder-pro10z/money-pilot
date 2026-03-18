@@ -11,11 +11,8 @@ export class ExpenseService {
 
   constructor(private api: ApiService) {}
 
-  getAll() {
-    // return
-  //  this.api.get<Expense[]>('expense');
-    return  this.api.get<PagedResponse<Expense>>('expense');
-
+  getAll(page = 1, pageSize = 20) {
+    return this.api.get<PagedResponse<Expense>>(`expense?page=${page}&pageSize=${pageSize}`);
   }
 
   getById(id: number) {

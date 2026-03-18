@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiService } from './api.service';
 import { Category } from '../models/category.model';
+import { CreateCategoryDto } from '../models/category-create.model';
 
 @Injectable({ providedIn: 'root' })
 
@@ -28,8 +29,8 @@ export class CategoryService {
     return this.http.get(`${environment.apiBase}/categories/${id}`);
   }
 
-  create(payload: any): Observable<any> {
-    return this.http.post(`${environment.apiBase}/categories`, payload);
+  create(payload: CreateCategoryDto): Observable<Category> {
+    return this.api.post<Category>('categories', payload);
   }
 
   update(id: string | number, payload: any): Observable<any> {

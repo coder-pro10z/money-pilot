@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { RecurringService } from '../../core/services/recurring.service';
 import { RecurringTransaction } from '../../core/models/recurring.model';
+import { RecurringService } from '../../core/services/recurring.service';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner.component';
 import { NotificationService } from '../../shared/services/notification.service';
 import { ConfirmationService } from '../../shared/services/confirmation.service';
@@ -10,7 +11,7 @@ import { ConfirmationService } from '../../shared/services/confirmation.service'
 @Component({
   selector: 'app-recurring',
   standalone: true,
-  imports: [CommonModule,LoadingSpinnerComponent],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
   template: `
     <h2>Recurring Transactions</h2>
 
@@ -19,49 +20,74 @@ import { ConfirmationService } from '../../shared/services/confirmation.service'
       <button class="btn run" (click)="runNow()">Run Due Now</button>
     </div>
 
+    <div class="toolbar" *ngIf="recurringList.length">
+      <input [(ngModel)]="searchTerm" (ngModelChange)="resetPagination()" type="text" placeholder="Search description or category" />
+
+      <select [(ngModel)]="statusFilter" (ngModelChange)="resetPagination()">
+        <option value="all">All Statuses</option>
+        <option value="active">Active Only</option>
+        <option value="inactive">Inactive Only</option>
+      </select>
+
+      <select [(ngModel)]="typeFilter" (ngModelChange)="resetPagination()">
+        <option value="all">All Types</option>
+        <option *ngFor="let type of recurrenceTypes" [value]="type">{{ type }}</option>
+      </select>
+    </div>
+
     <app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
 
-    <div class="card" *ngIf="!isLoading && recurringList.length">
-    <table class="table" *ngIf="!isLoading && recurringList.length">
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Amount</th>
-          <th>Category</th>
-          <th>Type</th>
-          <th>Start</th>
-          <th>End</th>
-          <th>Active</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+    <div class="card" *ngIf="filteredRecurring.length">
+      <table class="table data-table">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Type</th>
+            <th>Schedule</th>
+            <th>Next</th>
+            <th>Active</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
 
-      <tbody>
-        <tr *ngFor="let item of recurringList">
-          <td>{{ item.description }}</td>
-          <td>{{ item.amount | currency }}</td>
-          <td>{{ item.categoryName }}</td>
-          <td>{{ getRecurrenceLabel(item.recurrenceType) }}</td>
-          <td>{{ item.startDate | date:'yyyy-MM-dd' }}</td>
-          <td>{{ item.endDate ? (item.endDate | date:'yyyy-MM-dd') : '-' }}</td>
-          <td>
-            <span [class.active]="item.isActive">
-              {{ item.isActive ? 'Yes' : 'No' }}
-            </span>
-          </td>
-          <td>
-            <button (click)="edit(item.id)">Edit</button>
-            <button class="delete" (click)="remove(item.id)">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <tbody>
+          <tr *ngFor="let item of pagedRecurring">
+            <td>{{ item.description }}</td>
+            <td>{{ item.amount | currency }}</td>
+            <td>{{ item.categoryName }}</td>
+            <td>{{ getRecurrenceLabel(item.recurrenceType) }}</td>
+            <td>{{ getScheduleSummary(item) }}</td>
+            <td>{{ item.nextOccurrence ? (item.nextOccurrence | date:'mediumDate') : '-' }}</td>
+            <td>
+              <span [class.active]="item.isActive">{{ item.isActive ? 'Yes' : 'No' }}</span>
+            </td>
+            <td>
+              <button (click)="edit(item.id)">Edit</button>
+              <button class="delete" (click)="remove(item.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="pagination" *ngIf="totalPages > 1">
+        <button class="btn" (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button class="btn" (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+      </div>
     </div>
 
     <div class="empty-state" *ngIf="!isLoading && !recurringList.length">
       <h3>No recurring transactions yet</h3>
       <p>Set up recurring items for rent, subscriptions, and other repeat spending.</p>
       <button class="btn btn-primary" (click)="goToCreate()">Add Your First Recurring Transaction</button>
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && recurringList.length && !filteredRecurring.length">
+      <h3>No matching recurring transactions</h3>
+      <p>Adjust the filters or clear them to see all schedules again.</p>
+      <button class="btn" (click)="clearFilters()">Clear Filters</button>
     </div>
   `,
   styles: [`
@@ -73,6 +99,21 @@ import { ConfirmationService } from '../../shared/services/confirmation.service'
       margin-bottom: 20px;
       display: flex;
       gap: 10px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .toolbar input,
+    .toolbar select {
+      padding: 10px 12px;
+      border: 1px solid #d0d5dd;
+      border-radius: 8px;
+      background: #fff;
     }
 
     button {
@@ -134,12 +175,35 @@ import { ConfirmationService } from '../../shared/services/confirmation.service'
     .empty-state p {
       margin: 0 0 16px;
     }
+
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0 8px;
+    }
+
+    @media (max-width: 768px) {
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+
+      .pagination {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
   `]
 })
 export class RecurringComponent implements OnInit {
-
   recurringList: RecurringTransaction[] = [];
   isLoading = false;
+  searchTerm = '';
+  statusFilter = 'all';
+  typeFilter = 'all';
+  currentPage = 1;
+  readonly pageSize = 5;
+  readonly recurrenceTypes = ['Daily', 'Weekly', 'Monthly', 'Yearly'];
 
   constructor(
     private recurringService: RecurringService,
@@ -148,36 +212,83 @@ export class RecurringComponent implements OnInit {
     private confirmationService: ConfirmationService
   ) {}
 
+  get filteredRecurring(): RecurringTransaction[] {
+    const term = this.searchTerm.trim().toLowerCase();
+
+    return this.recurringList.filter(item => {
+      const type = this.getRecurrenceLabel(item.recurrenceType);
+      const matchesSearch =
+        !term ||
+        item.description.toLowerCase().includes(term) ||
+        item.categoryName?.toLowerCase().includes(term);
+
+      const matchesStatus =
+        this.statusFilter === 'all' ||
+        (this.statusFilter === 'active' && item.isActive) ||
+        (this.statusFilter === 'inactive' && !item.isActive);
+
+      const matchesType = this.typeFilter === 'all' || type === this.typeFilter;
+
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }
+
+  get pagedRecurring(): RecurringTransaction[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredRecurring.slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredRecurring.length / this.pageSize));
+  }
+
   ngOnInit(): void {
     this.loadRecurring();
   }
 
-  loadRecurring() {
-  this.isLoading = true;
+  loadRecurring(): void {
+    this.isLoading = true;
 
-  this.recurringService.getAll().subscribe({
-    next: (response) => {
-      console.log('Recurring transactions loaded:', response);
+    this.recurringService.getAll().subscribe({
+      next: (response) => {
+        this.recurringList = response.items;
+        this.currentPage = 1;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
+    });
+  }
 
-      this.recurringList = response.items; // ✅ correct
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.statusFilter = 'all';
+    this.typeFilter = 'all';
+    this.currentPage = 1;
+  }
 
-      this.isLoading = false;
-    },
-    error: () => {
-      this.isLoading = false;
-    }
-  });
-}
+  resetPagination(): void {
+    this.currentPage = 1;
+  }
 
-  goToCreate() {
+  goToCreate(): void {
     this.router.navigate(['recurring/create']);
   }
 
-  edit(id: number) {
+  edit(id: number): void {
     this.router.navigate(['recurring/edit', id]);
   }
 
-  remove(id: number) {
+  previousPage(): void {
+    this.currentPage = Math.max(1, this.currentPage - 1);
+  }
+
+  nextPage(): void {
+    this.currentPage = Math.min(this.totalPages, this.currentPage + 1);
+  }
+
+  remove(id: number): void {
     this.confirmationService.confirm({
       title: 'Delete Recurring Transaction',
       message: 'Are you sure you want to delete this recurring transaction? This action cannot be undone.',
@@ -195,18 +306,39 @@ export class RecurringComponent implements OnInit {
     });
   }
 
-  runNow() {
+  runNow(): void {
     this.recurringService.processDue().subscribe(() => {
       this.notificationService.success('Recurring processing executed.');
     });
   }
 
-  getRecurrenceLabel(type: number): string {
-    switch (type) {
-      case 0: return 'Daily';
-      case 1: return 'Weekly';
-      case 2: return 'Monthly';
-      default: return 'Unknown';
+  getRecurrenceLabel(type: string | number): string {
+    const map: Record<string, string> = {
+      '1': 'Daily',
+      '2': 'Weekly',
+      '3': 'Monthly',
+      '4': 'Yearly',
+      Daily: 'Daily',
+      Weekly: 'Weekly',
+      Monthly: 'Monthly',
+      Yearly: 'Yearly'
+    };
+
+    return map[String(type)] ?? 'Unknown';
+  }
+
+  getScheduleSummary(item: RecurringTransaction): string {
+    const interval = item.interval ?? 1;
+    const type = this.getRecurrenceLabel(item.recurrenceType);
+
+    if (type === 'Weekly') {
+      return `Every ${interval} week(s) on ${item.dayOfWeek || '-'}`;
     }
+
+    if (type === 'Monthly' || type === 'Yearly') {
+      return `Every ${interval} ${type.toLowerCase()}(s) on day ${item.dayOfMonth || '-'}`;
+    }
+
+    return `Every ${interval} day(s)`;
   }
 }

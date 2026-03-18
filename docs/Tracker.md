@@ -183,3 +183,12 @@ Let me know if you need help implementing delete confirmation in any of these re
 | Budgets list | Completed | Added empty-state card with primary CTA to create first budget |
 | Categories list | Completed | Added empty-state card with primary CTA to create first category |
 | Recurring list | Completed | Added empty-state card with primary CTA to create first recurring transaction |
+
+### Quick Create Category Update - 2026-03-18
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Shared quick-create category dialog | Completed | Added reusable dialog with inline validation and success feedback |
+| Expense form quick-create category | Completed | Dialog opens from expense form, refreshes categories, and auto-selects the newly created category |
+| Budget form quick-create category | Completed | Dialog opens from budget form, refreshes categories, and auto-selects the newly created category |
+| Category create service contract | Completed | Switched quick-create flow to typed `ApiService` response unwrapping instead of raw `HttpClient` |
