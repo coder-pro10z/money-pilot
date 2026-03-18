@@ -241,3 +241,10 @@ Let me know if you need help implementing delete confirmation in any of these re
 |------|--------|-------|
 | Portfolio README rewrite | Completed | Replaced the docs README with a portfolio-ready version covering system design, clean architecture, backend/frontend structure, API contracts, Swagger, EF Core, setup, deployment, and UX architecture |
 | README accuracy pass | Completed | Corrected repo structure formatting, aligned library/package references to the actual codebase, and clarified current API route naming versus older reference documents |
+
+### Backend API Landing Page Update - 2026-03-18
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Root endpoint landing page | Completed | Replaced the plain text `/` response with a custom HTML landing page for the ASP.NET Core API |
+| API discoverability | Completed | Added direct links to Swagger, health, and diagnostics plus highlighted key features and core endpoints |

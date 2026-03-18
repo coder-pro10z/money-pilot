@@ -298,7 +298,7 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
 
     app.MapControllers();
 
-    app.MapGet("/", () => "🎉 MoneyPilot API is running!");
+    app.MapGet("/", () => Results.Content(GetLandingPageHtml(), "text/html"));
 
     app.MapGet("/health", () => "Healthy");
 
@@ -794,6 +794,267 @@ builder.Services.AddScoped<IRecurringTransactionService, RecurringTransactionSer
         }
         return DateTime.Now.AddDays(1);
     }
+
+    string GetLandingPageHtml() => """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>MoneyPilot API</title>
+        <style>
+            :root {
+                color-scheme: dark;
+                --bg: #0f172a;
+                --panel: #111c33;
+                --panel-border: rgba(148, 163, 184, 0.18);
+                --text: #e2e8f0;
+                --muted: #94a3b8;
+                --primary: #6366f1;
+                --primary-hover: #4f46e5;
+                --secondary: #1e293b;
+                --accent: #22c55e;
+                --warning: #f59e0b;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                font-family: Arial, sans-serif;
+                background:
+                    radial-gradient(circle at top, rgba(99, 102, 241, 0.18), transparent 32%),
+                    linear-gradient(180deg, #0b1220 0%, var(--bg) 100%);
+                color: var(--text);
+            }
+
+            .container {
+                max-width: 1040px;
+                margin: 0 auto;
+                padding: 48px 20px 64px;
+            }
+
+            .hero {
+                padding: 28px;
+                border: 1px solid var(--panel-border);
+                border-radius: 20px;
+                background: rgba(15, 23, 42, 0.72);
+                backdrop-filter: blur(8px);
+                box-shadow: 0 24px 60px rgba(2, 6, 23, 0.35);
+            }
+
+            .eyebrow {
+                display: inline-block;
+                margin-bottom: 14px;
+                padding: 6px 10px;
+                border-radius: 999px;
+                background: rgba(99, 102, 241, 0.16);
+                color: #c7d2fe;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+
+            h1 {
+                margin: 0 0 12px;
+                font-size: clamp(32px, 5vw, 48px);
+                line-height: 1.05;
+            }
+
+            .subtitle {
+                max-width: 720px;
+                margin: 0 0 28px;
+                color: var(--muted);
+                font-size: 17px;
+                line-height: 1.6;
+            }
+
+            .buttons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 12px;
+                margin-bottom: 12px;
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 12px 18px;
+                border-radius: 10px;
+                text-decoration: none;
+                font-weight: 700;
+                transition: transform 0.15s ease, background-color 0.15s ease;
+            }
+
+            .btn:hover {
+                transform: translateY(-1px);
+            }
+
+            .btn-primary {
+                background: var(--primary);
+                color: white;
+            }
+
+            .btn-primary:hover {
+                background: var(--primary-hover);
+            }
+
+            .btn-secondary {
+                background: var(--secondary);
+                color: var(--text);
+                border: 1px solid var(--panel-border);
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 16px;
+                margin-top: 20px;
+            }
+
+            .card {
+                background: var(--panel);
+                border: 1px solid var(--panel-border);
+                padding: 18px;
+                border-radius: 16px;
+            }
+
+            .card h2 {
+                margin: 0 0 12px;
+                font-size: 18px;
+            }
+
+            .card p,
+            .card li {
+                color: var(--muted);
+                line-height: 1.6;
+            }
+
+            ul {
+                margin: 0;
+                padding-left: 18px;
+            }
+
+            .endpoint-list {
+                display: grid;
+                gap: 10px;
+            }
+
+            .endpoint {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 12px;
+                border-radius: 10px;
+                background: rgba(15, 23, 42, 0.7);
+                border: 1px solid rgba(34, 197, 94, 0.16);
+                font-family: Consolas, monospace;
+                color: #bbf7d0;
+                overflow-wrap: anywhere;
+            }
+
+            .method {
+                color: var(--accent);
+                font-weight: 700;
+            }
+
+            .status {
+                margin-top: 18px;
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 14px;
+                border-radius: 999px;
+                background: rgba(34, 197, 94, 0.12);
+                color: #bbf7d0;
+                font-weight: 700;
+            }
+
+            .status-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 999px;
+                background: var(--accent);
+                box-shadow: 0 0 16px rgba(34, 197, 94, 0.65);
+            }
+
+            .small {
+                margin-top: 16px;
+                color: var(--warning);
+                font-size: 13px;
+            }
+
+            @media (max-width: 640px) {
+                .container {
+                    padding: 24px 14px 40px;
+                }
+
+                .hero {
+                    padding: 20px;
+                    border-radius: 16px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <main class="container">
+            <section class="hero">
+                <span class="eyebrow">MoneyPilot API</span>
+                <h1>Secure personal finance backend for a modern full-stack app.</h1>
+                <p class="subtitle">
+                    MoneyPilot powers authentication, expense tracking, budget workflows, recurring transactions,
+                    and dashboard analytics through a clean ASP.NET Core 8 API with JWT auth, Swagger, EF Core,
+                    and background processing.
+                </p>
+
+                <div class="buttons">
+                    <a class="btn btn-primary" href="/swagger">View Swagger Docs</a>
+                    <a class="btn btn-secondary" href="/health">Health Check</a>
+                    <a class="btn btn-secondary" href="/diagnostics/startup">Startup Diagnostics</a>
+                </div>
+
+                <div class="grid">
+                    <section class="card">
+                        <h2>Key Features</h2>
+                        <ul>
+                            <li>JWT authentication with protected endpoints</li>
+                            <li>Expense and budget management workflows</li>
+                            <li>Recurring transaction automation</li>
+                            <li>Dashboard analytics and summaries</li>
+                            <li>Swagger, health checks, and diagnostics support</li>
+                        </ul>
+                    </section>
+
+                    <section class="card">
+                        <h2>Important Endpoints</h2>
+                        <div class="endpoint-list">
+                            <div class="endpoint"><span class="method">POST</span><span>/api/auth/login</span></div>
+                            <div class="endpoint"><span class="method">GET</span><span>/api/expense</span></div>
+                            <div class="endpoint"><span class="method">GET</span><span>/api/budget</span></div>
+                            <div class="endpoint"><span class="method">GET</span><span>/api/dashboard/summary</span></div>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <h2>Architecture</h2>
+                        <p>Built with ASP.NET Core 8, Entity Framework Core, Identity, JWT Bearer auth, Serilog, and a layered clean architecture.</p>
+                        <div class="status">
+                            <span class="status-dot"></span>
+                            <span>API is running successfully</span>
+                        </div>
+                        <p class="small">For full request and response exploration, use the Swagger UI.</p>
+                    </section>
+                </div>
+            </section>
+        </main>
+    </body>
+    </html>
+    """;
 
     //==================================================================
     // Log active URLs
