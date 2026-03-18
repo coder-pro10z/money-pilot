@@ -21,12 +21,7 @@ import { SidebarComponent } from './sidebar.component';
       </app-sidebar>
 
       <main class="main-content">
-        <div class="mobile-header" *ngIf="isHandset">
-          <button class="menu-btn" (click)="toggleSidebar()">☰</button>
-          <span class="app-title">MoneyPilot</span>
-        </div>
-
-        <app-navbar></app-navbar>
+        <app-navbar [isHandset]="isHandset" (menuToggle)="toggleSidebar()"></app-navbar>
         <div class="content-body">
           <router-outlet></router-outlet>
         </div>
@@ -63,44 +58,9 @@ import { SidebarComponent } from './sidebar.component';
       z-index: 900;
     }
 
-    @media (min-width: 769px) {
-      .mobile-header {
-        display: none;
-      }
-    }
-
     @media (max-width: 768px) {
       .main-content {
         width: 100%;
-      }
-
-      .mobile-header {
-        display: flex;
-        align-items: center;
-        padding: 10px 16px;
-        background: #1f2937;
-        color: white;
-        margin-bottom: 20px;
-        border-radius: 8px;
-      }
-
-      .menu-btn {
-        background: transparent;
-        border: none;
-        color: white;
-        font-size: 1.5rem;
-        margin-right: 12px;
-        cursor: pointer;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .app-title {
-        font-weight: 500;
-        font-size: 1.2rem;
       }
     }
   `]

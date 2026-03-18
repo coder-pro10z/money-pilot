@@ -218,3 +218,11 @@ Let me know if you need help implementing delete confirmation in any of these re
 | Main content shell spacing | Completed | Moved content padding below navbar so header sits flush with the top and right edges |
 | Navbar identity display | Completed | Replaced plain `Welcome` with decoded JWT user name/email |
 | Dashboard card spacing polish | Completed | Increased card gap/padding for better visual separation |
+
+### Duplicate Navbar Fix - 2026-03-18
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Mobile duplicate header removal | Completed | Removed separate `mobile-header` from layout |
+| Single global navbar | Completed | Navbar remains only in layout and now handles the mobile menu toggle |
+| Mobile navbar behavior | Completed | Hamburger button moved into the shared navbar so mobile shows one header only |
