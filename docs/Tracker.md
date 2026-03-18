@@ -234,3 +234,10 @@ Let me know if you need help implementing delete confirmation in any of these re
 | Category delete warning | Completed | Added red warning message to category delete confirmation about associated expenses and budgets |
 | Category color picker UI | Completed | Replaced plain color input with lightweight selectable color swatches |
 | Category form mobile safety | Completed | Added width and overflow-safe styling so color controls stay inside small screens |
+
+### Documentation Update - 2026-03-18
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Portfolio README rewrite | Completed | Replaced the docs README with a portfolio-ready version covering system design, clean architecture, backend/frontend structure, API contracts, Swagger, EF Core, setup, deployment, and UX architecture |
+| README accuracy pass | Completed | Corrected repo structure formatting, aligned library/package references to the actual codebase, and clarified current API route naming versus older reference documents |
