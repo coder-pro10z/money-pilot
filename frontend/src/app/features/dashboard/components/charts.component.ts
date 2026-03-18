@@ -33,9 +33,11 @@ import { DashboardSummary } from '../../../core/models/dashboard.model';
   styles: [`
     .charts-container {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       margin-top: 20px;
+      width: 100%;
+      max-width: 100%;
     }
 
     .chart-card {
@@ -44,6 +46,10 @@ import { DashboardSummary } from '../../../core/models/dashboard.model';
       border-radius: 10px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
       min-height: 320px;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
     }
 
     .chart-empty {
@@ -51,10 +57,11 @@ import { DashboardSummary } from '../../../core/models/dashboard.model';
       margin-top: 24px;
     }
 
-    @media (max-width: 768px) {
-      .charts-container {
-        grid-template-columns: 1fr;
-      }
+    canvas {
+      display: block;
+      width: 100% !important;
+      max-width: 100%;
+      height: auto !important;
     }
   `]
 })

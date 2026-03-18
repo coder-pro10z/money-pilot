@@ -29,21 +29,24 @@ import { CommonModule } from '@angular/common';
   `,
   styles: [`
     .card-container {
-      display: flex;
-      gap: 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
       margin-bottom: 2rem;
+      width: 100%;
+      align-items: stretch;
     }
-      .card-title {
-        margin-bottom: 0.5rem;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-      
-        }
+    .card-title {
+      margin-bottom: 0.5rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
 
     .card {
-      padding: 1rem;
+      padding: 20px;
       border-radius: 8px;
       background: #f4f4f4;
-      flex: 1;
+      min-width: 0;
+      box-sizing: border-box;
     }
 
     .card {
@@ -54,6 +57,11 @@ import { CommonModule } from '@angular/common';
     } 
     .rem-budget-card {
       background: #e8f5e9;
+    }
+
+    .card p {
+      margin: 0;
+      overflow-wrap: anywhere;
     }
   `]
 })

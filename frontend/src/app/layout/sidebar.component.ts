@@ -42,7 +42,7 @@ import { MatIconModule } from '@angular/material/icon';
   `,
   styles: [`
     .sidebar {
-      width: 220px;
+      width: 176px;
       background: #ffffff;
       color: #333;
       border-right: 1px solid #e0e0e0;
@@ -155,6 +155,7 @@ import { MatIconModule } from '@angular/material/icon';
         position: fixed;
         top: 0;
         left: 0;
+        width: min(240px, 78vw);
         transform: translateX(-100%);
       }
 

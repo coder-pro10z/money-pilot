@@ -136,7 +136,10 @@ export class DashboardComponent implements OnInit {
   }
 
   get topCategoryLabel(): string {
-    const category = this.data?.categoryBreakdown?.[0];
+    const category = this.data?.categoryBreakdown?.reduce((top, current) =>
+      !top || current.amount > top.amount ? current : top,
+    null as DashboardSummary['categoryBreakdown'][number] | null);
+
     return category ? `${category.category} (${category.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })})` : 'No category data yet';
   }
 

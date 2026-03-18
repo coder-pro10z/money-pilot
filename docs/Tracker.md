@@ -192,3 +192,29 @@ Let me know if you need help implementing delete confirmation in any of these re
 | Expense form quick-create category | Completed | Dialog opens from expense form, refreshes categories, and auto-selects the newly created category |
 | Budget form quick-create category | Completed | Dialog opens from budget form, refreshes categories, and auto-selects the newly created category |
 | Category create service contract | Completed | Switched quick-create flow to typed `ApiService` response unwrapping instead of raw `HttpClient` |
+
+### Dashboard Insight Fix - 2026-03-18
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Top Spending Category insight | Completed | Updated dashboard insight to compute the max category amount instead of relying on the first `categoryBreakdown` item |
+
+### Layout Responsiveness Fix - 2026-03-18
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Sidebar breakpoint handling | Completed | Replaced `Breakpoints.Handset` behavior with explicit `max-width: 768px` logic to avoid desktop/tablet backdrop issues |
+| Sidebar expanded width | Completed | Reduced desktop expanded width and kept mobile drawer width bounded |
+| Main content containment | Completed | Added `min-width: 0` and `overflow-x: hidden` so content resizes instead of overflowing |
+| Dashboard summary cards | Completed | Switched to responsive auto-fit grid so cards wrap cleanly on sidebar expand |
+| Dashboard charts | Completed | Added container-safe sizing and `canvas` width constraints to prevent right overflow |
+
+### Navbar And Shell Spacing Fix - 2026-03-18
+
+| Area | Status | Notes |
+|------|--------|-------|
+| Global body spacing reset | Completed | Removed default body margin and padding |
+| Navbar full-width alignment | Completed | Navbar now spans full width with consistent background and box sizing |
+| Main content shell spacing | Completed | Moved content padding below navbar so header sits flush with the top and right edges |
+| Navbar identity display | Completed | Replaced plain `Welcome` with decoded JWT user name/email |
+| Dashboard card spacing polish | Completed | Increased card gap/padding for better visual separation |

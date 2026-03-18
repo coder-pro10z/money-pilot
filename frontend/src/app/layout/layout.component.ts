@@ -1,4 +1,4 @@
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
@@ -27,23 +27,33 @@ import { SidebarComponent } from './sidebar.component';
         </div>
 
         <app-navbar></app-navbar>
-        <router-outlet></router-outlet>
+        <div class="content-body">
+          <router-outlet></router-outlet>
+        </div>
       </main>
     </div>
   `,
   styles: [`
     .app-layout {
       display: flex;
+      width: 100%;
       min-height: 100vh;
       position: relative;
     }
 
     .main-content {
       flex: 1;
-      padding: 10px;
+      min-width: 0;
       overflow-y: auto;
+      overflow-x: hidden;
       position: relative;
       z-index: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-body {
+      padding: 16px;
     }
 
     .sidebar-backdrop {
@@ -62,7 +72,6 @@ import { SidebarComponent } from './sidebar.component';
     @media (max-width: 768px) {
       .main-content {
         width: 100%;
-        margin-top: 10px;
       }
 
       .mobile-header {
@@ -101,7 +110,7 @@ export class LayoutComponent {
   isHandset = false;
 
   constructor(private breakpointObserver: BreakpointObserver) {
-    this.breakpointObserver.observe([Breakpoints.Handset]).subscribe(result => {
+    this.breakpointObserver.observe(['(max-width: 768px)']).subscribe(result => {
       this.isHandset = result.matches;
       this.sidebarCollapsed = this.isHandset;
     });

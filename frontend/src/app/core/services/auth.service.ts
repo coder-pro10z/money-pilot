@@ -42,4 +42,38 @@ export class AuthService {
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
+
+  getCurrentUser(): { name?: string; email?: string } | null {
+    const token = this.getToken();
+    if (!token) {
+      return null;
+    }
+
+    try {
+      const payload = token.split('.')[1];
+      if (!payload) {
+        return null;
+      }
+
+      const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+      const decoded = JSON.parse(atob(normalized));
+
+      const name =
+        decoded['unique_name'] ||
+        decoded['name'] ||
+        decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'];
+
+      const email =
+        decoded['email'] ||
+        decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] ||
+        name;
+
+      return {
+        name,
+        email
+      };
+    } catch {
+      return null;
+    }
+  }
 }
