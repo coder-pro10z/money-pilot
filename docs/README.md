@@ -1,5 +1,5 @@
 # MoneyPilot
-
+[![Release](https://img.shields.io/github/v/release/coder-pro10z/money-pilot)](https://github.com/coder-pro10z/money-pilot/releases)
 [![.NET](https://img.shields.io/badge/.NET-8.0-purple)](https://dotnet.microsoft.com/)
 [![Angular](https://img.shields.io/badge/Angular-17-red)](https://angular.io/)
 [![Architecture](https://img.shields.io/badge/Architecture-Clean-blue)]()
